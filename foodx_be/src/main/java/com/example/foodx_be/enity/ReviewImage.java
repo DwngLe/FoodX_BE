@@ -1,7 +1,6 @@
 package com.example.foodx_be.enity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,11 +22,13 @@ public class ReviewImage {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     private UUID id;
-    @NotBlank
-    @Column(name="image_link")
-    private String imageLink;
+    @Column(name = "image_id")
+    private String imageId;
+    private String name;
+    @Column(name="image_url")
+    private String imageUrl;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     @JoinColumn(name = "id_review", referencedColumnName = "id")
     private Review review;
 }

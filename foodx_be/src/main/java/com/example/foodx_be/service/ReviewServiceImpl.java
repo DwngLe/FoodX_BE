@@ -35,6 +35,11 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
+    public Review getReview(UUID id) {
+        return reviewRepository.getOne(id);
+    }
+
+    @Override
     public Page<ReviewRestaurantDTO> getListReviewOfRestaurant(int pageNo, int limit, UUID idRestaurant) {
         List<Review> reviewList = reviewRepository.findAllByRestaurantId(idRestaurant);
         if(reviewList.isEmpty()){

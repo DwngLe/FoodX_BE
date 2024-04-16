@@ -1,10 +1,8 @@
 package com.example.foodx_be.controller;
 
-import com.example.foodx_be.dto.RestaurantDTO;
 import com.example.foodx_be.dto.RestaurantUpdateDTO;
 import com.example.foodx_be.dto.ReviewUpdate;
 import com.example.foodx_be.enity.Restaurant;
-import com.example.foodx_be.enity.UpdateRestaurant;
 import com.example.foodx_be.service.AdminService;
 import com.example.foodx_be.service.OpenTimeService;
 import com.example.foodx_be.service.RestaurantService;
@@ -16,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -36,13 +33,13 @@ public class AdminController {
     @GetMapping("/reviewUpdate")
     public ResponseEntity<Page<RestaurantUpdateDTO>> getUpdateRestaurantList(@RequestParam(name = "updateState") UpdateState updateState,
                                                                              @RequestParam(name = "pageNo") int pageNo,
-                                                                             @RequestParam(name = "limit") int limit){
+                                                                             @RequestParam(name = "limit") int limit) {
         return new ResponseEntity<>(adminService.getRestaurantList(pageNo, limit, updateState), HttpStatus.OK);
     }
 
     @PostMapping("/reviewUpdate/{idUpdate}")
     public ResponseEntity<HttpStatus> reviewRestaurantUpdate(@PathVariable UUID idUpdate,
-                                                             @RequestBody ReviewUpdate reviewUpdate){
+                                                             @RequestBody ReviewUpdate reviewUpdate) {
         adminService.reviewRestaurantUpdate(idUpdate, reviewUpdate);
         return new ResponseEntity<>(HttpStatus.OK);
     }

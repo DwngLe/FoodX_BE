@@ -10,5 +10,7 @@ import java.util.UUID;
 public interface ReviewService {
     void addReview(AddReviewRestaurantCommand reviewCommand);
 
+    Review getReview(UUID id);
+
     Page<ReviewRestaurantDTO> getListReviewOfRestaurant(int pageNo, int limit, UUID idRestaurant);
 }
