@@ -1,5 +1,6 @@
 package com.example.foodx_be.enity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class ReviewImage {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     private UUID id;
+    @JsonIgnore
     @Column(name = "image_id")
     private String imageId;
     private String name;
@@ -30,5 +32,6 @@ public class ReviewImage {
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "id_review", referencedColumnName = "id")
+    @JsonIgnore
     private Review review;
 }

@@ -11,9 +11,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class CloudiaryServiceImpl implements CloudiaryService {
@@ -28,13 +26,17 @@ public class CloudiaryServiceImpl implements CloudiaryService {
     }
 
     @Override
-    public Map upload(MultipartFile multipartFile) throws  IOException {
-        File file = convert(multipartFile);
-        Map result = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
-        if (!Files.deleteIfExists(file.toPath())) {
-            throw new IOException("Failed to delete temporary file: " + file.getAbsolutePath());
+    public List<Map> uploadMultiFiles(MultipartFile[] multipartFiles) throws  IOException {
+        List<Map> results = new ArrayList<>();
+        for (MultipartFile multipartFile : multipartFiles) {
+            File file = convert(multipartFile);
+            Map result = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+            results.add(result);
+            if (!Files.deleteIfExists(file.toPath())) {
+                throw new IOException("Failed to delete temporary file: " + file.getAbsolutePath());
+            }
         }
-        return result;
+        return results;
     }
 
     @Override

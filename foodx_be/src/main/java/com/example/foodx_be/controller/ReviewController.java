@@ -9,7 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -18,8 +20,9 @@ import java.util.UUID;
 public class ReviewController {
     private ReviewService reviewService;
     @PostMapping("/add")
-    public ResponseEntity<HttpStatus> addReview(@RequestBody AddReviewRestaurantCommand addReviewCommand){
-        reviewService.addReview(addReviewCommand);
+    public ResponseEntity<HttpStatus> addReview(@RequestPart("data") AddReviewRestaurantCommand addReviewCommand,
+                                                @RequestPart(value = "multipartFiles", required = false) MultipartFile[] multipartFiles) throws IOException {
+        reviewService.addReview(addReviewCommand, multipartFiles);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
