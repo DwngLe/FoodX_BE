@@ -42,9 +42,10 @@ public class CloudiaryServiceImpl implements CloudiaryService {
 
 
     @Override
-    public Map uploadFile(MultipartFile multipartFile) throws IOException {
+    public Map uploadFile(MultipartFile multipartFile, String folderName) throws IOException {
         File file = convert(multipartFile);
-        Map result = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+        Map params = ObjectUtils.asMap("folder", folderName);
+        Map result = cloudinary.uploader().upload(file, params);
         return  result;
     }
 

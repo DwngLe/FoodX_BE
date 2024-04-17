@@ -14,19 +14,31 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
+
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService{
+    private CloudiaryService cloudiaryService;
+
     private UserRepository userRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final String FOLDER_UPLOAD = "Avatar";
+
     @Override
-    public User saveUser(RegisterCommand registerCommand) {
+    public void updateUserAvatar(String username, MultipartFile multipartFile) throws IOException {
+        Map result = cloudiaryService.uploadFile(multipartFile, FOLDER_UPLOAD);
+        User user = getUser(username);
+        user.setAvatarLink((String)result.get("url"));
+        userRepository.save(user);
+    }
+
+    @Override
+    public UserDTO saveUser(RegisterCommand registerCommand) {
 
         Optional<User> userRegister = userRepository.findByUsername(registerCommand.getUsername());
         if(userRegister.isPresent()){
@@ -35,7 +47,7 @@ public class UserServiceImpl implements UserService{
         User user = convertToUser(registerCommand);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        return user;
+        return convertToDTO(user);
     }
 
     @Override

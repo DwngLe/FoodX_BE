@@ -69,8 +69,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private AccountState accountState;
 
-
-
     @PrePersist
     public void control(){
         if(role == null){

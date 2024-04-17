@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = converToReviewEnity(reviewCommand);
         review.setUser(userReview);
         review.setRestaurant(restaurant);
+        review.setReviewDate(LocalDateTime.now());
         reviewRepository.save(review);
 
         List<Map> results = cloudiaryService.uploadMultiFiles(multipartFiles, FOLDER_UPLOAD);

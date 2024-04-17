@@ -1,6 +1,7 @@
 package com.example.foodx_be.controller;
 
 import com.example.foodx_be.dto.RegisterCommand;
+import com.example.foodx_be.dto.UserDTO;
 import com.example.foodx_be.enity.User;
 import com.example.foodx_be.service.UserService;
 import jakarta.validation.Valid;
@@ -23,8 +24,7 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/register")
-    private ResponseEntity<User> register(@Valid @RequestBody RegisterCommand registerCommand){
-        User user = userService.saveUser(registerCommand);
-        return new ResponseEntity<>( user, HttpStatus.CREATED);
+    private ResponseEntity<UserDTO> register(@Valid @RequestBody RegisterCommand registerCommand){
+        return new ResponseEntity<>( userService.saveUser(registerCommand), HttpStatus.CREATED);
     }
 }

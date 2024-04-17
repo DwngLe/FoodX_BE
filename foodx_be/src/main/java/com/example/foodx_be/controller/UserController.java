@@ -8,7 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -33,5 +35,12 @@ public class UserController {
                                                          @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
                                                          @RequestParam(name = "limit", defaultValue = "5") int limit) {
         return new ResponseEntity<>(userService.getUsersByName(pageNo, limit, name), HttpStatus.OK);
+    }
+
+    @PostMapping("/avatar/update/{username}")
+    public ResponseEntity<HttpStatus> updateUserAvatar(@RequestParam MultipartFile multipartFile,
+                                                       @PathVariable String username) throws IOException {
+        userService.updateUserAvatar(username, multipartFile);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
