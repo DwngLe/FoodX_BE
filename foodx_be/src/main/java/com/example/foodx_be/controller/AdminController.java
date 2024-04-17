@@ -1,6 +1,7 @@
 package com.example.foodx_be.controller;
 
 import com.example.foodx_be.dto.RestaurantUpdateDTO;
+import com.example.foodx_be.dto.ReviewRestaurantState;
 import com.example.foodx_be.dto.ReviewUpdate;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.service.AdminService;
@@ -23,22 +24,29 @@ public class AdminController {
     private UserService userService;
     private AdminService adminService;
 
-    @GetMapping("/restaurant/views/{restaurantName}")
+    @GetMapping("/restaurants/view/{restaurantName}")
     public ResponseEntity<Restaurant> getRestaurant(@PathVariable String restaurantName) {
         return new ResponseEntity<>(restaurantService.getRestaurantEnityByName(restaurantName), HttpStatus.OK);
     }
 
-    @GetMapping("/reviewUpdate")
+    @GetMapping("/reviewUpdates")
     public ResponseEntity<Page<RestaurantUpdateDTO>> getUpdateRestaurantList(@RequestParam(name = "updateState") UpdateState updateState,
                                                                              @RequestParam(name = "pageNo") int pageNo,
                                                                              @RequestParam(name = "limit") int limit) {
         return new ResponseEntity<>(adminService.getRestaurantList(pageNo, limit, updateState), HttpStatus.OK);
     }
 
-    @PostMapping("/reviewUpdate/{idUpdate}")
+    @PostMapping("/reviewUpdates/{idUpdate}")
     public ResponseEntity<HttpStatus> reviewRestaurantUpdate(@PathVariable UUID idUpdate,
                                                              @RequestBody ReviewUpdate reviewUpdate) {
         adminService.reviewRestaurantUpdate(idUpdate, reviewUpdate);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/restaurants/{idRestaurant}/updateState")
+    public ResponseEntity<HttpStatus> reviewRestaurantUpdate(@PathVariable UUID idRestaurant,
+                                                             @RequestBody ReviewRestaurantState restaurantState) {
+        adminService.reviewRestaurantState(idRestaurant, restaurantState);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

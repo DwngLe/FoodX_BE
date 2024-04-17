@@ -46,6 +46,7 @@ public class Restaurant {
     @Column(name = "instagram_link")
     private String instagramLink;
     @Column(name = "restaurant_state")
+    @Enumerated(EnumType.STRING)
     private RestaurantState restaurantState;
     @Column(name = "time_added")
     private LocalDate timeAdded;

@@ -1,7 +1,5 @@
 package com.example.foodx_be.service;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.stereotype.Service;
@@ -46,16 +44,16 @@ public class CloudiaryServiceImpl implements CloudiaryService {
         File file = convert(multipartFile);
         Map params = ObjectUtils.asMap("folder", folderName);
         Map result = cloudinary.uploader().upload(file, params);
-        return  result;
+        return result;
     }
 
     @Override
-    public Map delete(String id) throws  IOException {
+    public Map delete(String id) throws IOException {
         return cloudinary.uploader().destroy(id, ObjectUtils.emptyMap());
     }
 
     @Override
-    public File convert(MultipartFile multipartFile) throws  IOException {
+    public File convert(MultipartFile multipartFile) throws IOException {
         File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         FileOutputStream fo = new FileOutputStream(file);
         fo.write(multipartFile.getBytes());

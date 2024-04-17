@@ -1,6 +1,7 @@
 package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.RestaurantUpdateDTO;
+import com.example.foodx_be.dto.ReviewRestaurantState;
 import com.example.foodx_be.dto.ReviewUpdate;
 import com.example.foodx_be.enity.OpenTime;
 import com.example.foodx_be.enity.Restaurant;
@@ -32,6 +33,13 @@ public class AdminServiceImpl implements AdminService {
     private RestaurantRepository restaurantRepository;
 
     @Override
+    public void reviewRestaurantState(UUID idRestaurant, ReviewRestaurantState restaurantState) {
+        Restaurant restaurantAdd = restaurantService.getRestaurantEnity(idRestaurant);
+        restaurantAdd.setRestaurantState(restaurantState.getRestaurantState());
+        restaurantRepository.save(restaurantAdd);
+    }
+
+    @Override
     public Page<RestaurantUpdateDTO> getRestaurantList(int pageNo, int limit, UpdateState updateState) {
         List<UpdateRestaurant> updateRestaurantList = updateRestaurantRepository.findAllByUpdateState(updateState);
         if (updateRestaurantList.isEmpty()) {
@@ -58,7 +66,7 @@ public class AdminServiceImpl implements AdminService {
                 updateFromRestaurantUpdate(updateRestaurant, restaurant);
                 restaurantRepository.save(restaurant);
             } catch (Exception e) {
-                throw  new NoResultsFoundException();
+                throw new NoResultsFoundException();
             }
         }
         updateRestaurant.setUpdateState(reviewUpdate.getUpdateState());
