@@ -14,20 +14,7 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class OpenTimeServiceImpl implements OpenTimeService {
-    private RestaurantService restaurantService;
-    private RestaurantRepository restaurantRepository;
     private OpenTimeRepository openTimeRepository;
-
-    @Override
-    public void addOpenTimeToRestaurant(List<OpenTime> openTimeList, UUID idRestaurant) {
-        Restaurant restaurant = restaurantService.getRestaurantEnity(idRestaurant);
-        restaurant.setOpenTimeList(openTimeList);
-        for (OpenTime openTime : openTimeList) {
-            openTime.setRestaurant(restaurant);
-        }
-        restaurantRepository.save(restaurant);
-    }
-
 
     @Override
     public List<OpenTimeDTO> getOpenTimeOfRestaurant(UUID idRestaurant) {

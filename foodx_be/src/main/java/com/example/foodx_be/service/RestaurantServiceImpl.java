@@ -3,11 +3,11 @@ package com.example.foodx_be.service;
 import com.example.foodx_be.dto.AddRestaurantCommand;
 import com.example.foodx_be.dto.RestaurantDTO;
 import com.example.foodx_be.dto.UpdateRestaurantCommand;
-import com.example.foodx_be.enity.Restaurant;
-import com.example.foodx_be.enity.UpdateRestaurant;
-import com.example.foodx_be.enity.User;
+import com.example.foodx_be.enity.*;
 import com.example.foodx_be.exception.NoResultsFoundException;
+import com.example.foodx_be.repository.OpenTimeRepository;
 import com.example.foodx_be.repository.RestaurantRepository;
+import com.example.foodx_be.repository.UpdateOpentimeRepository;
 import com.example.foodx_be.repository.UpdateRestaurantRepository;
 import com.example.foodx_be.ulti.RestaurantState;
 import lombok.AllArgsConstructor;
@@ -26,8 +26,11 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RestaurantServiceImpl implements RestaurantService {
     private UserService userService;
+
     private RestaurantRepository restaurantRepository;
     private UpdateRestaurantRepository updateRestaurantRepository;
+    private OpenTimeRepository openTimeRepository;
+    private UpdateOpentimeRepository updateOpentimeRepository;
 
     @Override
     public void addRestaurant(AddRestaurantCommand addRestaurantCommand) {
@@ -35,6 +38,11 @@ public class RestaurantServiceImpl implements RestaurantService {
         Restaurant restaurant = convertToRestaurant(addRestaurantCommand);
         restaurant.setUserAdd(user);
         restaurantRepository.save(restaurant);
+
+        for(OpenTime openTime: addRestaurantCommand.getOpenTimeList()){
+            openTime.setRestaurant(restaurant);
+            openTimeRepository.save(openTime);
+        }
     }
 
     @Override
@@ -87,6 +95,12 @@ public class RestaurantServiceImpl implements RestaurantService {
         updateRestaurant.setUserUpdate(userUpdate);
         updateRestaurant.setRestaurant(restaurant);
         updateRestaurantRepository.save(updateRestaurant);
+
+        for(UpdateOpenTime openTime: updateRestaurant.getOpenTimeList()){
+            openTime.setUpdateRestaurant(updateRestaurant);
+            updateOpentimeRepository.save(openTime);
+        }
+
     }
 
     static Restaurant unwrarpRestaurant(Optional<Restaurant> entity) {

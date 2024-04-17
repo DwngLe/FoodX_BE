@@ -3,9 +3,11 @@ package com.example.foodx_be.service;
 import com.example.foodx_be.dto.AddRestaurantCommand;
 import com.example.foodx_be.dto.RestaurantDTO;
 import com.example.foodx_be.dto.UpdateRestaurantCommand;
+import com.example.foodx_be.enity.OpenTime;
 import com.example.foodx_be.enity.Restaurant;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface RestaurantService {

@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -14,7 +14,7 @@ import java.util.UUID;
 @Entity
 @Table
 @Builder
-public class OpenTime {
+public class UpdateOpenTime {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
@@ -31,7 +31,6 @@ public class OpenTime {
     private String closingTime;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "id_restaurant", referencedColumnName = "id")
-    private Restaurant restaurant;
-
+    @JoinColumn(name = "id_update_restaurant", referencedColumnName = "id")
+    private UpdateRestaurant updateRestaurant;
 }

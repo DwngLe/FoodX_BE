@@ -7,6 +7,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface OpenTimeService {
-    void addOpenTimeToRestaurant(List<OpenTime> openTimeList, UUID idRestaurant);
     List<OpenTimeDTO> getOpenTimeOfRestaurant(UUID idRestaurant);
 }

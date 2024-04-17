@@ -2,7 +2,9 @@ package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.RestaurantUpdateDTO;
 import com.example.foodx_be.dto.ReviewUpdate;
+import com.example.foodx_be.enity.OpenTime;
 import com.example.foodx_be.enity.Restaurant;
+import com.example.foodx_be.enity.UpdateOpenTime;
 import com.example.foodx_be.enity.UpdateRestaurant;
 import com.example.foodx_be.exception.NoResultsFoundException;
 import com.example.foodx_be.repository.RestaurantRepository;
@@ -117,6 +119,22 @@ public class AdminServiceImpl implements AdminService {
         Optional.ofNullable(restaurantUpdate.getFacebookLink()).ifPresent(restaurant::setFacebookLink);
         Optional.ofNullable(restaurantUpdate.getInstagramLink()).ifPresent(restaurant::setInstagramLink);
         Optional.ofNullable(restaurantUpdate.getRestaurantState()).ifPresent(restaurant::setRestaurantState);
+        List<OpenTime> convertedOpenTimeList = getOpenTimeList(restaurantUpdate);
+        restaurant.setOpenTimeList(convertedOpenTimeList);
+    }
+
+    private static List<OpenTime> getOpenTimeList(UpdateRestaurant restaurantUpdate) {
+        List<OpenTime> convertedOpenTimeList = new ArrayList<>();
+        if (restaurantUpdate.getOpenTimeList() != null) {
+            for (UpdateOpenTime updateOpenTime : restaurantUpdate.getOpenTimeList()) {
+                OpenTime openTime = new OpenTime();
+                openTime.setDayOfWeek((updateOpenTime.getDayOfWeek()));
+                openTime.setOpeningTime(updateOpenTime.getOpeningTime());
+                openTime.setClosingTime(updateOpenTime.getClosingTime());
+                convertedOpenTimeList.add(openTime);
+            }
+        }
+        return convertedOpenTimeList;
     }
 
 

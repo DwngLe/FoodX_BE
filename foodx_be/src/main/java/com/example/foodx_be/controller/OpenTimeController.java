@@ -16,14 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class OpenTimeController {
     private OpenTimeService openTimeService;
-    @PostMapping("/add/{idRestaurant}")
-    public ResponseEntity<HttpStatus> addOpenTimeToRestaurant(@PathVariable UUID idRestaurant,
-                                                              @RequestBody List<OpenTime> openTimeList){
-        openTimeService.addOpenTimeToRestaurant(openTimeList, idRestaurant);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
 
-    @GetMapping("/views/{idRestaurant}")
+    @GetMapping("/{idRestaurant}")
     public ResponseEntity<List<OpenTimeDTO>> getOpenTimeOfRestaurant(@PathVariable UUID idRestaurant){
         return new ResponseEntity<>(openTimeService.getOpenTimeOfRestaurant(idRestaurant) ,HttpStatus.OK);
     }

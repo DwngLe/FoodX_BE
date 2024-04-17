@@ -80,7 +80,7 @@ public class User {
             jointDate = LocalDate.now();
         }
         if(avatarLink == null){
-            avatarLink = "https://fastly.picsum.photos/id/56/200/200.jpg?hmac=rRTTTvbR4tHiWX7-kXoRxkV7ix62g9Re_xUvh4o47jA";
+            avatarLink = "https://res.cloudinary.com/dfsdwobb1/image/upload/v1713339322/Review%27s%20Images/gpft7enbgnz1wm2xnd4i.png";
         }
         if(accountState == null){
             accountState = AccountState.ACTIVE;

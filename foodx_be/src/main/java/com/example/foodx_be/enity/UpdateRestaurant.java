@@ -3,12 +3,14 @@ package com.example.foodx_be.enity;
 import com.example.foodx_be.ulti.RestaurantState;
 import com.example.foodx_be.ulti.UpdateState;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -28,8 +30,7 @@ public class UpdateRestaurant {
     private UUID id;
     @Column(name = "restaurant_name")
     private String restaurantName;
-    @Column(name = "house_number")
-    private String houseNumber;
+    @Column(name = "house_number")    private String houseNumber;
     private String ward;
     private String district;
     private String city;
@@ -73,4 +74,9 @@ public class UpdateRestaurant {
     @ManyToOne
     @JoinColumn(name = "id_restaurant", referencedColumnName = "id")
     private Restaurant restaurant;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "updateRestaurant", cascade = CascadeType.ALL)
+    private List<UpdateOpenTime> openTimeList;
+
 }

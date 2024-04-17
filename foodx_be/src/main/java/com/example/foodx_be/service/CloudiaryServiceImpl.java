@@ -26,17 +26,26 @@ public class CloudiaryServiceImpl implements CloudiaryService {
     }
 
     @Override
-    public List<Map> uploadMultiFiles(MultipartFile[] multipartFiles) throws  IOException {
+    public List<Map> uploadMultiFiles(MultipartFile[] multipartFiles, String folderName) throws IOException {
         List<Map> results = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
             File file = convert(multipartFile);
-            Map result = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+            Map params = ObjectUtils.asMap("folder", folderName); // Đặt thư mục trong đây
+            Map result = cloudinary.uploader().upload(file, params);
             results.add(result);
             if (!Files.deleteIfExists(file.toPath())) {
                 throw new IOException("Failed to delete temporary file: " + file.getAbsolutePath());
             }
         }
         return results;
+    }
+
+
+    @Override
+    public Map uploadFile(MultipartFile multipartFile) throws IOException {
+        File file = convert(multipartFile);
+        Map result = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+        return  result;
     }
 
     @Override

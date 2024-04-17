@@ -33,6 +33,8 @@ public class ReviewServiceImpl implements ReviewService {
     private ReviewRepository reviewRepository;
     private ReviewImageRepository reviewImageRepository;
 
+    private final String FOLDER_UPLOAD = "Review's Images";
+
     @Override
     public void addReview(AddReviewRestaurantCommand reviewCommand, MultipartFile[] multipartFiles) throws IOException {
         User userReview = userService.getUser(reviewCommand.getUsername());
@@ -42,7 +44,7 @@ public class ReviewServiceImpl implements ReviewService {
         review.setRestaurant(restaurant);
         reviewRepository.save(review);
 
-        List<Map> results = cloudiaryService.uploadMultiFiles(multipartFiles);
+        List<Map> results = cloudiaryService.uploadMultiFiles(multipartFiles, FOLDER_UPLOAD);
         for (Map result : results) {
             ReviewImage image = new ReviewImage();
             image.setImageId((String) result.get("public_id"));

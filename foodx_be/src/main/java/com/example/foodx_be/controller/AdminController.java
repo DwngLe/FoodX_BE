@@ -4,7 +4,6 @@ import com.example.foodx_be.dto.RestaurantUpdateDTO;
 import com.example.foodx_be.dto.ReviewUpdate;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.service.AdminService;
-import com.example.foodx_be.service.OpenTimeService;
 import com.example.foodx_be.service.RestaurantService;
 import com.example.foodx_be.service.UserService;
 import com.example.foodx_be.ulti.UpdateState;
@@ -20,7 +19,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequestMapping("/admin")
 public class AdminController {
-    private OpenTimeService openTimeService;
     private RestaurantService restaurantService;
     private UserService userService;
     private AdminService adminService;

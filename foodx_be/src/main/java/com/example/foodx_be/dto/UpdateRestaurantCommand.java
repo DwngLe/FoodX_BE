@@ -1,5 +1,7 @@
 package com.example.foodx_be.dto;
 
+import com.example.foodx_be.enity.OpenTime;
+import com.example.foodx_be.enity.UpdateOpenTime;
 import com.example.foodx_be.ulti.RestaurantState;
 import com.example.foodx_be.ulti.UpdateState;
 import jakarta.validation.constraints.NotBlank;
@@ -8,6 +10,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -38,4 +41,5 @@ public class UpdateRestaurantCommand {
     private RestaurantState restaurantState;
     @NotBlank(message =  "User who update this restaurant cannot be empty")
     private String userName;
+    private List<UpdateOpenTime> openTimeList;
 }
