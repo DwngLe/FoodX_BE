@@ -37,6 +37,20 @@ public class ReviewServiceImpl implements ReviewService {
     private final String FOLDER_UPLOAD = "Review's Images";
 
     @Override
+    public List<ReviewRestaurantDTO> getListRecentReview(int pageNo, int limit) {
+        Pageable pageable = PageRequest.of(pageNo, limit);
+        List<Review> reviewList = reviewRepository.findAllByOrderByReviewDateDesc(pageable);
+        if(reviewList.isEmpty()){
+            throw new NoResultsFoundException();
+        }
+        List<ReviewRestaurantDTO> reviewRestaurantDTOList = new ArrayList<>();
+        for (Review review : reviewList) {
+            reviewRestaurantDTOList.add(convertToReViewRestaurantDTO(review));
+        }
+        return reviewRestaurantDTOList;
+    }
+
+    @Override
     public void addReview(AddReviewRestaurantCommand reviewCommand, MultipartFile[] multipartFiles) throws IOException {
         User userReview = userService.getUser(reviewCommand.getUsername());
         Restaurant restaurant = restaurantService.getRestaurantEnity(reviewCommand.getRestaurantId());

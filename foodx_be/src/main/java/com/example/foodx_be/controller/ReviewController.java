@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,10 +27,17 @@ public class ReviewController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("/get/{idRestaurant}")
+    @GetMapping("/{idRestaurant}")
     public ResponseEntity<Page<ReviewRestaurantDTO>> getListReviewOfRestaurant(@PathVariable UUID idRestaurant,
                                                                                @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
                                                                                @RequestParam(name = "limit", defaultValue = "5") int limit){
         return new ResponseEntity<>(reviewService.getListReviewOfRestaurant(pageNo, limit, idRestaurant), HttpStatus.OK);
+    }
+
+    @GetMapping("/recent")
+    public  ResponseEntity<List<ReviewRestaurantDTO>> getListRecentReview(@RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
+                                                                          @RequestParam(name = "limit", defaultValue = "5") int limit){
+        return new ResponseEntity<>(reviewService.getListRecentReview(pageNo, limit), HttpStatus.OK);
+
     }
 }
