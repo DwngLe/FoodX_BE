@@ -41,5 +41,5 @@ public class UpdateRestaurantCommand {
     private RestaurantState restaurantState;
     @NotBlank(message =  "User who update this restaurant cannot be empty")
     private String userName;
-    private List<UpdateOpenTime> openTimeList;
+    private List<OpenTimeDTO> openTimeList;
 }

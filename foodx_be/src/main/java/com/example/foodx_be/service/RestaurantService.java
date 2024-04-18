@@ -21,7 +21,7 @@ public interface RestaurantService {
 
     Restaurant getRestaurantEnityByName(String restaurantName);
 
-    List<RestaurantDTO> getNearByRestaurant(BigDecimal longitude, BigDecimal latitude, double radiusInKm);
+    Page<RestaurantDTO> getNearByRestaurant(BigDecimal longitude, BigDecimal latitude, double radiusInKm, int pageNo, int limit);
 
     void updateRestaurant(UUID restaurant, UpdateRestaurantCommand updateRestaurantCommand);
 

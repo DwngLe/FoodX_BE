@@ -1,6 +1,7 @@
 package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.AddRestaurantCommand;
+import com.example.foodx_be.dto.OpenTimeDTO;
 import com.example.foodx_be.dto.RestaurantDTO;
 import com.example.foodx_be.dto.UpdateRestaurantCommand;
 import com.example.foodx_be.enity.*;
@@ -28,6 +29,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RestaurantServiceImpl implements RestaurantService {
     private UserService userService;
+    private OpenTimeService openTimeService;
 
     private RestaurantRepository restaurantRepository;
     private UpdateRestaurantRepository updateRestaurantRepository;
@@ -41,23 +43,23 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setUserAdd(user);
         restaurantRepository.save(restaurant);
 
-        for (OpenTime openTime : addRestaurantCommand.getOpenTimeList()) {
+        List<OpenTime> openTimeList = openTimeService.convertToOpenTimeEnityList(addRestaurantCommand.getOpenTimeList());
+        for (OpenTime openTime : openTimeList) {
             openTime.setRestaurant(restaurant);
             openTimeRepository.save(openTime);
         }
     }
 
     @Override
-    public List<RestaurantDTO> getNearByRestaurant(BigDecimal longitude, BigDecimal latitude, double radiusInKm) {
+    public Page<RestaurantDTO> getNearByRestaurant(BigDecimal longitude, BigDecimal latitude, double radiusInKm, int pageNo, int limit) {
         double[] boundingBox = BoundingBoxCalculator.calculateBoundingBox(latitude.doubleValue(), longitude.doubleValue(), radiusInKm);
 
         // Query database for restaurants within bounding box
         List<Restaurant> restaurants = restaurantRepository.findRestaurantsWithinBoundingBox(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3]);
-        List<RestaurantDTO> restaurantDTOList = new ArrayList<>();
-        for (Restaurant restaurant : restaurants) {
-            restaurantDTOList.add(convertToRestaurantDTO(restaurant));
+        if (restaurants.isEmpty()) {
+            throw new NoResultsFoundException();
         }
-        return  restaurantDTOList;
+        return converListRestaurantToPage(restaurants, pageNo, limit);
     }
 
 
@@ -72,17 +74,9 @@ public class RestaurantServiceImpl implements RestaurantService {
         if (restaurantList.isEmpty()) {
             throw new NoResultsFoundException();
         }
-        List<RestaurantDTO> userDTOList = new ArrayList<>();
-        for (Restaurant restaurant : restaurantList) {
-            userDTOList.add(convertToRestaurantDTO(restaurant));
-        }
-        Pageable pageable = PageRequest.of(pageNo, limit);
-
-        int startIndex = (int) pageable.getOffset();
-        int endIndex = (int) Math.min(pageable.getOffset() + pageable.getPageSize(), userDTOList.size());
-        List<RestaurantDTO> subList = userDTOList.subList(startIndex, endIndex);
-        return new PageImpl<>(subList, pageable, userDTOList.size());
+        return converListRestaurantToPage(restaurantList, pageNo, limit);
     }
+
 
     @Override
     public Restaurant getRestaurantEnity(UUID idRestaurant) {
@@ -90,6 +84,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         return unwrarpRestaurant(restaurantOptional);
     }
 
+    //for checking restaurant id
     @Override
     public Restaurant getRestaurantEnityByName(String restaurantName) {
         Optional<Restaurant> restaurantOptional = restaurantRepository.findRestaurantByRestaurantName(restaurantName);
@@ -100,16 +95,40 @@ public class RestaurantServiceImpl implements RestaurantService {
     public void updateRestaurant(UUID idRestaurant, UpdateRestaurantCommand updateRestaurantCommand) {
         User userUpdate = userService.getUser(updateRestaurantCommand.getUserName());
         Restaurant restaurant = getRestaurantEnity(idRestaurant);
+
         UpdateRestaurant updateRestaurant = convertToUpdateRestaurant(updateRestaurantCommand);
         updateRestaurant.setUserUpdate(userUpdate);
         updateRestaurant.setRestaurant(restaurant);
         updateRestaurantRepository.save(updateRestaurant);
 
-        for (UpdateOpenTime openTime : updateRestaurant.getOpenTimeList()) {
-            openTime.setUpdateRestaurant(updateRestaurant);
-            updateOpentimeRepository.save(openTime);
-        }
+        List<OpenTimeDTO> openTimeDTOList = updateRestaurantCommand.getOpenTimeList();
+        for (OpenTimeDTO openTimeDTO : openTimeDTOList) {
+            UpdateOpenTime updateOpenTime = convertToUpdateOpenTimeEnity(openTimeDTO);
+            updateOpenTime.setUpdateRestaurant(updateRestaurant);
+            updateOpentimeRepository.save(updateOpenTime);
 
+        }
+    }
+
+    public UpdateOpenTime convertToUpdateOpenTimeEnity(OpenTimeDTO openTimeDTO){
+        return UpdateOpenTime.builder()
+                .dayOfWeek(openTimeDTO.getDayOfWeek())
+                .openingTime(openTimeDTO.getOpeningTime())
+                .closingTime(openTimeDTO.getClosingTime())
+                .build();
+    }
+
+    public Page<RestaurantDTO> converListRestaurantToPage(List<Restaurant> restaurants, int pageNo, int limit) {
+        List<RestaurantDTO> restaurantDTOList = new ArrayList<>();
+        for (Restaurant restaurant : restaurants) {
+            restaurantDTOList.add(convertToRestaurantDTO(restaurant));
+        }
+        Pageable pageable = PageRequest.of(pageNo, limit);
+
+        int startIndex = (int) pageable.getOffset();
+        int endIndex = (int) Math.min(pageable.getOffset() + pageable.getPageSize(), restaurantDTOList.size());
+        List<RestaurantDTO> subList = restaurantDTOList.subList(startIndex, endIndex);
+        return new PageImpl<>(subList, pageable, restaurantDTOList.size());
     }
 
     static Restaurant unwrarpRestaurant(Optional<Restaurant> entity) {

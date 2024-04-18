@@ -3,7 +3,6 @@ package com.example.foodx_be.controller;
 import com.example.foodx_be.dto.AddRestaurantCommand;
 import com.example.foodx_be.dto.RestaurantDTO;
 import com.example.foodx_be.dto.UpdateRestaurantCommand;
-import com.example.foodx_be.enity.OpenTime;
 import com.example.foodx_be.service.RestaurantService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -29,7 +27,7 @@ public class RestaurantController {
 
 
     @GetMapping("/{idRestaurant}")
-    public ResponseEntity<RestaurantDTO> getRestaurant(@PathVariable UUID idRestaurant){
+    public ResponseEntity<RestaurantDTO> getRestaurant(@PathVariable UUID idRestaurant) {
         return new ResponseEntity<>(restaurantService.getRestaurantDTO(idRestaurant), HttpStatus.OK);
     }
 
@@ -37,20 +35,23 @@ public class RestaurantController {
     public ResponseEntity<Page<RestaurantDTO>> getRestaurants(@RequestParam(name = "searchBy") String searchBy,
                                                               @RequestParam(name = "keyword") String keyword,
                                                               @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
-                                                              @RequestParam(name = "limit", defaultValue = "10") int limit){
-        return new ResponseEntity<>(restaurantService.getRestaurantsByKeyword(pageNo,limit, keyword, searchBy), HttpStatus.OK);
+                                                              @RequestParam(name = "limit", defaultValue = "10") int limit) {
+        return new ResponseEntity<>(restaurantService.getRestaurantsByKeyword(pageNo, limit, keyword, searchBy), HttpStatus.OK);
     }
+
     @PostMapping("/{idRestaurant}/update")
     public ResponseEntity<HttpStatus> updateRestaurant(@PathVariable UUID idRestaurant,
-                                                       @RequestBody UpdateRestaurantCommand updateRestaurantCommand){
+                                                       @RequestBody UpdateRestaurantCommand updateRestaurantCommand) {
         restaurantService.updateRestaurant(idRestaurant, updateRestaurantCommand);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/nearby")
-    public ResponseEntity<List<RestaurantDTO>> getRestaurantNearBy(@RequestParam BigDecimal longitude,
+    public ResponseEntity<Page<RestaurantDTO>> getRestaurantNearBy(@RequestParam BigDecimal longitude,
                                                                    @RequestParam BigDecimal latitude,
-                                                                   @RequestParam double radiusInKm){
-        return new ResponseEntity<>(restaurantService.getNearByRestaurant(longitude, latitude, radiusInKm), HttpStatus.OK);
+                                                                   @RequestParam double radiusInKm,
+                                                                   @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
+                                                                   @RequestParam(name = "limit", defaultValue = "10") int limit) {
+        return new ResponseEntity<>(restaurantService.getNearByRestaurant(longitude, latitude, radiusInKm, pageNo, limit), HttpStatus.OK);
     }
 }

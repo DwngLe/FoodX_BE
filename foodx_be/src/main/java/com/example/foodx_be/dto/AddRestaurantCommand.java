@@ -36,5 +36,5 @@ public class AddRestaurantCommand {
     private String instagramLink;
     @NotBlank(message =  "User who add this restaurant cannot be empty")
     private String userName;
-    private List<OpenTime> openTimeList;
+    private List<OpenTimeDTO> openTimeList;
 }

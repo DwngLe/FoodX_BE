@@ -23,7 +23,26 @@ public class OpenTimeServiceImpl implements OpenTimeService {
         return openTimeDTOList;
     }
 
-    private List<OpenTimeDTO> convertToOpenTimeDTOList(List<OpenTime> openTimeList) {
+    @Override
+    public OpenTime convertToOpenTimeEnity(OpenTimeDTO openTimeDTO) {
+        return OpenTime.builder()
+                .dayOfWeek(openTimeDTO.getDayOfWeek())
+                .openingTime(openTimeDTO.getOpeningTime())
+                .closingTime(openTimeDTO.getClosingTime())
+                .build();
+    }
+
+    @Override
+    public List<OpenTime> convertToOpenTimeEnityList(List<OpenTimeDTO> openTimeDTOList) {
+        List<OpenTime> openTimeList = new ArrayList<>();
+        for(OpenTimeDTO openTimeDTO: openTimeDTOList){
+            openTimeList.add(convertToOpenTimeEnity(openTimeDTO));
+        }
+        return openTimeList;
+    }
+
+    @Override
+    public List<OpenTimeDTO> convertToOpenTimeDTOList(List<OpenTime> openTimeList) {
         List<OpenTimeDTO> openTimeDTOList = new ArrayList<>();
         for (OpenTime openTime : openTimeList) {
             openTimeDTOList.add(convertToOpenTimeDTO(openTime));
@@ -31,6 +50,7 @@ public class OpenTimeServiceImpl implements OpenTimeService {
         return openTimeDTOList;
     }
 
+    @Override
     public OpenTimeDTO convertToOpenTimeDTO(OpenTime openTime) {
         return OpenTimeDTO.builder()
                 .openingTime(openTime.getOpeningTime())
@@ -38,5 +58,7 @@ public class OpenTimeServiceImpl implements OpenTimeService {
                 .dayOfWeek(openTime.getDayOfWeek())
                 .build();
     }
+
+
 }
 

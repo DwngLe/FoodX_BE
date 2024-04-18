@@ -8,4 +8,8 @@ import java.util.UUID;
 
 public interface OpenTimeService {
     List<OpenTimeDTO> getOpenTimeOfRestaurant(UUID idRestaurant);
+    List<OpenTimeDTO> convertToOpenTimeDTOList(List<OpenTime> openTimeList);
+    OpenTimeDTO convertToOpenTimeDTO(OpenTime openTime);
+    OpenTime convertToOpenTimeEnity(OpenTimeDTO openTimeDTO);
+    List<OpenTime> convertToOpenTimeEnityList(List<OpenTimeDTO> openTimeDTOList);
 }
