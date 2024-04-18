@@ -12,6 +12,7 @@ import java.util.UUID;
 public interface RestaurantRepository extends JpaRepository<Restaurant, UUID> {
     Optional<Restaurant> findRestaurantByRestaurantName(String restaurantName);
     List<Restaurant> findAllByRestaurantNameAndRestaurantState(String retaurantName,  RestaurantState restaurantState);
+    List<Restaurant> findAllByRestaurantState(RestaurantState restaurantState);
     List<Restaurant> findAllByCityAndRestaurantState(String city, RestaurantState restaurantState);
     List<Restaurant> findAllByDistrict(String district);
     @Query(value = "SELECT r FROM Restaurant r WHERE r.latitude BETWEEN ?1 AND ?3 AND r.longitude BETWEEN ?2 AND ?4")

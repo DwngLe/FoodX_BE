@@ -1,8 +1,6 @@
 package com.example.foodx_be.controller;
 
-import com.example.foodx_be.dto.RestaurantUpdateDTO;
-import com.example.foodx_be.dto.ReviewRestaurantState;
-import com.example.foodx_be.dto.ReviewUpdate;
+import com.example.foodx_be.dto.*;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.service.AdminService;
 import com.example.foodx_be.service.RestaurantService;
@@ -25,7 +23,7 @@ public class AdminController {
     private AdminService adminService;
 
     @GetMapping("/restaurants/view/{restaurantName}")
-    public ResponseEntity<Restaurant> getRestaurant(@PathVariable String restaurantName) {
+    public ResponseEntity<Restaurant> getRestaurantByRestaurantState(@PathVariable String restaurantName) {
         return new ResponseEntity<>(restaurantService.getRestaurantEnityByName(restaurantName), HttpStatus.OK);
     }
 
@@ -33,7 +31,7 @@ public class AdminController {
     public ResponseEntity<Page<RestaurantUpdateDTO>> getUpdateRestaurantList(@RequestParam(name = "updateState") UpdateState updateState,
                                                                              @RequestParam(name = "pageNo") int pageNo,
                                                                              @RequestParam(name = "limit") int limit) {
-        return new ResponseEntity<>(adminService.getRestaurantList(pageNo, limit, updateState), HttpStatus.OK);
+        return new ResponseEntity<>(adminService.getRestaurantUpdateList(pageNo, limit, updateState), HttpStatus.OK);
     }
 
     @PostMapping("/reviewUpdates/{idUpdate}")
@@ -48,6 +46,12 @@ public class AdminController {
                                                              @RequestBody ReviewRestaurantState restaurantState) {
         adminService.reviewRestaurantState(idRestaurant, restaurantState);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @GetMapping("/restaurants/view")
+    public  ResponseEntity<Page<RestaurantDTO>> getRestaurantByRestaurantState(@RequestBody RestaurantStateCommand restaurantStateCommand,
+                                                                               @RequestParam(name = "pageNo") int pageNo,
+                                                                               @RequestParam(name = "limit") int limit){
+        return new ResponseEntity<>(adminService.getRestaurantByRestaurantState(pageNo, limit, restaurantStateCommand), HttpStatus.OK);
     }
 
 

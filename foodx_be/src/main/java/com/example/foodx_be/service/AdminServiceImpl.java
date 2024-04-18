@@ -1,8 +1,6 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.RestaurantUpdateDTO;
-import com.example.foodx_be.dto.ReviewRestaurantState;
-import com.example.foodx_be.dto.ReviewUpdate;
+import com.example.foodx_be.dto.*;
 import com.example.foodx_be.enity.OpenTime;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.UpdateOpenTime;
@@ -40,7 +38,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Page<RestaurantUpdateDTO> getRestaurantList(int pageNo, int limit, UpdateState updateState) {
+    public Page<RestaurantUpdateDTO> getRestaurantUpdateList(int pageNo, int limit, UpdateState updateState) {
         List<UpdateRestaurant> updateRestaurantList = updateRestaurantRepository.findAllByUpdateState(updateState);
         if (updateRestaurantList.isEmpty()) {
             throw new NoResultsFoundException();
@@ -55,6 +53,11 @@ public class AdminServiceImpl implements AdminService {
         int endIndex = (int) Math.min(pageable.getOffset() + pageable.getPageSize(), restaurantUpdateDTOList.size());
         List<RestaurantUpdateDTO> subList = restaurantUpdateDTOList.subList(startIndex, endIndex);
         return new PageImpl<>(subList, pageable, restaurantUpdateDTOList.size());
+    }
+
+    @Override
+    public Page<RestaurantDTO> getRestaurantByRestaurantState(int pageNo, int limit, RestaurantStateCommand restaurantStateCommand) {
+        return restaurantService.getRestaurantByRestaurantState(pageNo, limit, restaurantStateCommand);
     }
 
     @Override

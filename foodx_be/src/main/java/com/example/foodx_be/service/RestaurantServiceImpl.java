@@ -1,9 +1,6 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.AddRestaurantCommand;
-import com.example.foodx_be.dto.OpenTimeDTO;
-import com.example.foodx_be.dto.RestaurantDTO;
-import com.example.foodx_be.dto.UpdateRestaurantCommand;
+import com.example.foodx_be.dto.*;
 import com.example.foodx_be.enity.*;
 import com.example.foodx_be.exception.NoResultsFoundException;
 import com.example.foodx_be.repository.OpenTimeRepository;
@@ -73,6 +70,15 @@ public class RestaurantServiceImpl implements RestaurantService {
         };
         if (restaurantList.isEmpty()) {
             throw new NoResultsFoundException();
+        }
+        return converListRestaurantToPage(restaurantList, pageNo, limit);
+    }
+
+    @Override
+    public Page<RestaurantDTO> getRestaurantByRestaurantState(int pageNo, int limit, RestaurantStateCommand restaurantStateCommand) {
+        List<Restaurant> restaurantList = restaurantRepository.findAllByRestaurantState(restaurantStateCommand.getRestaurantState());
+        if(restaurantList.isEmpty()){
+            throw  new NoResultsFoundException();
         }
         return converListRestaurantToPage(restaurantList, pageNo, limit);
     }
