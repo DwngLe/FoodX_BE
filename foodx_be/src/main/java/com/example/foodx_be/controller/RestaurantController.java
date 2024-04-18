@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,5 +45,12 @@ public class RestaurantController {
                                                        @RequestBody UpdateRestaurantCommand updateRestaurantCommand){
         restaurantService.updateRestaurant(idRestaurant, updateRestaurantCommand);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/nearby")
+    public ResponseEntity<List<RestaurantDTO>> getRestaurantNearBy(@RequestParam BigDecimal longitude,
+                                                                   @RequestParam BigDecimal latitude,
+                                                                   @RequestParam double radiusInKm){
+        return new ResponseEntity<>(restaurantService.getNearByRestaurant(longitude, latitude, radiusInKm), HttpStatus.OK);
     }
 }

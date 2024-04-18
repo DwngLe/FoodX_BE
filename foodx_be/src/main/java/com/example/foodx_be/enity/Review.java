@@ -1,18 +1,15 @@
 package com.example.foodx_be.enity;
 
 
-import com.example.foodx_be.ulti.AccountState;
-import com.example.foodx_be.ulti.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -28,16 +25,12 @@ public class Review {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     private UUID id;
-
     @Column(name = "review_date")
     private LocalDateTime reviewDate;
-
     @Column(name = "review_title")
     private String reviewTitle;
-
     @Column(name = "review_content")
     private String reviewContent;
-
     @Column(name = "star_number")
     private Double starNumber;
     @Column(name = "like_number")
@@ -46,10 +39,10 @@ public class Review {
     private int unlikeNumber;
 
     @PrePersist
-    public void control(){
-       if(reviewDate == null){
-           reviewDate = LocalDateTime.now();
-       }
+    public void control() {
+        if (reviewDate == null) {
+            reviewDate = LocalDateTime.now();
+        }
     }
 
     @ManyToOne(optional = false)

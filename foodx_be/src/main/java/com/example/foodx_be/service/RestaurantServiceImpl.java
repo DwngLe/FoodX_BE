@@ -9,6 +9,7 @@ import com.example.foodx_be.repository.OpenTimeRepository;
 import com.example.foodx_be.repository.RestaurantRepository;
 import com.example.foodx_be.repository.UpdateOpentimeRepository;
 import com.example.foodx_be.repository.UpdateRestaurantRepository;
+import com.example.foodx_be.ulti.BoundingBoxCalculator;
 import com.example.foodx_be.ulti.RestaurantState;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,18 +41,25 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setUserAdd(user);
         restaurantRepository.save(restaurant);
 
-        for(OpenTime openTime: addRestaurantCommand.getOpenTimeList()){
+        for (OpenTime openTime : addRestaurantCommand.getOpenTimeList()) {
             openTime.setRestaurant(restaurant);
             openTimeRepository.save(openTime);
         }
     }
 
     @Override
-    public RestaurantDTO getRestaurantDTO(UUID idRestaurant) {
-        Optional<Restaurant> restaurantOptional = restaurantRepository.findById(idRestaurant);
-        Restaurant restaurant = unwrarpRestaurant(restaurantOptional);
-        return convertToRestaurantDTO(restaurant);
+    public List<RestaurantDTO> getNearByRestaurant(BigDecimal longitude, BigDecimal latitude, double radiusInKm) {
+        double[] boundingBox = BoundingBoxCalculator.calculateBoundingBox(latitude.doubleValue(), longitude.doubleValue(), radiusInKm);
+
+        // Query database for restaurants within bounding box
+        List<Restaurant> restaurants = restaurantRepository.findRestaurantsWithinBoundingBox(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3]);
+        List<RestaurantDTO> restaurantDTOList = new ArrayList<>();
+        for (Restaurant restaurant : restaurants) {
+            restaurantDTOList.add(convertToRestaurantDTO(restaurant));
+        }
+        return  restaurantDTOList;
     }
+
 
     @Override
     public Page<RestaurantDTO> getRestaurantsByKeyword(int pageNo, int limit, String keyword, String searchBy) {
@@ -96,7 +105,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         updateRestaurant.setRestaurant(restaurant);
         updateRestaurantRepository.save(updateRestaurant);
 
-        for(UpdateOpenTime openTime: updateRestaurant.getOpenTimeList()){
+        for (UpdateOpenTime openTime : updateRestaurant.getOpenTimeList()) {
             openTime.setUpdateRestaurant(updateRestaurant);
             updateOpentimeRepository.save(openTime);
         }
@@ -167,10 +176,17 @@ public class RestaurantServiceImpl implements RestaurantService {
         if (restaurant.getUserOwner() != null) {
             builder.userOwner(userService.convertToDTO(restaurant.getUserOwner()));
         }
-        if(restaurant.getUserAdd() != null){
+        if (restaurant.getUserAdd() != null) {
             builder.userAdd(userService.convertToDTO(restaurant.getUserAdd()));
         }
         return builder.build();
+    }
+
+    @Override
+    public RestaurantDTO getRestaurantDTO(UUID idRestaurant) {
+        Optional<Restaurant> restaurantOptional = restaurantRepository.findById(idRestaurant);
+        Restaurant restaurant = unwrarpRestaurant(restaurantOptional);
+        return convertToRestaurantDTO(restaurant);
     }
 
 
