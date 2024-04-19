@@ -105,4 +105,8 @@ public class User {
     @OneToMany(mappedBy = "userUpdate", cascade = CascadeType.ALL)
     private List<UpdateRestaurant> updateRestaurantList;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "userOwner", cascade = CascadeType.ALL)
+    private List<BusinessProof> businessProofList;
+
 }

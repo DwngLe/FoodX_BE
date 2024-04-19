@@ -57,6 +57,12 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public User getUser(UUID idUser) {
+        Optional<User> user = userRepository.findById(idUser);
+        return unwrapUser(user);
+    }
+
+    @Override
     public UserDTO getUserByID(UUID id) {
         Optional<User> user = userRepository.findById(id);
         return convertToDTO(unwrapUser(user));

@@ -8,6 +8,7 @@ import com.example.foodx_be.enity.UpdateRestaurant;
 import com.example.foodx_be.exception.NoResultsFoundException;
 import com.example.foodx_be.repository.RestaurantRepository;
 import com.example.foodx_be.repository.UpdateRestaurantRepository;
+import com.example.foodx_be.ulti.RestaurantState;
 import com.example.foodx_be.ulti.UpdateState;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -55,10 +56,7 @@ public class AdminServiceImpl implements AdminService {
         return new PageImpl<>(subList, pageable, restaurantUpdateDTOList.size());
     }
 
-    @Override
-    public Page<RestaurantDTO> getRestaurantByRestaurantState(int pageNo, int limit, RestaurantStateCommand restaurantStateCommand) {
-        return restaurantService.getRestaurantByRestaurantState(pageNo, limit, restaurantStateCommand);
-    }
+
 
     @Override
     public void reviewRestaurantUpdate(UUID idRestaurantUpdate, ReviewUpdate reviewUpdate) {

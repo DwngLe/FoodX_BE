@@ -1,7 +1,9 @@
 package com.example.foodx_be.controller;
 
+import com.example.foodx_be.dto.AddBusinessProofCommand;
 import com.example.foodx_be.dto.UpdateUserComand;
 import com.example.foodx_be.dto.UserDTO;
+import com.example.foodx_be.service.BusinessProofService;
 import com.example.foodx_be.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,7 +19,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    UserService userService;
+    private UserService userService;
+    private BusinessProofService businessProofService;
 
     @GetMapping("/profile/{id}")
     public ResponseEntity<UserDTO> findById(@PathVariable UUID id) {
@@ -42,5 +45,14 @@ public class UserController {
                                                        @PathVariable String username) throws IOException {
         userService.updateUserAvatar(username, multipartFile);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/claimBusiness/{idRestaurant}")
+    public ResponseEntity<HttpStatus> addBusinessProof(@PathVariable UUID idRestaurant,
+                                                       @RequestPart("data") AddBusinessProofCommand addBusinessProofCommand,
+                                                       @RequestPart MultipartFile multipartFile) throws IOException{
+        addBusinessProofCommand.setIdRestaurant(idRestaurant);
+        businessProofService.addBusinessProof(addBusinessProofCommand, multipartFile);
+        return  new ResponseEntity<>(HttpStatus.OK);
     }
 }

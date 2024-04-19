@@ -5,6 +5,7 @@ import com.example.foodx_be.dto.RestaurantDTO;
 import com.example.foodx_be.dto.RestaurantStateCommand;
 import com.example.foodx_be.dto.UpdateRestaurantCommand;
 import com.example.foodx_be.enity.Restaurant;
+import com.example.foodx_be.ulti.RestaurantState;
 import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
@@ -17,7 +18,7 @@ public interface RestaurantService {
 
     Page<RestaurantDTO> getRestaurantsByKeyword(int page, int limit, String keyword, String searchType);
 
-    Page<RestaurantDTO> getRestaurantByRestaurantState(int pageNo, int limit, RestaurantStateCommand restaurantStateCommand);
+    Page<RestaurantDTO> getRestaurantByRestaurantState(int pageNo, int limit, RestaurantState restaurantState);
 
     Restaurant getRestaurantEnity(UUID idRestaurant);
 

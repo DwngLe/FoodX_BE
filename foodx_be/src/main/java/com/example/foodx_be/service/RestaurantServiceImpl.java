@@ -75,8 +75,9 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Page<RestaurantDTO> getRestaurantByRestaurantState(int pageNo, int limit, RestaurantStateCommand restaurantStateCommand) {
-        List<Restaurant> restaurantList = restaurantRepository.findAllByRestaurantState(restaurantStateCommand.getRestaurantState());
+    public Page<RestaurantDTO> getRestaurantByRestaurantState(int pageNo, int limit, RestaurantState restaurantState) {
+
+        List<Restaurant> restaurantList = restaurantRepository.findAllByRestaurantState(restaurantState);
         if(restaurantList.isEmpty()){
             throw  new NoResultsFoundException();
         }

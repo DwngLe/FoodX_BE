@@ -15,6 +15,7 @@ public interface UserService {
     UserDTO saveUser(RegisterCommand registerCommand);
 
     User getUser(String username);
+    User getUser(UUID idUser);
 
     UserDTO getUserByID(UUID id);
 

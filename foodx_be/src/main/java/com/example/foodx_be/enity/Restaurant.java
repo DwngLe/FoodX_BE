@@ -83,4 +83,8 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     private List<UpdateRestaurant> updateRestaurantList;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    private List<BusinessProof> businessProofList;
+
 }
