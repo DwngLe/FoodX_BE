@@ -58,10 +58,22 @@ public class AdminController {
     }
 
     @GetMapping("/businessProof")
-    public ResponseEntity<Page<BusinessProofDTO>> getBusinessProofByState(@RequestParam UpdateState state,
-                                                                          @RequestParam int pageNo,
-                                                                          @RequestParam int limit){
+    public ResponseEntity<Page<BusinessProofDTO>> getListBusinessProofByState(@RequestParam UpdateState state,
+                                                                              @RequestParam int pageNo,
+                                                                              @RequestParam int limit){
         return new ResponseEntity<>(businessProofService.getListBusinessProofByState(pageNo, limit, state), HttpStatus.OK);
+    }
+
+    @GetMapping("/businessProof/{idBusinessProof}")
+    public ResponseEntity<BusinessProofDTO> getBusinessProof(@PathVariable UUID idBusinessProof){
+        return new ResponseEntity<>(businessProofService.getBusinessProof(idBusinessProof), HttpStatus.OK);
+    }
+
+    @PostMapping("/businessProof/{idBusinessProof}")
+    public ResponseEntity<HttpStatus> reviewBusinessProof(@PathVariable UUID idBusinessProof,
+                                                          @RequestParam UpdateState updateState){
+        businessProofService.reviewBusinessProof(idBusinessProof, updateState);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

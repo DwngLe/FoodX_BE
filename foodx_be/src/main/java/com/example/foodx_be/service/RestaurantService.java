@@ -28,6 +28,8 @@ public interface RestaurantService {
 
     void updateRestaurant(UUID restaurant, UpdateRestaurantCommand updateRestaurantCommand);
 
+    void saveRestaurantEnity(Restaurant restaurant);
+
 
 
 }

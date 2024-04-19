@@ -50,15 +50,9 @@ public class Restaurant {
     private RestaurantState restaurantState;
     @Column(name = "time_added")
     private LocalDate timeAdded;
+    private Boolean hasAnOwner;
 
 
-    @ManyToOne
-    @JoinColumn(name = "id_user_add", referencedColumnName = "id")
-    private User userAdd;
-
-    @ManyToOne
-    @JoinColumn(name = "id_user_owner", referencedColumnName = "id")
-    private User userOwner;
 
     @PrePersist
     public void control() {
@@ -68,7 +62,14 @@ public class Restaurant {
         if (timeAdded == null) {
             timeAdded = LocalDate.now();
         }
+        if(hasAnOwner == null){
+            hasAnOwner = false;
+        }
     }
+
+    @ManyToOne
+    @JoinColumn(name = "id_user_add", referencedColumnName = "id")
+    private User userAdd;
 
 
     @JsonIgnore
@@ -86,5 +87,9 @@ public class Restaurant {
     @JsonIgnore
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     private List<BusinessProof> businessProofList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    private List<RestaurantTag> restaurantTagList;
 
 }

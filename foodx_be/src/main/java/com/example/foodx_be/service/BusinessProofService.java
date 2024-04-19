@@ -9,10 +9,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public interface BusinessProofService {
     void addBusinessProof(AddBusinessProofCommand addBusinessProofCommand, MultipartFile multipartFile) throws IOException;
     Page<BusinessProofDTO> getListBusinessProofByState(int pageNo, int limit, UpdateState state);
+
+    void reviewBusinessProof(UUID idBusinessProof, UpdateState updateState);
+
+    BusinessProofDTO getBusinessProof(UUID idBusinessProof);
 
     BusinessProof convertToBusinessProofEnity(BusinessProofDTO businessProofDTO);
 }

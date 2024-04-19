@@ -12,10 +12,11 @@ import org.hibernate.annotations.GenericGenerator;
 import java.util.UUID;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "business_proof")
 public class BusinessProof {
     @Id
     @GeneratedValue(generator = "UUID")

@@ -101,9 +101,6 @@ public class AdminServiceImpl implements AdminService {
                 .timeAdded(updateRestaurant.getRestaurant().getTimeAdded())
                 .updateState(updateRestaurant.getUpdateState())
                 .updateTime(updateRestaurant.getUpdateTime());
-        if (updateRestaurant.getRestaurant().getUserOwner() != null) {
-            builder.userNameOwner(updateRestaurant.getRestaurant().getUserOwner().getUsername());
-        }
         if (updateRestaurant.getUserUpdate() != null) {
             builder.userNameUpdate(updateRestaurant.getUserUpdate().getUsername());
         }

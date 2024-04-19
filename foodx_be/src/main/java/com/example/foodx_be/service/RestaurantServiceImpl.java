@@ -117,6 +117,11 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
     }
 
+    @Override
+    public void saveRestaurantEnity(Restaurant restaurant) {
+        restaurantRepository.save(restaurant);
+    }
+
     public UpdateOpenTime convertToUpdateOpenTimeEnity(OpenTimeDTO openTimeDTO){
         return UpdateOpenTime.builder()
                 .dayOfWeek(openTimeDTO.getDayOfWeek())
@@ -198,10 +203,8 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .instagramLink(restaurant.getInstagramLink())
                 .restaurantState(restaurant.getRestaurantState())
                 .timeAdded(restaurant.getTimeAdded())
+                .hasAnOwner(restaurant.getHasAnOwner())
                 .userAdd(userService.convertToDTO(restaurant.getUserAdd()));
-        if (restaurant.getUserOwner() != null) {
-            builder.userOwner(userService.convertToDTO(restaurant.getUserOwner()));
-        }
         if (restaurant.getUserAdd() != null) {
             builder.userAdd(userService.convertToDTO(restaurant.getUserAdd()));
         }

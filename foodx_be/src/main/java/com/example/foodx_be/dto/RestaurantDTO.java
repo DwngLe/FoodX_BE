@@ -32,7 +32,7 @@ public class RestaurantDTO {
     private RestaurantState restaurantState;
     @JsonFormat(pattern = "dd:MM:yyyy")
     private LocalDate timeAdded;
-    private UserDTO userOwner;
+    private Boolean hasAnOwner;
     private UserDTO userAdd;
     private UserDTO userUpdate;
     private UpdateState updateState;
