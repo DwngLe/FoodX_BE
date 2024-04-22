@@ -39,6 +39,13 @@ public class RestaurantController {
         return new ResponseEntity<>(restaurantService.getRestaurantsByKeyword(pageNo, limit, keyword, searchBy), HttpStatus.OK);
     }
 
+    @GetMapping("/search/tag")
+    public ResponseEntity<Page<RestaurantDTO>> getRestaurants(@RequestParam UUID idTag,
+                                                              @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
+                                                              @RequestParam(name = "limit", defaultValue = "10") int limit) {
+        return new ResponseEntity<>(restaurantService.getListRestaurantByTag(pageNo, limit, idTag), HttpStatus.OK);
+    }
+
     @PostMapping("/{idRestaurant}/update")
     public ResponseEntity<HttpStatus> updateRestaurant(@PathVariable UUID idRestaurant,
                                                        @RequestBody UpdateRestaurantCommand updateRestaurantCommand) {

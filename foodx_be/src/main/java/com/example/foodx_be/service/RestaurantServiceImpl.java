@@ -108,6 +108,19 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    public Page<RestaurantDTO> getListRestaurantByTag(int pageNo, int limit, UUID idTag) {
+        List<RestaurantTag> restaurantTagList = restaurantTagRepository.getAllByTagId(idTag);
+        if(restaurantTagList.isEmpty()){
+            throw  new NoResultsFoundException();
+        }
+        List<Restaurant> restaurantList = new ArrayList<>();
+        for(RestaurantTag restaurantTag : restaurantTagList){
+            restaurantList.add(restaurantTag.getRestaurant());
+        }
+        return converListRestaurantToPage(restaurantList ,pageNo, limit);
+    }
+
+    @Override
     public void updateRestaurant(UUID idRestaurant, UpdateRestaurantCommand updateRestaurantCommand) {
         User userUpdate = userService.getUser(updateRestaurantCommand.getUserName());
         Restaurant restaurant = getRestaurantEnity(idRestaurant);

@@ -23,6 +23,7 @@ public interface RestaurantService {
     Restaurant getRestaurantEnity(UUID idRestaurant);
 
     Restaurant getRestaurantEnityByName(String restaurantName);
+    Page<RestaurantDTO> getListRestaurantByTag(int pageNo, int limit, UUID idTag);
 
     Page<RestaurantDTO> getNearByRestaurant(BigDecimal longitude, BigDecimal latitude, double radiusInKm, int pageNo, int limit);
 
