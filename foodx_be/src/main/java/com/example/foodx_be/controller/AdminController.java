@@ -2,10 +2,8 @@ package com.example.foodx_be.controller;
 
 import com.example.foodx_be.dto.*;
 import com.example.foodx_be.enity.Restaurant;
-import com.example.foodx_be.service.AdminService;
-import com.example.foodx_be.service.BusinessProofService;
-import com.example.foodx_be.service.RestaurantService;
-import com.example.foodx_be.service.UserService;
+import com.example.foodx_be.enity.Tag;
+import com.example.foodx_be.service.*;
 import com.example.foodx_be.ulti.RestaurantState;
 import com.example.foodx_be.ulti.UpdateState;
 import lombok.AllArgsConstructor;
@@ -14,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -24,6 +23,7 @@ public class AdminController {
     private UserService userService;
     private AdminService adminService;
     private BusinessProofService businessProofService;
+    private TagService tagService;
 
     @GetMapping("/restaurants/view/{restaurantName}")
     public ResponseEntity<Restaurant> getRestaurantByRestaurantState(@PathVariable String restaurantName) {
@@ -73,6 +73,12 @@ public class AdminController {
     public ResponseEntity<HttpStatus> reviewBusinessProof(@PathVariable UUID idBusinessProof,
                                                           @RequestParam UpdateState updateState){
         businessProofService.reviewBusinessProof(idBusinessProof, updateState);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/tag/add")
+    public ResponseEntity<HttpStatus> addTag(@RequestBody List<TagDTO> tagDTOList){
+        tagService.addTag(tagDTOList);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

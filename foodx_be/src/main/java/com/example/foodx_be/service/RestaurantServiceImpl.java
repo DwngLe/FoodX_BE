@@ -3,10 +3,7 @@ package com.example.foodx_be.service;
 import com.example.foodx_be.dto.*;
 import com.example.foodx_be.enity.*;
 import com.example.foodx_be.exception.NoResultsFoundException;
-import com.example.foodx_be.repository.OpenTimeRepository;
-import com.example.foodx_be.repository.RestaurantRepository;
-import com.example.foodx_be.repository.UpdateOpentimeRepository;
-import com.example.foodx_be.repository.UpdateRestaurantRepository;
+import com.example.foodx_be.repository.*;
 import com.example.foodx_be.ulti.BoundingBoxCalculator;
 import com.example.foodx_be.ulti.RestaurantState;
 import lombok.AllArgsConstructor;
@@ -27,11 +24,14 @@ import java.util.UUID;
 public class RestaurantServiceImpl implements RestaurantService {
     private UserService userService;
     private OpenTimeService openTimeService;
+    private TagService tagService;
 
     private RestaurantRepository restaurantRepository;
     private UpdateRestaurantRepository updateRestaurantRepository;
     private OpenTimeRepository openTimeRepository;
     private UpdateOpentimeRepository updateOpentimeRepository;
+    private RestaurantTagRepository restaurantTagRepository;
+    private TagRepository tagRepository;
 
     @Override
     public void addRestaurant(AddRestaurantCommand addRestaurantCommand) {
@@ -44,6 +44,15 @@ public class RestaurantServiceImpl implements RestaurantService {
         for (OpenTime openTime : openTimeList) {
             openTime.setRestaurant(restaurant);
             openTimeRepository.save(openTime);
+        }
+
+        List<UUID> listID = addRestaurantCommand.getListIdTag();
+        for(int i=0; i<listID.size(); i++){
+            Tag tag = tagService.getTagEity(listID.get(i));
+            RestaurantTag  restaurantTag = new RestaurantTag();
+            restaurantTag.setRestaurant(restaurant);
+            restaurantTag.setTag(tag);
+            restaurantTagRepository.save(restaurantTag);
         }
     }
 
