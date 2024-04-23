@@ -1,15 +1,11 @@
 package com.example.foodx_be.dto;
 
-import com.example.foodx_be.enity.OpenTime;
-import com.example.foodx_be.enity.UpdateOpenTime;
 import com.example.foodx_be.ulti.RestaurantState;
-import com.example.foodx_be.ulti.UpdateState;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,17 +16,17 @@ public class UpdateRestaurantCommand {
     private String restaurantName;
     @NotBlank(message = "House number cannot be empty")
     private String houseNumber;
-    @NotBlank(message =  "Ward cannot be empty")
+    @NotBlank(message = "Ward cannot be empty")
     private String ward;
-    @NotBlank(message =  "District cannot be empty")
+    @NotBlank(message = "District cannot be empty")
     private String district;
-    @NotBlank(message =  "City cannot be empty")
+    @NotBlank(message = "City cannot be empty")
     private String city;
-    @NotBlank(message =  "Longitude location cannot be empty")
+    @NotBlank(message = "Longitude location cannot be empty")
     private BigDecimal longitude;
-    @NotBlank(message =  "Latitude location cannot be empty")
+    @NotBlank(message = "Latitude location cannot be empty")
     private BigDecimal latitude;
-    @NotBlank(message =  "Desciption cannot be empty")
+    @NotBlank(message = "Desciption cannot be empty")
     private String description;
     private String phoneNumber;
     private String email;
@@ -39,7 +35,7 @@ public class UpdateRestaurantCommand {
     private String instagramLink;
     @NotBlank(message = "Does restaurant is active or not?")
     private RestaurantState restaurantState;
-    @NotBlank(message =  "User who update this restaurant cannot be empty")
+    @NotBlank(message = "User who update this restaurant cannot be empty")
     private UUID idUser;
     private List<OpenTimeDTO> openTimeList;
 }

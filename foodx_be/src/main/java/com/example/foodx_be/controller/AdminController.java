@@ -1,8 +1,10 @@
 package com.example.foodx_be.controller;
 
-import com.example.foodx_be.dto.*;
+import com.example.foodx_be.dto.BusinessProofDTO;
+import com.example.foodx_be.dto.RestaurantDTO;
+import com.example.foodx_be.dto.RestaurantUpdateDTO;
+import com.example.foodx_be.dto.TagDTO;
 import com.example.foodx_be.enity.Restaurant;
-import com.example.foodx_be.enity.Tag;
 import com.example.foodx_be.service.*;
 import com.example.foodx_be.ulti.RestaurantState;
 import com.example.foodx_be.ulti.UpdateState;
@@ -20,7 +22,6 @@ import java.util.UUID;
 @RequestMapping("/admin")
 public class AdminController {
     private RestaurantService restaurantService;
-    private UserService userService;
     private AdminService adminService;
     private BusinessProofService businessProofService;
     private TagService tagService;
@@ -50,34 +51,35 @@ public class AdminController {
         adminService.reviewRestaurantState(idRestaurant, restaurantState);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @GetMapping("/restaurants/view")
-    public  ResponseEntity<Page<RestaurantDTO>> getRestaurantByRestaurantState(@RequestParam RestaurantState restaurantState,
-                                                                               @RequestParam(defaultValue = "0") int pageNo,
-                                                                               @RequestParam(defaultValue = "10") int limit){
+    public ResponseEntity<Page<RestaurantDTO>> getRestaurantByRestaurantState(@RequestParam RestaurantState restaurantState,
+                                                                              @RequestParam(defaultValue = "0") int pageNo,
+                                                                              @RequestParam(defaultValue = "10") int limit) {
         return new ResponseEntity<>(restaurantService.getRestaurantByRestaurantState(pageNo, limit, restaurantState), HttpStatus.OK);
     }
 
     @GetMapping("/businessProof")
     public ResponseEntity<Page<BusinessProofDTO>> getListBusinessProofByState(@RequestParam UpdateState state,
                                                                               @RequestParam int pageNo,
-                                                                              @RequestParam int limit){
+                                                                              @RequestParam int limit) {
         return new ResponseEntity<>(businessProofService.getListBusinessProofByState(pageNo, limit, state), HttpStatus.OK);
     }
 
     @GetMapping("/businessProof/{idBusinessProof}")
-    public ResponseEntity<BusinessProofDTO> getBusinessProof(@PathVariable UUID idBusinessProof){
+    public ResponseEntity<BusinessProofDTO> getBusinessProof(@PathVariable UUID idBusinessProof) {
         return new ResponseEntity<>(businessProofService.getBusinessProof(idBusinessProof), HttpStatus.OK);
     }
 
     @PostMapping("/businessProof/{idBusinessProof}")
     public ResponseEntity<HttpStatus> reviewBusinessProof(@PathVariable UUID idBusinessProof,
-                                                          @RequestParam UpdateState updateState){
+                                                          @RequestParam UpdateState updateState) {
         businessProofService.reviewBusinessProof(idBusinessProof, updateState);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/tag/add")
-    public ResponseEntity<HttpStatus> addTag(@RequestBody List<TagDTO> tagDTOList){
+    public ResponseEntity<HttpStatus> addTag(@RequestBody List<TagDTO> tagDTOList) {
         tagService.addTag(tagDTOList);
         return new ResponseEntity<>(HttpStatus.OK);
     }

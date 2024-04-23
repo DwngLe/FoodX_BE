@@ -35,7 +35,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     private OpenTimeRepository openTimeRepository;
     private UpdateOpentimeRepository updateOpentimeRepository;
     private RestaurantTagRepository restaurantTagRepository;
-    private TagRepository tagRepository;
 
     @Override
     public void addRestaurant(AddRestaurantCommand addRestaurantCommand) {
@@ -51,8 +50,8 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
 
         List<UUID> listID = addRestaurantCommand.getListIdTag();
-        for (int i = 0; i < listID.size(); i++) {
-            Tag tag = tagService.getTagEity(listID.get(i));
+        for (UUID uuid : listID) {
+            Tag tag = tagService.getTagEity(uuid);
             RestaurantTag restaurantTag = new RestaurantTag();
             restaurantTag.setRestaurant(restaurant);
             restaurantTag.setTag(tag);
