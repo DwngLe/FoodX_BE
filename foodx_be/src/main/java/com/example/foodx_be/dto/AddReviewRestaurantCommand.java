@@ -11,6 +11,6 @@ public class AddReviewRestaurantCommand {
     private String reviewTitle;
     private String reviewContent;
     private Double starNumber;
-    private String username;
+    private UUID idUser;
     private UUID restaurantId;
 }

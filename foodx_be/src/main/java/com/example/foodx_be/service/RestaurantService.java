@@ -31,6 +31,8 @@ public interface RestaurantService {
 
     void saveRestaurantEnity(Restaurant restaurant);
 
+    Restaurant updateRestaurantPoint(UUID idRestaurant, double point);
+
 
 
 }

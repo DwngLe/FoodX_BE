@@ -35,12 +35,13 @@ public class ReviewServiceImpl implements ReviewService {
     private ReviewImageRepository reviewImageRepository;
 
     private final String FOLDER_UPLOAD = "Review's Images";
+    private final int POINTS_REVIEW = 5;
 
     @Override
     public List<ReviewRestaurantDTO> getListRecentReview(int pageNo, int limit) {
         Pageable pageable = PageRequest.of(pageNo, limit);
         List<Review> reviewList = reviewRepository.findAllByOrderByReviewDateDesc(pageable);
-        if(reviewList.isEmpty()){
+        if (reviewList.isEmpty()) {
             throw new NoResultsFoundException();
         }
         List<ReviewRestaurantDTO> reviewRestaurantDTOList = new ArrayList<>();
@@ -52,22 +53,28 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void addReview(AddReviewRestaurantCommand reviewCommand, MultipartFile[] multipartFiles) throws IOException {
-        User userReview = userService.getUser(reviewCommand.getUsername());
-        Restaurant restaurant = restaurantService.getRestaurantEnity(reviewCommand.getRestaurantId());
+        //update user and restaurant point
+        User userReview = userService.updateUserPoint(reviewCommand.getIdUser(), POINTS_REVIEW);
+        Restaurant restaurant = restaurantService.updateRestaurantPoint(reviewCommand.getRestaurantId(), reviewCommand.getStarNumber());
+
+        //add review
         Review review = converToReviewEnity(reviewCommand);
         review.setUser(userReview);
         review.setRestaurant(restaurant);
         review.setReviewDate(LocalDateTime.now());
         reviewRepository.save(review);
 
-        List<Map> results = cloudiaryService.uploadMultiFiles(multipartFiles, FOLDER_UPLOAD);
-        for (Map result : results) {
-            ReviewImage image = new ReviewImage();
-            image.setImageId((String) result.get("public_id"));
-            image.setName((String) result.get("original_filename"));
-            image.setImageUrl((String) result.get("url"));
-            image.setReview(review);
-            reviewImageRepository.save(image);
+
+        if (multipartFiles != null) {
+            List<Map> results = cloudiaryService.uploadMultiFiles(multipartFiles, FOLDER_UPLOAD);
+            for (Map result : results) {
+                ReviewImage image = new ReviewImage();
+                image.setImageId((String) result.get("public_id"));
+                image.setName((String) result.get("original_filename"));
+                image.setImageUrl((String) result.get("url"));
+                image.setReview(review);
+                reviewImageRepository.save(image);
+            }
         }
     }
 

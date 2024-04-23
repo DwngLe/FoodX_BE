@@ -154,6 +154,15 @@ public class UserServiceImpl implements UserService{
                 .city(updateUserComand.getCity())
                 .build();
     }
+
+    @Override
+    public User updateUserPoint(UUID idUser, int point) {
+        User user= unwrapUser(userRepository.findById(idUser));
+        user.setPoints(user.getPoints() + point);
+        userRepository.save(user);
+        return user;
+    }
+
     @Override
     public UserDTO convertToDTO(User user) {
         return UserDTO.builder()

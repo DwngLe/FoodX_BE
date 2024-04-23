@@ -1,6 +1,9 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.*;
+import com.example.foodx_be.dto.AddRestaurantCommand;
+import com.example.foodx_be.dto.OpenTimeDTO;
+import com.example.foodx_be.dto.RestaurantDTO;
+import com.example.foodx_be.dto.UpdateRestaurantCommand;
 import com.example.foodx_be.enity.*;
 import com.example.foodx_be.exception.NoResultsFoundException;
 import com.example.foodx_be.repository.*;
@@ -47,9 +50,9 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
 
         List<UUID> listID = addRestaurantCommand.getListIdTag();
-        for(int i=0; i<listID.size(); i++){
+        for (int i = 0; i < listID.size(); i++) {
             Tag tag = tagService.getTagEity(listID.get(i));
-            RestaurantTag  restaurantTag = new RestaurantTag();
+            RestaurantTag restaurantTag = new RestaurantTag();
             restaurantTag.setRestaurant(restaurant);
             restaurantTag.setTag(tag);
             restaurantTagRepository.save(restaurantTag);
@@ -87,8 +90,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     public Page<RestaurantDTO> getRestaurantByRestaurantState(int pageNo, int limit, RestaurantState restaurantState) {
 
         List<Restaurant> restaurantList = restaurantRepository.findAllByRestaurantState(restaurantState);
-        if(restaurantList.isEmpty()){
-            throw  new NoResultsFoundException();
+        if (restaurantList.isEmpty()) {
+            throw new NoResultsFoundException();
         }
         return converListRestaurantToPage(restaurantList, pageNo, limit);
     }
@@ -110,14 +113,14 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public Page<RestaurantDTO> getListRestaurantByTag(int pageNo, int limit, UUID idTag) {
         List<RestaurantTag> restaurantTagList = restaurantTagRepository.getAllByTagId(idTag);
-        if(restaurantTagList.isEmpty()){
-            throw  new NoResultsFoundException();
+        if (restaurantTagList.isEmpty()) {
+            throw new NoResultsFoundException();
         }
         List<Restaurant> restaurantList = new ArrayList<>();
-        for(RestaurantTag restaurantTag : restaurantTagList){
+        for (RestaurantTag restaurantTag : restaurantTagList) {
             restaurantList.add(restaurantTag.getRestaurant());
         }
-        return converListRestaurantToPage(restaurantList ,pageNo, limit);
+        return converListRestaurantToPage(restaurantList, pageNo, limit);
     }
 
     @Override
@@ -144,7 +147,16 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurantRepository.save(restaurant);
     }
 
-    public UpdateOpenTime convertToUpdateOpenTimeEnity(OpenTimeDTO openTimeDTO){
+    @Override
+    public Restaurant updateRestaurantPoint(UUID idRestaurant, double point) {
+        Restaurant restaurant = unwrarpRestaurant(restaurantRepository.findById(idRestaurant));
+        restaurant.setReviewCount(restaurant.getReviewCount() + 1);
+        restaurant.setReviewSum(restaurant.getReviewSum() + point);
+        restaurantRepository.save(restaurant);
+        return restaurant;
+    }
+
+    public UpdateOpenTime convertToUpdateOpenTimeEnity(OpenTimeDTO openTimeDTO) {
         return UpdateOpenTime.builder()
                 .dayOfWeek(openTimeDTO.getDayOfWeek())
                 .openingTime(openTimeDTO.getOpeningTime())

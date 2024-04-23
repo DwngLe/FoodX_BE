@@ -62,7 +62,7 @@ public class User {
     @Column(name = "joint_date")
     private LocalDate jointDate;
 
-    private int points;
+    private int points =0;
 
     @Enumerated(EnumType.STRING)
     private Role role;

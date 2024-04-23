@@ -2,7 +2,6 @@ package com.example.foodx_be.enity;
 
 import com.example.foodx_be.ulti.RestaurantState;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -50,8 +49,12 @@ public class Restaurant {
     private RestaurantState restaurantState;
     @Column(name = "time_added")
     private LocalDate timeAdded;
+    @Column(name = "has_an_owner")
     private Boolean hasAnOwner;
-
+    @Column(name = "review_count")
+    private double reviewCount = 0;
+    @Column(name = "review_sum")
+    private double reviewSum = 0;
 
 
     @PrePersist
@@ -62,7 +65,7 @@ public class Restaurant {
         if (timeAdded == null) {
             timeAdded = LocalDate.now();
         }
-        if(hasAnOwner == null){
+        if (hasAnOwner == null) {
             hasAnOwner = false;
         }
     }

@@ -32,4 +32,5 @@ public interface UserService {
     User convertToUser(UserDTO userDTO);
 
     User convertToUser(UpdateUserComand updateUserComand);
+    User updateUserPoint(UUID idUser, int point);
 }
