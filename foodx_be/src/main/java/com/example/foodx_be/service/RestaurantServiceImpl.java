@@ -148,9 +148,9 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Restaurant updateRestaurantPoint(UUID idRestaurant, double point) {
+    public Restaurant updateRestaurantPoint(UUID idRestaurant, double point, double count) {
         Restaurant restaurant = unwrarpRestaurant(restaurantRepository.findById(idRestaurant));
-        restaurant.setReviewCount(restaurant.getReviewCount() + 1);
+        restaurant.setReviewCount(restaurant.getReviewCount() + count);
         restaurant.setReviewSum(restaurant.getReviewSum() + point);
         restaurantRepository.save(restaurant);
         return restaurant;

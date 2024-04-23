@@ -36,6 +36,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final String FOLDER_UPLOAD = "Review's Images";
     private final int POINTS_REVIEW = 5;
+    private final double REVIEW_ADD_COUNT = 1;
+    private final double REVIEW_DELETE_COUNT = -1;
 
     @Override
     public List<ReviewRestaurantDTO> getListRecentReview(int pageNo, int limit) {
@@ -55,7 +57,7 @@ public class ReviewServiceImpl implements ReviewService {
     public void addReview(AddReviewRestaurantCommand reviewCommand, MultipartFile[] multipartFiles) throws IOException {
         //update user and restaurant point
         User userReview = userService.updateUserPoint(reviewCommand.getIdUser(), POINTS_REVIEW);
-        Restaurant restaurant = restaurantService.updateRestaurantPoint(reviewCommand.getRestaurantId(), reviewCommand.getStarNumber());
+        Restaurant restaurant = restaurantService.updateRestaurantPoint(reviewCommand.getRestaurantId(), reviewCommand.getStarNumber(), REVIEW_ADD_COUNT);
 
         //add review
         Review review = converToReviewEnity(reviewCommand);
