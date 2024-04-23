@@ -19,30 +19,22 @@ public class RegisterCommand {
     @ValidUsername
     @NotBlank
     private String username;
-
     @NotBlank(message = "Password cannot be empty")
     private String password;
-
     @NotBlank(message = "Repeat Password cannot be empty")
     private String repeatPassword;
-
     @ValidName
     @NotBlank(message = "Name cannot be empty")
     private String name;
-
     @NotBlank(message = "Phone cannot be empty")
     private String phoneNumber;
-
     @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     @NotBlank(message = "Email cannot be empty")
     private String email;
-
     @NotBlank(message = "Ward cannot be empty")
     private String ward;
-
     @NotBlank(message = "Ward cannot be empty")
     private String district;
-
     @NotBlank(message = "Ward cannot be empty")
     private String city;
 }

@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class OpenTimeDTO {
-
     private String dayOfWeek;
     @JsonFormat(pattern = "HH:mm:ss")
     private String openingTime;

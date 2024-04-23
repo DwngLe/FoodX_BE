@@ -3,6 +3,7 @@ package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.RegisterCommand;
 import com.example.foodx_be.dto.UpdateUserComand;
+import com.example.foodx_be.dto.UserBasicInfor;
 import com.example.foodx_be.dto.UserDTO;
 import com.example.foodx_be.enity.User;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ public interface UserService {
     User convertToUser(RegisterCommand registerCommand);
 
     User convertToUser(UserDTO userDTO);
+    UserBasicInfor convertTouserBasicInfor(User user);
 
     User convertToUser(UpdateUserComand updateUserComand);
     User updateUserPoint(UUID idUser, int point);

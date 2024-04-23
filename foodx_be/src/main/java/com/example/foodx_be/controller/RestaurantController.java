@@ -56,7 +56,7 @@ public class RestaurantController {
     @GetMapping("/nearby")
     public ResponseEntity<Page<RestaurantDTO>> getRestaurantNearBy(@RequestParam BigDecimal longitude,
                                                                    @RequestParam BigDecimal latitude,
-                                                                   @RequestParam double radiusInKm,
+                                                                   @RequestParam(defaultValue = "1") double radiusInKm,
                                                                    @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
                                                                    @RequestParam(name = "limit", defaultValue = "10") int limit) {
         return new ResponseEntity<>(restaurantService.getNearByRestaurant(longitude, latitude, radiusInKm, pageNo, limit), HttpStatus.OK);

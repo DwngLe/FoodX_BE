@@ -35,7 +35,7 @@ public class AddRestaurantCommand {
     private String facebookLink;
     private String instagramLink;
     @NotBlank(message =  "User who add this restaurant cannot be empty")
-    private String userName;
+    private UUID idUser;
     private List<OpenTimeDTO> openTimeList;
     private List<UUID> listIdTag;
 }

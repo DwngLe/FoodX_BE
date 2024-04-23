@@ -33,9 +33,10 @@ public class RestaurantDTO {
     @JsonFormat(pattern = "dd:MM:yyyy")
     private LocalDate timeAdded;
     private Boolean hasAnOwner;
-    private UserDTO userAdd;
-    private UserDTO userUpdate;
+    private UserBasicInfor userAdd;
+    private UserBasicInfor userUpdate;
     private UpdateState updateState;
     @JsonFormat(pattern = "HH:mm:ss dd:MM:yyyy")
     private LocalDateTime updateTime;
+    private List<TagDTO> tagDTOList;
 }

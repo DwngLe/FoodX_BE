@@ -32,9 +32,9 @@ public class AdminServiceImpl implements AdminService {
     private RestaurantRepository restaurantRepository;
 
     @Override
-    public void reviewRestaurantState(UUID idRestaurant, ReviewRestaurantState restaurantState) {
+    public void reviewRestaurantState(UUID idRestaurant, RestaurantState restaurantState) {
         Restaurant restaurantAdd = restaurantService.getRestaurantEnity(idRestaurant);
-        restaurantAdd.setRestaurantState(restaurantState.getRestaurantState());
+        restaurantAdd.setRestaurantState(restaurantState);
         restaurantRepository.save(restaurantAdd);
     }
 
@@ -59,9 +59,9 @@ public class AdminServiceImpl implements AdminService {
 
 
     @Override
-    public void reviewRestaurantUpdate(UUID idRestaurantUpdate, ReviewUpdate reviewUpdate) {
+    public void reviewRestaurantUpdate(UUID idRestaurantUpdate, UpdateState updateState) {
         UpdateRestaurant updateRestaurant = unwrarpRestaurant(updateRestaurantRepository.findById(idRestaurantUpdate));
-        if (reviewUpdate.getUpdateState() == UpdateState.ACCEPTED) {
+        if (updateState == UpdateState.ACCEPTED) {
             try {
                 Restaurant restaurant = updateRestaurant.getRestaurant();
                 updateFromRestaurantUpdate(updateRestaurant, restaurant);
@@ -70,7 +70,7 @@ public class AdminServiceImpl implements AdminService {
                 throw new NoResultsFoundException();
             }
         }
-        updateRestaurant.setUpdateState(reviewUpdate.getUpdateState());
+        updateRestaurant.setUpdateState(updateState);
         updateRestaurant.setReviewUpdateTime(LocalDateTime.now());
         updateRestaurantRepository.save(updateRestaurant);
     }
@@ -102,7 +102,7 @@ public class AdminServiceImpl implements AdminService {
                 .updateState(updateRestaurant.getUpdateState())
                 .updateTime(updateRestaurant.getUpdateTime());
         if (updateRestaurant.getUserUpdate() != null) {
-            builder.userNameUpdate(updateRestaurant.getUserUpdate().getUsername());
+            builder.userUpdate(userService.convertTouserBasicInfor(updateRestaurant.getUserUpdate()));
         }
         return builder.build();
     }

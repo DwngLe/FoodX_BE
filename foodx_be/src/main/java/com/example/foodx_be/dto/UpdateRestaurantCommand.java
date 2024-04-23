@@ -40,6 +40,6 @@ public class UpdateRestaurantCommand {
     @NotBlank(message = "Does restaurant is active or not?")
     private RestaurantState restaurantState;
     @NotBlank(message =  "User who update this restaurant cannot be empty")
-    private String userName;
+    private UUID idUser;
     private List<OpenTimeDTO> openTimeList;
 }

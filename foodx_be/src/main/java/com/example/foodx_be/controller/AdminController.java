@@ -39,21 +39,21 @@ public class AdminController {
 
     @PostMapping("/reviewUpdates/{idUpdate}")
     public ResponseEntity<HttpStatus> reviewRestaurantUpdate(@PathVariable UUID idUpdate,
-                                                             @RequestBody ReviewUpdate reviewUpdate) {
-        adminService.reviewRestaurantUpdate(idUpdate, reviewUpdate);
+                                                             @RequestParam UpdateState updateState) {
+        adminService.reviewRestaurantUpdate(idUpdate, updateState);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/restaurants/{idRestaurant}/updateState")
     public ResponseEntity<HttpStatus> reviewRestaurantUpdate(@PathVariable UUID idRestaurant,
-                                                             @RequestBody ReviewRestaurantState restaurantState) {
+                                                             @RequestParam RestaurantState restaurantState) {
         adminService.reviewRestaurantState(idRestaurant, restaurantState);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/restaurants/view")
     public  ResponseEntity<Page<RestaurantDTO>> getRestaurantByRestaurantState(@RequestParam RestaurantState restaurantState,
-                                                                               @RequestParam int pageNo,
-                                                                               @RequestParam int limit){
+                                                                               @RequestParam(defaultValue = "0") int pageNo,
+                                                                               @RequestParam(defaultValue = "10") int limit){
         return new ResponseEntity<>(restaurantService.getRestaurantByRestaurantState(pageNo, limit, restaurantState), HttpStatus.OK);
     }
 

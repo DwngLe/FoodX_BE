@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface RestaurantTagRepository extends JpaRepository<RestaurantTag, UUID> {
     List<RestaurantTag> getAllByTagId(UUID id);
+
+    List<RestaurantTag> getAllByRestaurantId(UUID idRestaurant);
 }

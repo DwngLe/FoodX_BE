@@ -2,7 +2,6 @@ package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.AddBusinessProofCommand;
 import com.example.foodx_be.dto.BusinessProofDTO;
-import com.example.foodx_be.dto.ReviewUpdate;
 import com.example.foodx_be.enity.BusinessProof;
 import com.example.foodx_be.ulti.UpdateState;
 import org.springframework.data.domain.Page;
@@ -13,6 +12,7 @@ import java.util.UUID;
 
 public interface BusinessProofService {
     void addBusinessProof(AddBusinessProofCommand addBusinessProofCommand, MultipartFile multipartFile) throws IOException;
+
     Page<BusinessProofDTO> getListBusinessProofByState(int pageNo, int limit, UpdateState state);
 
     void reviewBusinessProof(UUID idBusinessProof, UpdateState updateState);

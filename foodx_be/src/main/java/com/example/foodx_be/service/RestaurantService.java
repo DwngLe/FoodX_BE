@@ -2,7 +2,6 @@ package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.AddRestaurantCommand;
 import com.example.foodx_be.dto.RestaurantDTO;
-import com.example.foodx_be.dto.RestaurantStateCommand;
 import com.example.foodx_be.dto.UpdateRestaurantCommand;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.ulti.RestaurantState;

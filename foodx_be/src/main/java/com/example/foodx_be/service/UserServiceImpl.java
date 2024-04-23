@@ -2,6 +2,7 @@ package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.RegisterCommand;
 import com.example.foodx_be.dto.UpdateUserComand;
+import com.example.foodx_be.dto.UserBasicInfor;
 import com.example.foodx_be.dto.UserDTO;
 import com.example.foodx_be.enity.User;
 import com.example.foodx_be.exception.UserExistedException;
@@ -138,6 +139,16 @@ public class UserServiceImpl implements UserService{
                 .ward(userDTO.getWard())
                 .district(userDTO.getDistrict())
                 .city(userDTO.getCity())
+                .build();
+    }
+
+    @Override
+    public UserBasicInfor convertTouserBasicInfor(User user) {
+        return UserBasicInfor.builder()
+                .idUser(user.getId())
+                .name(user.getName())
+                .avatarLink(user.getAvatarLink())
+                .points(user.getPoints())
                 .build();
     }
 

@@ -18,7 +18,7 @@ public class ReviewRestaurantDTO {
     private Double starNumber;
     private int likeNumber;
     private int unlikeNumber;
-    private UserDTO userId;
+    private UserBasicInfor userReview;
     private UUID restaurantId;
     private List<ReviewImage> reviewImageIds;
 }

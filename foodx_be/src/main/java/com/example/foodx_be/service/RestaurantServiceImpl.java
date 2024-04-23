@@ -28,6 +28,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     private UserService userService;
     private OpenTimeService openTimeService;
     private TagService tagService;
+    private RestaurantTagService restaurantTagService;
 
     private RestaurantRepository restaurantRepository;
     private UpdateRestaurantRepository updateRestaurantRepository;
@@ -38,7 +39,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public void addRestaurant(AddRestaurantCommand addRestaurantCommand) {
-        User user = userService.getUser(addRestaurantCommand.getUserName());
+        User user = userService.getUser(addRestaurantCommand.getIdUser());
         Restaurant restaurant = convertToRestaurant(addRestaurantCommand);
         restaurant.setUserAdd(user);
         restaurantRepository.save(restaurant);
@@ -63,7 +64,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public Page<RestaurantDTO> getNearByRestaurant(BigDecimal longitude, BigDecimal latitude, double radiusInKm, int pageNo, int limit) {
         double[] boundingBox = BoundingBoxCalculator.calculateBoundingBox(latitude.doubleValue(), longitude.doubleValue(), radiusInKm);
 
-        // Query database for restaurants within bounding box
+        //min lat, min long, max lat, max log
         List<Restaurant> restaurants = restaurantRepository.findRestaurantsWithinBoundingBox(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3]);
         if (restaurants.isEmpty()) {
             throw new NoResultsFoundException();
@@ -125,7 +126,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public void updateRestaurant(UUID idRestaurant, UpdateRestaurantCommand updateRestaurantCommand) {
-        User userUpdate = userService.getUser(updateRestaurantCommand.getUserName());
+        User userUpdate = userService.getUser(updateRestaurantCommand.getIdUser());
         Restaurant restaurant = getRestaurantEnity(idRestaurant);
 
         UpdateRestaurant updateRestaurant = convertToUpdateRestaurant(updateRestaurantCommand);
@@ -238,9 +239,10 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .restaurantState(restaurant.getRestaurantState())
                 .timeAdded(restaurant.getTimeAdded())
                 .hasAnOwner(restaurant.getHasAnOwner())
-                .userAdd(userService.convertToDTO(restaurant.getUserAdd()));
+                .userAdd(userService.convertTouserBasicInfor(restaurant.getUserAdd()))
+                .tagDTOList(tagService.convertToListTagDTO(restaurantTagService.getListTagOfRestaurant(restaurant.getId())));
         if (restaurant.getUserAdd() != null) {
-            builder.userAdd(userService.convertToDTO(restaurant.getUserAdd()));
+            builder.userAdd(userService.convertTouserBasicInfor(restaurant.getUserAdd()));
         }
         return builder.build();
     }

@@ -9,6 +9,6 @@ import java.util.UUID;
 
 public interface AdminService {
     Page<RestaurantUpdateDTO> getRestaurantUpdateList(int pageNo, int limit, UpdateState updateState);
-    void reviewRestaurantUpdate(UUID idRestaurantUpdate, ReviewUpdate reviewUpdate);
-    void reviewRestaurantState(UUID idRestaurant, ReviewRestaurantState restaurantState);
+    void reviewRestaurantUpdate(UUID idRestaurantUpdate, UpdateState updateState);
+    void reviewRestaurantState(UUID idRestaurant, RestaurantState restaurantState);
 }

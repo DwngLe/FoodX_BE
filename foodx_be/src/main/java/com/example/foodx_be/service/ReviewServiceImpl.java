@@ -120,7 +120,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .starNumber(review.getStarNumber())
                 .likeNumber(review.getLikeNumber())
                 .unlikeNumber(review.getUnlikeNumber())
-                .userId(userService.convertToDTO(review.getUser()))// Ví dụ về cách tạo một UserDTO từ User
+                .userReview(userService.convertTouserBasicInfor(review.getUser()))
                 .restaurantId(review.getRestaurant().getId())
                 .reviewImageIds(review.getReviewImageList())
                 .build();
