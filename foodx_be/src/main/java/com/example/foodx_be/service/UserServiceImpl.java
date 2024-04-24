@@ -31,9 +31,9 @@ public class UserServiceImpl implements UserService{
     private final String FOLDER_UPLOAD = "Avatar";
 
     @Override
-    public void updateUserAvatar(String username, MultipartFile multipartFile) throws IOException {
+    public void updateUserAvatar(UUID idUser, MultipartFile multipartFile) throws IOException {
         Map result = cloudiaryService.uploadFile(multipartFile, FOLDER_UPLOAD);
-        User user = getUser(username);
+        User user = getUser(idUser);
         user.setAvatarLink((String)result.get("url"));
         userRepository.save(user);
     }

@@ -24,7 +24,7 @@ public interface UserService {
 
     UserDTO updateUser(UpdateUserComand updateUserComand);
 
-    void updateUserAvatar(String username, MultipartFile multipartFile) throws IOException;
+    void updateUserAvatar(UUID idUser, MultipartFile multipartFile) throws IOException;
 
     UserDTO convertToDTO(User user);
 

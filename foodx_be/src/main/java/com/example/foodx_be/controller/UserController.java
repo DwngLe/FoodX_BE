@@ -40,10 +40,10 @@ public class UserController {
         return new ResponseEntity<>(userService.getUsersByName(pageNo, limit, name), HttpStatus.OK);
     }
 
-    @PostMapping("/avatar{username}")
+    @PostMapping("/avatar/{idUser}")
     public ResponseEntity<HttpStatus> updateUserAvatar(@RequestParam MultipartFile multipartFile,
-                                                       @PathVariable String username) throws IOException {
-        userService.updateUserAvatar(username, multipartFile);
+                                                       @PathVariable UUID idUser) throws IOException {
+        userService.updateUserAvatar(idUser, multipartFile);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
