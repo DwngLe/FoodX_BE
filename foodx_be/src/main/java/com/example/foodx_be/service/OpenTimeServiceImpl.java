@@ -17,6 +17,15 @@ public class OpenTimeServiceImpl implements OpenTimeService {
     private OpenTimeRepository openTimeRepository;
 
     @Override
+    public void saveOpenTime(List<OpenTimeDTO> openTimeDTOList, Restaurant restaurant) {
+        List<OpenTime> openTimeList = convertToOpenTimeEnityList(openTimeDTOList);
+        for (OpenTime openTime : openTimeList) {
+            openTime.setRestaurant(restaurant);
+            openTimeRepository.save(openTime);
+        }
+    }
+
+    @Override
     public List<OpenTimeDTO> getOpenTimeOfRestaurant(UUID idRestaurant) {
         List<OpenTime> openTimeList = openTimeRepository.findAllByRestaurantId(idRestaurant);
         List<OpenTimeDTO> openTimeDTOList = convertToOpenTimeDTOList(openTimeList);

@@ -1,12 +1,15 @@
 package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.AddRestaurantCommand;
-import com.example.foodx_be.dto.OpenTimeDTO;
 import com.example.foodx_be.dto.RestaurantDTO;
 import com.example.foodx_be.dto.UpdateRestaurantCommand;
-import com.example.foodx_be.enity.*;
+import com.example.foodx_be.enity.Restaurant;
+import com.example.foodx_be.enity.Tag;
+import com.example.foodx_be.enity.UpdateRestaurant;
+import com.example.foodx_be.enity.User;
 import com.example.foodx_be.exception.NoResultsFoundException;
-import com.example.foodx_be.repository.*;
+import com.example.foodx_be.repository.RestaurantRepository;
+import com.example.foodx_be.repository.UpdateRestaurantRepository;
 import com.example.foodx_be.ulti.BoundingBoxCalculator;
 import com.example.foodx_be.ulti.RestaurantState;
 import lombok.AllArgsConstructor;
@@ -27,36 +30,32 @@ import java.util.UUID;
 public class RestaurantServiceImpl implements RestaurantService {
     private UserService userService;
     private OpenTimeService openTimeService;
+    private UpdateOpenTimeService updateOpenTimeService;
     private TagService tagService;
     private RestaurantTagService restaurantTagService;
 
     private RestaurantRepository restaurantRepository;
     private UpdateRestaurantRepository updateRestaurantRepository;
-    private OpenTimeRepository openTimeRepository;
-    private UpdateOpentimeRepository updateOpentimeRepository;
-    private RestaurantTagRepository restaurantTagRepository;
 
     @Override
     public void addRestaurant(AddRestaurantCommand addRestaurantCommand) {
         User user = userService.getUser(addRestaurantCommand.getIdUser());
-        Restaurant restaurant = convertToRestaurant(addRestaurantCommand);
+        Restaurant restaurant = convertToRestaurantEnity(addRestaurantCommand);
         restaurant.setUserAdd(user);
         restaurantRepository.save(restaurant);
 
-        List<OpenTime> openTimeList = openTimeService.convertToOpenTimeEnityList(addRestaurantCommand.getOpenTimeList());
-        for (OpenTime openTime : openTimeList) {
-            openTime.setRestaurant(restaurant);
-            openTimeRepository.save(openTime);
-        }
+        openTimeService.saveOpenTime(addRestaurantCommand.getOpenTimeList(), restaurant);
 
         List<UUID> listID = addRestaurantCommand.getListIdTag();
         for (UUID uuid : listID) {
             Tag tag = tagService.getTagEity(uuid);
-            RestaurantTag restaurantTag = new RestaurantTag();
-            restaurantTag.setRestaurant(restaurant);
-            restaurantTag.setTag(tag);
-            restaurantTagRepository.save(restaurantTag);
+            restaurantTagService.saveRestaurantTag(restaurant, tag);
         }
+    }
+
+    @Override
+    public void saveRestaurantEnity(Restaurant restaurant) {
+        restaurantRepository.save(restaurant);
     }
 
     @Override
@@ -68,7 +67,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         if (restaurants.isEmpty()) {
             throw new NoResultsFoundException();
         }
-        return converListRestaurantToPage(restaurants, pageNo, limit);
+        return converListRestaurantEnityToPage(restaurants, pageNo, limit);
     }
 
 
@@ -83,7 +82,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         if (restaurantList.isEmpty()) {
             throw new NoResultsFoundException();
         }
-        return converListRestaurantToPage(restaurantList, pageNo, limit);
+        return converListRestaurantEnityToPage(restaurantList, pageNo, limit);
     }
 
     @Override
@@ -93,17 +92,16 @@ public class RestaurantServiceImpl implements RestaurantService {
         if (restaurantList.isEmpty()) {
             throw new NoResultsFoundException();
         }
-        return converListRestaurantToPage(restaurantList, pageNo, limit);
+        return converListRestaurantEnityToPage(restaurantList, pageNo, limit);
     }
 
-
+    //for checking restaurant id
     @Override
     public Restaurant getRestaurantEnity(UUID idRestaurant) {
         Optional<Restaurant> restaurantOptional = restaurantRepository.findById(idRestaurant);
         return unwrarpRestaurant(restaurantOptional);
     }
 
-    //for checking restaurant id
     @Override
     public Restaurant getRestaurantEnityByName(String restaurantName) {
         Optional<Restaurant> restaurantOptional = restaurantRepository.findRestaurantByRestaurantName(restaurantName);
@@ -112,15 +110,14 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Page<RestaurantDTO> getListRestaurantByTag(int pageNo, int limit, UUID idTag) {
-        List<RestaurantTag> restaurantTagList = restaurantTagRepository.getAllByTagId(idTag);
-        if (restaurantTagList.isEmpty()) {
-            throw new NoResultsFoundException();
-        }
-        List<Restaurant> restaurantList = new ArrayList<>();
-        for (RestaurantTag restaurantTag : restaurantTagList) {
-            restaurantList.add(restaurantTag.getRestaurant());
-        }
-        return converListRestaurantToPage(restaurantList, pageNo, limit);
+        return converListRestaurantEnityToPage(restaurantTagService.getListRestaurantByTag(idTag), pageNo, limit);
+    }
+
+    @Override
+    public RestaurantDTO getRestaurantDTO(UUID idRestaurant) {
+        Optional<Restaurant> restaurantOptional = restaurantRepository.findById(idRestaurant);
+        Restaurant restaurant = unwrarpRestaurant(restaurantOptional);
+        return convertToRestaurantDTO(restaurant);
     }
 
     @Override
@@ -128,23 +125,13 @@ public class RestaurantServiceImpl implements RestaurantService {
         User userUpdate = userService.getUser(updateRestaurantCommand.getIdUser());
         Restaurant restaurant = getRestaurantEnity(idRestaurant);
 
-        UpdateRestaurant updateRestaurant = convertToUpdateRestaurant(updateRestaurantCommand);
+        UpdateRestaurant updateRestaurant = convertToUpdateRestaurantEnity(updateRestaurantCommand);
         updateRestaurant.setUserUpdate(userUpdate);
         updateRestaurant.setRestaurant(restaurant);
         updateRestaurantRepository.save(updateRestaurant);
 
-        List<OpenTimeDTO> openTimeDTOList = updateRestaurantCommand.getOpenTimeList();
-        for (OpenTimeDTO openTimeDTO : openTimeDTOList) {
-            UpdateOpenTime updateOpenTime = convertToUpdateOpenTimeEnity(openTimeDTO);
-            updateOpenTime.setUpdateRestaurant(updateRestaurant);
-            updateOpentimeRepository.save(updateOpenTime);
+        updateOpenTimeService.saveUpdateOpenTime(updateRestaurantCommand.getOpenTimeList(), updateRestaurant);
 
-        }
-    }
-
-    @Override
-    public void saveRestaurantEnity(Restaurant restaurant) {
-        restaurantRepository.save(restaurant);
     }
 
     @Override
@@ -156,15 +143,8 @@ public class RestaurantServiceImpl implements RestaurantService {
         return restaurant;
     }
 
-    public UpdateOpenTime convertToUpdateOpenTimeEnity(OpenTimeDTO openTimeDTO) {
-        return UpdateOpenTime.builder()
-                .dayOfWeek(openTimeDTO.getDayOfWeek())
-                .openingTime(openTimeDTO.getOpeningTime())
-                .closingTime(openTimeDTO.getClosingTime())
-                .build();
-    }
 
-    public Page<RestaurantDTO> converListRestaurantToPage(List<Restaurant> restaurants, int pageNo, int limit) {
+    public Page<RestaurantDTO> converListRestaurantEnityToPage(List<Restaurant> restaurants, int pageNo, int limit) {
         List<RestaurantDTO> restaurantDTOList = new ArrayList<>();
         for (Restaurant restaurant : restaurants) {
             restaurantDTOList.add(convertToRestaurantDTO(restaurant));
@@ -182,7 +162,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         else throw new NoResultsFoundException();
     }
 
-    private Restaurant convertToRestaurant(AddRestaurantCommand addRestaurantCommand) {
+    private Restaurant convertToRestaurantEnity(AddRestaurantCommand addRestaurantCommand) {
         return Restaurant.builder()
                 .restaurantName(addRestaurantCommand.getRestaurantName())
                 .houseNumber(addRestaurantCommand.getHouseNumber())
@@ -200,7 +180,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .build();
     }
 
-    private UpdateRestaurant convertToUpdateRestaurant(UpdateRestaurantCommand updateRestaurantCommand) {
+    private UpdateRestaurant convertToUpdateRestaurantEnity(UpdateRestaurantCommand updateRestaurantCommand) {
         return UpdateRestaurant.builder()
                 .restaurantName(updateRestaurantCommand.getRestaurantName())
                 .houseNumber(updateRestaurantCommand.getHouseNumber())
@@ -244,13 +224,6 @@ public class RestaurantServiceImpl implements RestaurantService {
             builder.userAdd(userService.convertTouserBasicInfor(restaurant.getUserAdd()));
         }
         return builder.build();
-    }
-
-    @Override
-    public RestaurantDTO getRestaurantDTO(UUID idRestaurant) {
-        Optional<Restaurant> restaurantOptional = restaurantRepository.findById(idRestaurant);
-        Restaurant restaurant = unwrarpRestaurant(restaurantOptional);
-        return convertToRestaurantDTO(restaurant);
     }
 
 

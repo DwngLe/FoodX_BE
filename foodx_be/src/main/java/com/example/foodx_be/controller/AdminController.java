@@ -26,7 +26,7 @@ public class AdminController {
     private BusinessProofService businessProofService;
     private TagService tagService;
 
-    @GetMapping("/restaurants/view/{restaurantName}")
+    @GetMapping("/restaurants/{restaurantName}")
     public ResponseEntity<Restaurant> getRestaurantByRestaurantState(@PathVariable String restaurantName) {
         return new ResponseEntity<>(restaurantService.getRestaurantEnityByName(restaurantName), HttpStatus.OK);
     }
@@ -52,33 +52,33 @@ public class AdminController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/restaurants/view")
+    @GetMapping("/restaurants")
     public ResponseEntity<Page<RestaurantDTO>> getRestaurantByRestaurantState(@RequestParam RestaurantState restaurantState,
                                                                               @RequestParam(defaultValue = "0") int pageNo,
                                                                               @RequestParam(defaultValue = "10") int limit) {
         return new ResponseEntity<>(restaurantService.getRestaurantByRestaurantState(pageNo, limit, restaurantState), HttpStatus.OK);
     }
 
-    @GetMapping("/businessProof")
+    @GetMapping("/businessProofs")
     public ResponseEntity<Page<BusinessProofDTO>> getListBusinessProofByState(@RequestParam UpdateState state,
                                                                               @RequestParam int pageNo,
                                                                               @RequestParam int limit) {
         return new ResponseEntity<>(businessProofService.getListBusinessProofByState(pageNo, limit, state), HttpStatus.OK);
     }
 
-    @GetMapping("/businessProof/{idBusinessProof}")
+    @GetMapping("/businessProofs/{idBusinessProof}")
     public ResponseEntity<BusinessProofDTO> getBusinessProof(@PathVariable UUID idBusinessProof) {
         return new ResponseEntity<>(businessProofService.getBusinessProof(idBusinessProof), HttpStatus.OK);
     }
 
-    @PostMapping("/businessProof/{idBusinessProof}")
+    @PostMapping("/businessProofs/{idBusinessProof}")
     public ResponseEntity<HttpStatus> reviewBusinessProof(@PathVariable UUID idBusinessProof,
                                                           @RequestParam UpdateState updateState) {
         businessProofService.reviewBusinessProof(idBusinessProof, updateState);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/tag/add")
+    @PostMapping("/tags")
     public ResponseEntity<HttpStatus> addTag(@RequestBody List<TagDTO> tagDTOList) {
         tagService.addTag(tagDTOList);
         return new ResponseEntity<>(HttpStatus.OK);

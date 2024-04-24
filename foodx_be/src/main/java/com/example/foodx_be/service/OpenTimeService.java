@@ -2,6 +2,7 @@ package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.OpenTimeDTO;
 import com.example.foodx_be.enity.OpenTime;
+import com.example.foodx_be.enity.Restaurant;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,4 +13,5 @@ public interface OpenTimeService {
     OpenTimeDTO convertToOpenTimeDTO(OpenTime openTime);
     OpenTime convertToOpenTimeEnity(OpenTimeDTO openTimeDTO);
     List<OpenTime> convertToOpenTimeEnityList(List<OpenTimeDTO> openTimeDTOList);
+    void saveOpenTime(List<OpenTimeDTO> openTimeDTOList, Restaurant restaurant);
 }

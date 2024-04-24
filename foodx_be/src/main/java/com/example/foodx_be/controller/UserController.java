@@ -17,17 +17,17 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
     private UserService userService;
     private BusinessProofService businessProofService;
 
-    @GetMapping("/profile/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<UserDTO> findById(@PathVariable UUID id) {
         return new ResponseEntity<>(userService.getUserByID(id), HttpStatus.OK);
     }
 
-    @PostMapping("/profile/update")
+    @PostMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UpdateUserComand updateUserComand) {
         return new ResponseEntity<>(userService.updateUser(updateUserComand), HttpStatus.OK);
     }
@@ -40,7 +40,7 @@ public class UserController {
         return new ResponseEntity<>(userService.getUsersByName(pageNo, limit, name), HttpStatus.OK);
     }
 
-    @PostMapping("/avatar/update/{username}")
+    @PostMapping("/avatar{username}")
     public ResponseEntity<HttpStatus> updateUserAvatar(@RequestParam MultipartFile multipartFile,
                                                        @PathVariable String username) throws IOException {
         userService.updateUserAvatar(username, multipartFile);

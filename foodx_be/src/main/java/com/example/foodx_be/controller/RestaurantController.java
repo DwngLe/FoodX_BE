@@ -15,11 +15,11 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/restaurant")
+@RequestMapping("/restaurants")
 public class RestaurantController {
     private RestaurantService restaurantService;
 
-    @PostMapping("/add")
+    @PostMapping("")
     public ResponseEntity<HttpStatus> addRestaurant(@RequestBody AddRestaurantCommand addRestaurantCommand) {
         restaurantService.addRestaurant(addRestaurantCommand);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -46,7 +46,7 @@ public class RestaurantController {
         return new ResponseEntity<>(restaurantService.getListRestaurantByTag(pageNo, limit, idTag), HttpStatus.OK);
     }
 
-    @PostMapping("/{idRestaurant}/update")
+    @PostMapping("/{idRestaurant}")
     public ResponseEntity<HttpStatus> updateRestaurant(@PathVariable UUID idRestaurant,
                                                        @RequestBody UpdateRestaurantCommand updateRestaurantCommand) {
         restaurantService.updateRestaurant(idRestaurant, updateRestaurantCommand);

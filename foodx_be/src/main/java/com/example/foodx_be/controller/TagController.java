@@ -14,11 +14,11 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/tag")
+@RequestMapping("/tags")
 public class TagController {
     private TagService tagService;
 
-    @GetMapping("/viewAll")
+    @GetMapping("")
     public ResponseEntity<List<TagDTO>> getListTag(){
         return new ResponseEntity<>(tagService.getListTag(), HttpStatus.OK);
     }

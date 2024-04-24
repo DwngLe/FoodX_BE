@@ -1,5 +1,6 @@
 package com.example.foodx_be.service;
 
+import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.RestaurantTag;
 import com.example.foodx_be.enity.Tag;
 import com.example.foodx_be.repository.RestaurantTagRepository;
@@ -22,5 +23,23 @@ public class RestaurantTagServiceImpl implements RestaurantTagService {
             tagList.add(restaurantTag.getTag());
         }
         return tagList;
+    }
+
+    @Override
+    public List<Restaurant> getListRestaurantByTag(UUID idTag) {
+        List<RestaurantTag> restaurantTagList = restaurantTagRepository.getAllByTagId(idTag);
+        List<Restaurant>  restaurantList = new ArrayList<>();
+        for (RestaurantTag restaurantTag : restaurantTagList) {
+            restaurantList.add(restaurantTag.getRestaurant());
+        }
+        return restaurantList;
+    }
+
+    @Override
+    public void saveRestaurantTag(Restaurant restaurant, Tag tag) {
+        RestaurantTag restaurantTag = new RestaurantTag();
+        restaurantTag.setRestaurant(restaurant);
+        restaurantTag.setTag(tag);
+        restaurantTagRepository.save(restaurantTag);
     }
 }

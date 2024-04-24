@@ -16,11 +16,11 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/review")
+@RequestMapping("/reviews")
 public class ReviewController {
     private ReviewService reviewService;
 
-    @PostMapping("/add")
+    @PostMapping("")
     public ResponseEntity<HttpStatus> addReview(@RequestPart("data") AddReviewRestaurantCommand addReviewCommand,
                                                 @RequestPart(value = "multipartFiles", required = false) MultipartFile[] multipartFiles) throws IOException {
         reviewService.addReview(addReviewCommand, multipartFiles);

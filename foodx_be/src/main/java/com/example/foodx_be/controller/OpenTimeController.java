@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/opentime")
+@RequestMapping("/opentimes")
 @AllArgsConstructor
 public class OpenTimeController {
     private OpenTimeService openTimeService;
