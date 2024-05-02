@@ -12,5 +12,4 @@ public class UserBasicInfor {
     private String name;
     private String avatarLink;
     private int points;
-
 }

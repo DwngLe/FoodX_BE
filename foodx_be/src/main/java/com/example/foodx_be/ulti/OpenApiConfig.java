@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 contact = @Contact(
                         name = "Le Trong Duong",
                         email = "duongle157.work@gmail.com",
-                        url = "https://github.com/DwngLee"
+                        url = "https://github.com/DwngLe"
                 ),
                 title = "OpenApi specification - Le Trong Duong",
                 description = "OpenApi documentation for Food X",
@@ -19,6 +19,10 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 @Server(
                         description = "Local ENV",
                         url = "http://localhost:8080/api"
+                ),
+                @Server(
+                        description = "PROD ENV",
+                        url = "https://foodxbe-production.up.railway.app/api"
                 )
         }
 
