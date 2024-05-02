@@ -53,17 +53,7 @@ hoặc
 ```bash
   mvn spring-boot:run
 ```
-## ***Client***
-**Bước 1: Cài node_modules**
-```bash
-  npm i
-```
 
-**Bước 2: Chạy dự án**
-
-```bash
-  npm run dev
-```
 
 
 
