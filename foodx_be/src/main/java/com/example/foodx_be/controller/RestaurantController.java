@@ -1,9 +1,6 @@
 package com.example.foodx_be.controller;
 
-import com.example.foodx_be.dto.AddRestaurantCommand;
-import com.example.foodx_be.dto.RequestDTO;
-import com.example.foodx_be.dto.RestaurantDTO;
-import com.example.foodx_be.dto.UpdateRestaurantCommand;
+import com.example.foodx_be.dto.*;
 import com.example.foodx_be.service.RestaurantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -142,12 +138,8 @@ public class RestaurantController {
             }
 
     )
-    @GetMapping("/nearby")
-    public ResponseEntity<Page<RestaurantDTO>> getRestaurantNearBy(@RequestParam BigDecimal longitude,
-                                                                   @RequestParam BigDecimal latitude,
-                                                                   @RequestParam(defaultValue = "1") double radiusInKm,
-                                                                   @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
-                                                                   @RequestParam(name = "limit", defaultValue = "10") int limit) {
-        return new ResponseEntity<>(restaurantService.getNearByRestaurant(longitude, latitude, radiusInKm, pageNo, limit), HttpStatus.OK);
+    @PostMapping("/nearby")
+    public ResponseEntity<Page<RestaurantDTO>> getRestaurantNearBy(@RequestBody NearbyRequestDTO nearbyRequestDTO) {
+        return new ResponseEntity<>(restaurantService.getNearByRestaurant(nearbyRequestDTO.getRequestDTO(), nearbyRequestDTO.getLocationDTO()), HttpStatus.OK);
     }
 }

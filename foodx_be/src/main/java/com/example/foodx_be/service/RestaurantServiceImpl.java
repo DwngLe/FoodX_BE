@@ -9,6 +9,7 @@ import com.example.foodx_be.exception.NoResultsFoundException;
 import com.example.foodx_be.repository.RestaurantRepository;
 import com.example.foodx_be.repository.UpdateRestaurantRepository;
 import com.example.foodx_be.ulti.BoundingBoxCalculator;
+import com.example.foodx_be.ulti.Operation;
 import com.example.foodx_be.ulti.RestaurantState;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -60,15 +61,36 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Page<RestaurantDTO> getNearByRestaurant(BigDecimal longitude, BigDecimal latitude, double radiusInKm, int pageNo, int limit) {
-        double[] boundingBox = BoundingBoxCalculator.calculateBoundingBox(latitude.doubleValue(), longitude.doubleValue(), radiusInKm);
+    public Page<RestaurantDTO> getNearByRestaurant(RequestDTO requestDTO, LocationDTO locationDTO) {
+        //random number
+        BigDecimal latitude = locationDTO.getLatitude();
+        BigDecimal longitude = locationDTO.getLongitude();
+        BigDecimal radiusInKm = locationDTO.getRadius();
+
+
+        BigDecimal[] boundingBox = BoundingBoxCalculator.calculateBoundingBox(latitude, longitude, radiusInKm);
 
         //min lat, min long, max lat, max log
-        List<Restaurant> restaurants = restaurantRepository.findRestaurantsWithinBoundingBox(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3]);
-        if (restaurants.isEmpty()) {
+        requestDTO.getSearchRequestDTO().add(new SearchRequestDTO("latitude", boundingBox[0].toString() + ", " + boundingBox[2], Operation.BETWEEN));
+        requestDTO.getSearchRequestDTO().add(new SearchRequestDTO("longitude", boundingBox[1].toString() + ", " + boundingBox[3], Operation.BETWEEN));
+        requestDTO.getSearchRequestDTO().add(new SearchRequestDTO("restaurantState", RestaurantState.ACTIVE.toString(), Operation.EQUAL));
+
+
+        Specification<Restaurant> restaurantSpecification = specification.getSearchSpecification(requestDTO.getSearchRequestDTO());
+        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
+
+        // Apply sorting based on the sortByColumn
+        if ("point".equals(requestDTO.getSortByColumn())) {
+            restaurantSpecification = restaurantSpecification.and(specification.sortByAverageReview(requestDTO.getSort()));
+        } else {
+            restaurantSpecification = restaurantSpecification.and(specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
+        }
+
+        Page<Restaurant> all = restaurantRepository.findAll(restaurantSpecification, pageable);
+        if (all.getContent().isEmpty()) {
             throw new NoResultsFoundException();
         }
-        return converListRestaurantEnityToPage(restaurants, pageNo, limit);
+        return all.map(this::convertToRestaurantDTO);
     }
 
 
@@ -98,7 +120,8 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Page<RestaurantDTO> getRestaurantBySpecification(RequestDTO requestDTO) {
-        Specification<Restaurant> restaurantSpecification = specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), requestDTO.getGlobalOperator());
+        requestDTO.getSearchRequestDTO().add(new SearchRequestDTO("restaurantState", RestaurantState.ACTIVE.toString(), Operation.EQUAL));
+        Specification<Restaurant> restaurantSpecification = specification.getSearchSpecification(requestDTO.getSearchRequestDTO());
         Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
 
         // Apply sorting based on the sortByColumn

@@ -151,7 +151,7 @@ public class UserController {
 
     @GetMapping("/specification")
     public Page<User> getUsers(@RequestBody RequestDTO requestDTO) {
-        Specification<User> userSpecification = specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), requestDTO.getGlobalOperator());
+        Specification<User> userSpecification = specification.getSearchSpecification(requestDTO.getSearchRequestDTO());
         Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
         Page<User> all = userRepository.findAll(userSpecification, pageable);
         return all;

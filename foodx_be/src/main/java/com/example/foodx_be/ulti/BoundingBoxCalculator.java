@@ -1,31 +1,46 @@
 package com.example.foodx_be.ulti;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+
 public class BoundingBoxCalculator {
     // Earth radius in kilometers
-    private static final double EARTH_RADIUS = 6371.0;
+    private static final BigDecimal EARTH_RADIUS = new BigDecimal("6371.0");
+    private static final MathContext MATH_CONTEXT = new MathContext(15, RoundingMode.HALF_UP);
 
-    public static double[] calculateBoundingBox(double latitude, double longitude, double radiusInKm) {
-        double latRadians = Math.toRadians(latitude);
-        double lngRadians = Math.toRadians(longitude);
+    public static BigDecimal[] calculateBoundingBox(BigDecimal latitude, BigDecimal longitude, BigDecimal radiusInKm) {
+        BigDecimal latRadians = toRadians(latitude);
+        BigDecimal lngRadians = toRadians(longitude);
 
         // Angular distance in radians on a great circle
-        double angularRadius = radiusInKm / EARTH_RADIUS;
+        BigDecimal angularRadius = radiusInKm.divide(EARTH_RADIUS, MATH_CONTEXT);
 
         // Latitude bounds
-        double minLat = latRadians - angularRadius;
-        double maxLat = latRadians + angularRadius;
+        BigDecimal minLat = latRadians.subtract(angularRadius, MATH_CONTEXT);
+        BigDecimal maxLat = latRadians.add(angularRadius, MATH_CONTEXT);
 
         // Longitude bounds
-        double deltaLng = Math.asin(Math.sin(angularRadius) / Math.cos(latRadians));
-        double minLng = lngRadians - deltaLng;
-        double maxLng = lngRadians + deltaLng;
+        BigDecimal deltaLng = BigDecimal.valueOf(Math.asin(
+                Math.sin(angularRadius.doubleValue()) / Math.cos(latRadians.doubleValue())));
+
+        BigDecimal minLng = lngRadians.subtract(deltaLng, MATH_CONTEXT);
+        BigDecimal maxLng = lngRadians.add(deltaLng, MATH_CONTEXT);
 
         // Convert back to degrees
-        minLat = Math.toDegrees(minLat);
-        maxLat = Math.toDegrees(maxLat);
-        minLng = Math.toDegrees(minLng);
-        maxLng = Math.toDegrees(maxLng);
+        minLat = toDegrees(minLat);
+        maxLat = toDegrees(maxLat);
+        minLng = toDegrees(minLng);
+        maxLng = toDegrees(maxLng);
 
-        return new double[]{minLat, minLng, maxLat, maxLng};
+        return new BigDecimal[]{minLat, minLng, maxLat, maxLng};
+    }
+
+    private static BigDecimal toRadians(BigDecimal degrees) {
+        return degrees.multiply(BigDecimal.valueOf(Math.PI)).divide(BigDecimal.valueOf(180), MATH_CONTEXT);
+    }
+
+    private static BigDecimal toDegrees(BigDecimal radians) {
+        return radians.multiply(BigDecimal.valueOf(180)).divide(BigDecimal.valueOf(Math.PI), MATH_CONTEXT);
     }
 }

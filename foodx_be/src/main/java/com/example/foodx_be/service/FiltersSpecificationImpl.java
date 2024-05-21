@@ -1,12 +1,12 @@
 package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.SearchRequestDTO;
-import com.example.foodx_be.ulti.GlobalOperator;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public class FiltersSpecificationImpl<T> {
 
-    public Specification<T> getSearchSpecification(List<SearchRequestDTO> searchRequestDTOList, GlobalOperator globalOperator) {
+    public Specification<T> getSearchSpecification(List<SearchRequestDTO> searchRequestDTOList) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -46,7 +46,7 @@ public class FiltersSpecificationImpl<T> {
                         break;
                     case BETWEEN:
                         String[] splitForBetween = requestDTO.getValue().split(", ");
-                        Predicate between = criteriaBuilder.between(root.get(requestDTO.getColumn()), Double.parseDouble(splitForBetween[0]), Double.parseDouble(splitForBetween[1]));
+                        Predicate between = criteriaBuilder.between(root.get(requestDTO.getColumn()), new BigDecimal(Double.parseDouble(splitForBetween[0])), new BigDecimal(Double.parseDouble(splitForBetween[1])));
                         predicates.add(between);
                         break;
 
@@ -54,11 +54,7 @@ public class FiltersSpecificationImpl<T> {
                         throw new IllegalStateException("Unexpected value: " + requestDTO.getOperation());
                 }
             }
-            if (globalOperator.equals(GlobalOperator.AND)) {
                 return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-            } else {
-                return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
-            }
         };
     }
 
@@ -83,4 +79,6 @@ public class FiltersSpecificationImpl<T> {
             return criteriaBuilder.conjunction(); // No additional predicates, just the ordering
         };
     }
+
+
 }
