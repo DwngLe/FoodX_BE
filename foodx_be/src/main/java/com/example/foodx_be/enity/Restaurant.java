@@ -1,5 +1,6 @@
 package com.example.foodx_be.enity;
 
+import com.example.foodx_be.ulti.Price;
 import com.example.foodx_be.ulti.RestaurantState;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -55,7 +56,13 @@ public class Restaurant {
     private double reviewCount = 0;
     @Column(name = "review_sum")
     private double reviewSum = 0;
-
+    @Column(name = "offer_delivery")
+    private Boolean offerDelivery;
+    @Column(name = "offer_takeaway")
+    private Boolean offerTakeaway;
+    @Column(name = "is_outdoor_seating")
+    private Boolean outdoorSeating;
+    private Price price;
 
     @PrePersist
     public void control() {

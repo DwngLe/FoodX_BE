@@ -56,6 +56,12 @@ public class UpdateRestaurant {
     @Column(name = "review_update_time")
     @JsonFormat(pattern = "HH:mm dd:MM:yyyy")
     private LocalDateTime reviewUpdateTime;
+    @Column(name = "offer_delivery")
+    private Boolean offerDelivery;
+    @Column(name = "offer_takeaway")
+    private Boolean offerTakeaway;
+    @Column(name = "is_outdoor_seating")
+    private Boolean outdoorSeating;
 
     @PrePersist
     public void control(){

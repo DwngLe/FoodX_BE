@@ -33,6 +33,9 @@ public class UpdateRestaurantCommand {
     private String website;
     private String facebookLink;
     private String instagramLink;
+    private Boolean offerDelivery;
+    private Boolean offerTakeaway;
+    private Boolean outdoorSeating;
     @NotBlank(message = "Does restaurant is active or not?")
     private RestaurantState restaurantState;
     @NotBlank(message = "User who update this restaurant cannot be empty")

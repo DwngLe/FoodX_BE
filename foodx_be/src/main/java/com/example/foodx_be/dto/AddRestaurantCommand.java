@@ -32,6 +32,9 @@ public class AddRestaurantCommand {
     private String website;
     private String facebookLink;
     private String instagramLink;
+    private Boolean offerDelivery;
+    private Boolean offerTakeaway;
+    private Boolean outdoorSeating;
     @NotBlank(message = "User who add this restaurant cannot be empty")
     private UUID idUser;
     private List<OpenTimeDTO> openTimeList;

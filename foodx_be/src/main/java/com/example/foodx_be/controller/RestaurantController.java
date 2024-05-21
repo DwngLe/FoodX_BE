@@ -1,6 +1,7 @@
 package com.example.foodx_be.controller;
 
 import com.example.foodx_be.dto.AddRestaurantCommand;
+import com.example.foodx_be.dto.RequestDTO;
 import com.example.foodx_be.dto.RestaurantDTO;
 import com.example.foodx_be.dto.UpdateRestaurantCommand;
 import com.example.foodx_be.service.RestaurantService;
@@ -60,7 +61,8 @@ public class RestaurantController {
     }
 
     @Operation(
-            summary = "Lấy ra danh sách các nhà hàng dựa trên keyword",
+            description = "Lấy ra danh sách các nhà hàng áp dụng Filtering, Sorting, Searching và Pageable",
+            summary = "Lấy ra danh sách các nhà hàng dựa trên các tiêu chí",
             responses = {
                     @ApiResponse(
                             description = "Thành công",
@@ -72,12 +74,9 @@ public class RestaurantController {
                     )
             }
     )
-    @GetMapping("/search")
-    public ResponseEntity<Page<RestaurantDTO>> getRestaurants(@RequestParam(name = "searchBy") String searchBy,
-                                                              @RequestParam(name = "keyword") String keyword,
-                                                              @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
-                                                              @RequestParam(name = "limit", defaultValue = "10") int limit) {
-        return new ResponseEntity<>(restaurantService.getRestaurantsByKeyword(pageNo, limit, keyword, searchBy), HttpStatus.OK);
+    @PostMapping("/specification")
+    public ResponseEntity<Page<RestaurantDTO>> getRestaurants(@RequestBody RequestDTO requestDTO) {
+        return new ResponseEntity<>(restaurantService.getRestaurantBySpecification(requestDTO), HttpStatus.OK);
     }
 
     @Operation(
@@ -94,6 +93,7 @@ public class RestaurantController {
             }
 
     )
+    //for testing purpose
     @GetMapping("/search/tag")
     public ResponseEntity<Page<RestaurantDTO>> getRestaurants(@RequestParam UUID idTag,
                                                               @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,

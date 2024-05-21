@@ -1,14 +1,17 @@
 package com.example.foodx_be.controller;
 
-import com.example.foodx_be.dto.AddBusinessProofCommand;
-import com.example.foodx_be.dto.UpdateUserComand;
-import com.example.foodx_be.dto.UserDTO;
+import com.example.foodx_be.dto.*;
+import com.example.foodx_be.enity.User;
+import com.example.foodx_be.repository.UserRepository;
 import com.example.foodx_be.service.BusinessProofService;
+import com.example.foodx_be.service.FiltersSpecificationImpl;
 import com.example.foodx_be.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,8 @@ public class UserController {
     private UserService userService;
     private BusinessProofService businessProofService;
 
+    private UserRepository userRepository;
+    private FiltersSpecificationImpl<User> specification;
     @Operation(
             summary = "Lấy ra thông tin của 1 người dùng",
             responses = {
@@ -142,5 +147,13 @@ public class UserController {
         addBusinessProofCommand.setIdRestaurant(idRestaurant);
         businessProofService.addBusinessProof(addBusinessProofCommand, multipartFile);
         return  new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/specification")
+    public Page<User> getUsers(@RequestBody RequestDTO requestDTO) {
+        Specification<User> userSpecification = specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), requestDTO.getGlobalOperator());
+        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
+        Page<User> all = userRepository.findAll(userSpecification, pageable);
+        return all;
     }
 }

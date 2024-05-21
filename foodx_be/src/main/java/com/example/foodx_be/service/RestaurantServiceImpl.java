@@ -1,8 +1,6 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.AddRestaurantCommand;
-import com.example.foodx_be.dto.RestaurantDTO;
-import com.example.foodx_be.dto.UpdateRestaurantCommand;
+import com.example.foodx_be.dto.*;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.Tag;
 import com.example.foodx_be.enity.UpdateRestaurant;
@@ -17,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -33,6 +32,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     private UpdateOpenTimeService updateOpenTimeService;
     private TagService tagService;
     private RestaurantTagService restaurantTagService;
+
+    private FiltersSpecificationImpl<Restaurant> specification;
 
     private RestaurantRepository restaurantRepository;
     private UpdateRestaurantRepository updateRestaurantRepository;
@@ -93,6 +94,22 @@ public class RestaurantServiceImpl implements RestaurantService {
             throw new NoResultsFoundException();
         }
         return converListRestaurantEnityToPage(restaurantList, pageNo, limit);
+    }
+
+    @Override
+    public Page<RestaurantDTO> getRestaurantBySpecification(RequestDTO requestDTO) {
+        Specification<Restaurant> restaurantSpecification = specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), requestDTO.getGlobalOperator());
+        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
+
+        // Apply sorting based on the sortByColumn
+        if ("point".equals(requestDTO.getSortByColumn())) {
+            restaurantSpecification = restaurantSpecification.and(specification.sortByAverageReview(requestDTO.getSort()));
+        } else {
+            restaurantSpecification = restaurantSpecification.and(specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
+        }
+
+        Page<Restaurant> all = restaurantRepository.findAll(restaurantSpecification, pageable);
+        return all.map(this::convertToRestaurantDTO);
     }
 
     //for checking restaurant id
@@ -177,6 +194,9 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .website(addRestaurantCommand.getWebsite())
                 .facebookLink(addRestaurantCommand.getFacebookLink())
                 .instagramLink(addRestaurantCommand.getInstagramLink())
+                .offerDelivery(addRestaurantCommand.getOfferDelivery())
+                .outdoorSeating(addRestaurantCommand.getOutdoorSeating())
+                .offerTakeaway(addRestaurantCommand.getOfferTakeaway())
                 .build();
     }
 
@@ -195,6 +215,9 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .website(updateRestaurantCommand.getWebsite())
                 .facebookLink(updateRestaurantCommand.getFacebookLink())
                 .instagramLink(updateRestaurantCommand.getInstagramLink())
+                .offerDelivery(updateRestaurantCommand.getOfferDelivery())
+                .outdoorSeating(updateRestaurantCommand.getOutdoorSeating())
+                .offerTakeaway(updateRestaurantCommand.getOfferTakeaway())
                 .restaurantState(updateRestaurantCommand.getRestaurantState())
                 .build();
     }
@@ -215,10 +238,14 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .website(restaurant.getWebsite())
                 .facebookLink(restaurant.getFacebookLink())
                 .instagramLink(restaurant.getInstagramLink())
+                .offerDelivery(restaurant.getOfferDelivery())
+                .outdoorSeating(restaurant.getOutdoorSeating())
+                .offerTakeaway(restaurant.getOfferTakeaway())
                 .restaurantState(restaurant.getRestaurantState())
                 .timeAdded(restaurant.getTimeAdded())
                 .hasAnOwner(restaurant.getHasAnOwner())
                 .userAdd(userService.convertTouserBasicInfor(restaurant.getUserAdd()))
+                .points(restaurant.getReviewSum() / restaurant.getReviewCount())
                 .tagDTOList(tagService.convertToListTagDTO(restaurantTagService.getListTagOfRestaurant(restaurant.getId())));
         if (restaurant.getUserAdd() != null) {
             builder.userAdd(userService.convertTouserBasicInfor(restaurant.getUserAdd()));
