@@ -1,6 +1,7 @@
 package com.example.foodx_be.controller;
 
 import com.example.foodx_be.dto.*;
+import com.example.foodx_be.enity.RestaurantTag;
 import com.example.foodx_be.service.RestaurantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -90,11 +91,9 @@ public class RestaurantController {
 
     )
     //for testing purpose
-    @GetMapping("/search/tag")
-    public ResponseEntity<Page<RestaurantDTO>> getRestaurants(@RequestParam UUID idTag,
-                                                              @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
-                                                              @RequestParam(name = "limit", defaultValue = "10") int limit) {
-        return new ResponseEntity<>(restaurantService.getListRestaurantByTag(pageNo, limit, idTag), HttpStatus.OK);
+    @PostMapping("/search/tag")
+    public ResponseEntity<Page<RestaurantTag>> getRestaurantsByTag(@RequestBody RequestDTO requestDTO) {
+        return new ResponseEntity<>(restaurantService.getListRestaurantByTag(requestDTO), HttpStatus.OK);
     }
 
     @Operation(

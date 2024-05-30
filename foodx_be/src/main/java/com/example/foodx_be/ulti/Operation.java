@@ -6,5 +6,6 @@ public enum Operation {
     IN,
     GREATER_THAN,
     LESS_THAN,
-    BETWEEN
+    BETWEEN,
+    TAG_IN
 }

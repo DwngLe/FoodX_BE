@@ -1,22 +1,25 @@
 package com.example.foodx_be.enity;
 
 import com.example.foodx_be.ulti.AccountState;
+import com.example.foodx_be.ulti.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import java.time.LocalDate;
-import com.example.foodx_be.ulti.Role;
 
 @Data
 @Builder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "user")
+@Table(name = "\"user\"")
 public class User {
     @Id
     @GeneratedValue(generator = "UUID")

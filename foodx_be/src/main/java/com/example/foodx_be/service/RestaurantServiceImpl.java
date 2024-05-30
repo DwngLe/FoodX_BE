@@ -1,14 +1,12 @@
 package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.*;
-import com.example.foodx_be.enity.Restaurant;
-import com.example.foodx_be.enity.Tag;
-import com.example.foodx_be.enity.UpdateRestaurant;
-import com.example.foodx_be.enity.User;
+import com.example.foodx_be.enity.*;
 import com.example.foodx_be.exception.NoResultsFoundException;
 import com.example.foodx_be.repository.RestaurantRepository;
 import com.example.foodx_be.repository.UpdateRestaurantRepository;
 import com.example.foodx_be.ulti.BoundingBoxCalculator;
+import com.example.foodx_be.ulti.GlobalOperator;
 import com.example.foodx_be.ulti.Operation;
 import com.example.foodx_be.ulti.RestaurantState;
 import lombok.AllArgsConstructor;
@@ -76,7 +74,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         requestDTO.getSearchRequestDTO().add(new SearchRequestDTO("restaurantState", RestaurantState.ACTIVE.toString(), Operation.EQUAL));
 
 
-        Specification<Restaurant> restaurantSpecification = specification.getSearchSpecification(requestDTO.getSearchRequestDTO());
+        Specification<Restaurant> restaurantSpecification = specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
         Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
 
         // Apply sorting based on the sortByColumn
@@ -94,19 +92,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
 
-    @Override
-    public Page<RestaurantDTO> getRestaurantsByKeyword(int pageNo, int limit, String keyword, String searchBy) {
-        List<Restaurant> restaurantList = switch (searchBy) {
-            case "city" -> restaurantRepository.findAllByCityAndRestaurantState(keyword, RestaurantState.ACTIVE);
-            case "restaurantName" ->
-                    restaurantRepository.findAllByRestaurantNameAndRestaurantState(keyword, RestaurantState.ACTIVE);
-            default -> new ArrayList<>();
-        };
-        if (restaurantList.isEmpty()) {
-            throw new NoResultsFoundException();
-        }
-        return converListRestaurantEnityToPage(restaurantList, pageNo, limit);
-    }
 
     @Override
     public Page<RestaurantDTO> getRestaurantByRestaurantState(int pageNo, int limit, RestaurantState restaurantState) {
@@ -121,7 +106,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public Page<RestaurantDTO> getRestaurantBySpecification(RequestDTO requestDTO) {
         requestDTO.getSearchRequestDTO().add(new SearchRequestDTO("restaurantState", RestaurantState.ACTIVE.toString(), Operation.EQUAL));
-        Specification<Restaurant> restaurantSpecification = specification.getSearchSpecification(requestDTO.getSearchRequestDTO());
+        Specification<Restaurant> restaurantSpecification = specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
         Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
 
         // Apply sorting based on the sortByColumn
@@ -142,15 +127,9 @@ public class RestaurantServiceImpl implements RestaurantService {
         return unwrarpRestaurant(restaurantOptional);
     }
 
-    @Override
-    public Restaurant getRestaurantEnityByName(String restaurantName) {
-        Optional<Restaurant> restaurantOptional = restaurantRepository.findRestaurantByRestaurantName(restaurantName);
-        return unwrarpRestaurant(restaurantOptional);
-    }
 
-    @Override
-    public Page<RestaurantDTO> getListRestaurantByTag(int pageNo, int limit, UUID idTag) {
-        return converListRestaurantEnityToPage(restaurantTagService.getListRestaurantByTag(idTag), pageNo, limit);
+    public Page<RestaurantTag> getListRestaurantByTag(RequestDTO requestDTO) {
+        return restaurantTagService.getListRestaurantByTag(requestDTO);
     }
 
     @Override

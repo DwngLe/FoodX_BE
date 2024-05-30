@@ -1,6 +1,11 @@
 package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.SearchRequestDTO;
+import com.example.foodx_be.enity.Restaurant;
+import com.example.foodx_be.enity.RestaurantTag;
+import com.example.foodx_be.enity.Tag;
+import com.example.foodx_be.ulti.GlobalOperator;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -10,11 +15,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class FiltersSpecificationImpl<T> {
 
-    public Specification<T> getSearchSpecification(List<SearchRequestDTO> searchRequestDTOList) {
+    public Specification<T> getSearchSpecification(List<SearchRequestDTO> searchRequestDTOList, GlobalOperator operator) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -23,6 +29,15 @@ public class FiltersSpecificationImpl<T> {
                     case EQUAL:
                         if (root.get(requestDTO.getColumn()).getJavaType() == Boolean.class) {
                             predicates.add(criteriaBuilder.equal(root.get(requestDTO.getColumn()), Boolean.valueOf(requestDTO.getValue())));
+                        } else if (root.get(requestDTO.getColumn()).getJavaType() == UUID.class) {
+                            try {
+                                UUID uuid = UUID.fromString(requestDTO.getValue());
+                                predicates.add(criteriaBuilder.equal(root.get(requestDTO.getColumn()), uuid));
+                            } catch (IllegalArgumentException e) {
+                                // Handle the case where the value is not a valid UUID string
+                                // You can either log an error or rethrow the exception
+                                throw new RuntimeException("Invalid UUID string: " + requestDTO.getValue(), e);
+                            }
                         } else {
                             predicates.add(criteriaBuilder.equal(root.get(requestDTO.getColumn()), requestDTO.getValue()));
                         }
@@ -49,12 +64,27 @@ public class FiltersSpecificationImpl<T> {
                         Predicate between = criteriaBuilder.between(root.get(requestDTO.getColumn()), new BigDecimal(Double.parseDouble(splitForBetween[0])), new BigDecimal(Double.parseDouble(splitForBetween[1])));
                         predicates.add(between);
                         break;
-
+                    case TAG_IN:
+                        // Trường hợp tìm kiếm theo danh sách ID Tag
+                        String[] tagIds = requestDTO.getValue().split(", ");
+                        List<UUID> uuidList = new ArrayList<>();
+                        for (String tagId : tagIds) {
+                            uuidList.add(UUID.fromString(tagId));
+                        }
+                        Join<Restaurant, RestaurantTag> restaurantTagJoin = root.join("restaurantTagList"); // Join từ thực thể Restaurant tới RestaurantTag
+                        Join<RestaurantTag, Tag> tagJoin = restaurantTagJoin.join("tag"); // Join từ RestaurantTag tới Tag
+                        Predicate tagInPredicate = tagJoin.get("id").in(uuidList);
+                        predicates.add(tagInPredicate);
+                        break;
                     default:
                         throw new IllegalStateException("Unexpected value: " + requestDTO.getOperation());
                 }
             }
+            if (operator.equals(GlobalOperator.AND)) {
                 return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            } else {
+                return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
+            }
         };
     }
 
@@ -65,7 +95,7 @@ public class FiltersSpecificationImpl<T> {
             } else {
                 query.orderBy(criteriaBuilder.desc(root.get(column)));
             }
-            return criteriaBuilder.conjunction(); // No additional predicates, just the ordering
+            return criteriaBuilder.conjunction();
         };
     }
 
@@ -76,9 +106,7 @@ public class FiltersSpecificationImpl<T> {
             } else {
                 query.orderBy(criteriaBuilder.desc(criteriaBuilder.quot(root.get("reviewSum"), root.get("reviewCount"))));
             }
-            return criteriaBuilder.conjunction(); // No additional predicates, just the ordering
+            return criteriaBuilder.conjunction();
         };
     }
-
-
 }

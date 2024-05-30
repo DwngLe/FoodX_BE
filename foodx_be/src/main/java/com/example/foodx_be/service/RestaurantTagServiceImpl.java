@@ -1,10 +1,17 @@
 package com.example.foodx_be.service;
 
+import com.example.foodx_be.dto.PageRequestDTO;
+import com.example.foodx_be.dto.RequestDTO;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.RestaurantTag;
 import com.example.foodx_be.enity.Tag;
+import com.example.foodx_be.exception.NoResultsFoundException;
 import com.example.foodx_be.repository.RestaurantTagRepository;
+import com.example.foodx_be.ulti.GlobalOperator;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,6 +21,8 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class RestaurantTagServiceImpl implements RestaurantTagService {
+    private FiltersSpecificationImpl<RestaurantTag> tagFiltersSpecification;
+
     private RestaurantTagRepository restaurantTagRepository;
     @Override
     public List<Tag> getListTagOfRestaurant(UUID idRestaurant) {
@@ -26,13 +35,22 @@ public class RestaurantTagServiceImpl implements RestaurantTagService {
     }
 
     @Override
-    public List<Restaurant> getListRestaurantByTag(UUID idTag) {
-        List<RestaurantTag> restaurantTagList = restaurantTagRepository.getAllByTagId(idTag);
-        List<Restaurant>  restaurantList = new ArrayList<>();
-        for (RestaurantTag restaurantTag : restaurantTagList) {
-            restaurantList.add(restaurantTag.getRestaurant());
+    public Page<RestaurantTag> getListRestaurantByTag(RequestDTO requestDTO) {
+        Specification<RestaurantTag> restaurantSpecification = tagFiltersSpecification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.OR);
+        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
+
+        if ("point".equals(requestDTO.getSortByColumn())) {
+            restaurantSpecification = restaurantSpecification.and(tagFiltersSpecification.sortByAverageReview(requestDTO.getSort()));
+        } else {
+            restaurantSpecification = restaurantSpecification.and(tagFiltersSpecification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
         }
-        return restaurantList;
+
+        Page<RestaurantTag> all = restaurantTagRepository.findAll(restaurantSpecification, pageable);
+        if (all.getContent().isEmpty()) {
+            throw new NoResultsFoundException();
+        }
+
+        return all;
     }
 
     @Override
