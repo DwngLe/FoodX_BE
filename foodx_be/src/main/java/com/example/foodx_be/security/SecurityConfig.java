@@ -26,6 +26,9 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_POST_ENPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENPOINTS).permitAll()
+                        .requestMatchers("/swagger-ui/**",
+                                "/swagger-resources/*",
+                                "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated());
 
         //decode jwt user gui len trong header

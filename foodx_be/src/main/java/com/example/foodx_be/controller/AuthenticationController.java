@@ -4,7 +4,6 @@ import com.example.foodx_be.dto.request.AuthenticationRequest;
 import com.example.foodx_be.dto.request.RegisterCommand;
 import com.example.foodx_be.dto.response.AuthenticationResponse;
 import com.example.foodx_be.dto.response.UserDTO;
-import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.AuthenticationService;
 import com.example.foodx_be.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +28,7 @@ public class AuthenticationController {
 
 
     @Operation(
-            description = "Người dùng gửi lên các thông tin cần thiết để đăng ký tài khoản",
+            description = "Người dùng gửi lên các thông tin cần thiết để đăng ký tài khoản, hệ thống sẽ trả về các thông tin cơ bản",
             summary = "Đăng ký tài khoản",
             responses = {
                     @ApiResponse(
@@ -41,15 +40,26 @@ public class AuthenticationController {
                             responseCode = "405"
                     )
             }
-
     )
     @PostMapping("/register")
-    private ResponseEntity<APIResponse<UserDTO>> register(@Valid @RequestBody RegisterCommand registerCommand) {
-        APIResponse<UserDTO> apiResponse = new APIResponse<>();
-        apiResponse.setResult(userService.saveUser(registerCommand));
-        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+    private ResponseEntity<UserDTO> register(@Valid @RequestBody RegisterCommand registerCommand) {
+        return new ResponseEntity<>(userService.saveUser(registerCommand), HttpStatus.CREATED);
     }
 
+    @Operation(
+            description = "Người dùng gửi lên các thông tin cần thiết để đăng nhập tài khoản, hệ thống sẽ trả về token",
+            summary = "Đăng nhập tài khoản",
+            responses = {
+                    @ApiResponse(
+                            description = "Thành công",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Thông tin không hợp lệ",
+                            responseCode = "405"
+                    )
+            }
+    )
     @PostMapping("/login")
     private ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         return new ResponseEntity<>(authenticationService.authenticate(request), HttpStatus.OK);
