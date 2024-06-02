@@ -1,12 +1,16 @@
 package com.example.foodx_be.controller;
 
-import com.example.foodx_be.dto.RegisterCommand;
-import com.example.foodx_be.dto.UserDTO;
+import com.example.foodx_be.dto.request.AuthenticationRequest;
+import com.example.foodx_be.dto.request.RegisterCommand;
+import com.example.foodx_be.dto.response.AuthenticationResponse;
+import com.example.foodx_be.dto.response.UserDTO;
+import com.example.foodx_be.exception.APIResponse;
+import com.example.foodx_be.service.AuthenticationService;
 import com.example.foodx_be.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,9 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Controller
 @RestController
 @RequestMapping("/auth")
-public class AuthController {
-    @Autowired
+@AllArgsConstructor
+public class AuthenticationController {
     private UserService userService;
+    private AuthenticationService authenticationService;
+
 
     @Operation(
             description = "Người dùng gửi lên các thông tin cần thiết để đăng ký tài khoản",
@@ -38,7 +44,14 @@ public class AuthController {
 
     )
     @PostMapping("/register")
-    private ResponseEntity<UserDTO> register(@Valid @RequestBody RegisterCommand registerCommand) {
-        return new ResponseEntity<>(userService.saveUser(registerCommand), HttpStatus.CREATED);
+    private ResponseEntity<APIResponse<UserDTO>> register(@Valid @RequestBody RegisterCommand registerCommand) {
+        APIResponse<UserDTO> apiResponse = new APIResponse<>();
+        apiResponse.setResult(userService.saveUser(registerCommand));
+        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    private ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+        return new ResponseEntity<>(authenticationService.authenticate(request), HttpStatus.OK);
     }
 }

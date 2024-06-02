@@ -1,32 +1,45 @@
 package com.example.foodx_be.security;
 
-import com.example.foodx_be.security.filter.AuthenticationFilter;
-import com.example.foodx_be.security.filter.ExceptionHandlerFilter;
-import com.example.foodx_be.security.manager.CustomAuthenticationManager;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import javax.crypto.spec.SecretKeySpec;
+
 @Configuration
 @AllArgsConstructor
 public class SecurityConfig {
-    private final CustomAuthenticationManager customAuthenticationManager;
+    private final String[] PUBLIC_POST_ENPOINTS = {"/auth/*", "/restaurants/specification"};
+    private final String[] PUBLIC_GET_ENPOINTS = {"/opentimes/*", "/restaurants/*", "/reviews/*", "/users/*"};
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        AuthenticationFilter authenticationFilter = new AuthenticationFilter(customAuthenticationManager);
-        authenticationFilter.setFilterProcessesUrl("/authenticate");
-        http
-                .csrf(csrf -> csrf.disable())
-                .authorizeRequests(authorizeRequests ->
-                        authorizeRequests
-                                .anyRequest().permitAll()
-                                .and()
-                                .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)
-                                .addFilter(authenticationFilter)
-                );
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
-        return http.build();
+        httpSecurity.authorizeHttpRequests(request ->
+                request.requestMatchers(HttpMethod.POST, PUBLIC_POST_ENPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENPOINTS).permitAll()
+                        .anyRequest().authenticated());
+
+        //decode jwt user gui len trong header
+        httpSecurity.oauth2ResourceServer(oauth2 ->
+                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())));
+
+        return httpSecurity.build();
+    }
+
+    @Bean
+    JwtDecoder jwtDecoder() {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(SecurityConstants.SECRET_KEY.getBytes(), "HS512");
+        return NimbusJwtDecoder.withSecretKey(secretKeySpec)
+                .macAlgorithm(MacAlgorithm.HS512)
+                .build();
     }
 }
