@@ -1,6 +1,5 @@
 package com.example.foodx_be.enity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -30,9 +28,6 @@ public class Tag {
     @Column(name = "tag_description")
     private String tagDescription;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
-    private List<RestaurantTag> restaurantTagList;
 
 
 }

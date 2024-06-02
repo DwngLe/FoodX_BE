@@ -1,6 +1,6 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.*;
+import com.example.foodx_be.dto.response.RestaurantUpdateDTO;
 import com.example.foodx_be.enity.OpenTime;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.UpdateOpenTime;

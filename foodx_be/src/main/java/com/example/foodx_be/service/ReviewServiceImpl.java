@@ -1,7 +1,7 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.AddReviewRestaurantCommand;
-import com.example.foodx_be.dto.ReviewRestaurantDTO;
+import com.example.foodx_be.dto.request.AddReviewRestaurantCommand;
+import com.example.foodx_be.dto.response.ReviewRestaurantDTO;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.Review;
 import com.example.foodx_be.enity.ReviewImage;

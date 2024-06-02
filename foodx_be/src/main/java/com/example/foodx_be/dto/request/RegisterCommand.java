@@ -1,4 +1,4 @@
-package com.example.foodx_be.dto;
+package com.example.foodx_be.dto.request;
 
 import com.example.foodx_be.validation.PasswordMatches;
 import com.example.foodx_be.validation.ValidName;

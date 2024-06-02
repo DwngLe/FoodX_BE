@@ -1,7 +1,7 @@
 package com.example.foodx_be.controller;
 
-import com.example.foodx_be.dto.AddReviewRestaurantCommand;
-import com.example.foodx_be.dto.ReviewRestaurantDTO;
+import com.example.foodx_be.dto.request.AddReviewRestaurantCommand;
+import com.example.foodx_be.dto.response.ReviewRestaurantDTO;
 import com.example.foodx_be.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

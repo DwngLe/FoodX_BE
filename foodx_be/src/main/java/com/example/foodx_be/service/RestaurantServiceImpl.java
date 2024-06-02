@@ -1,6 +1,8 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.*;
+import com.example.foodx_be.dto.request.AddRestaurantCommand;
+import com.example.foodx_be.dto.request.UpdateRestaurantCommand;
+import com.example.foodx_be.dto.response.*;
 import com.example.foodx_be.enity.*;
 import com.example.foodx_be.exception.NoResultsFoundException;
 import com.example.foodx_be.repository.RestaurantRepository;
@@ -117,6 +119,9 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
 
         Page<Restaurant> all = restaurantRepository.findAll(restaurantSpecification, pageable);
+        if (all.getContent().isEmpty()) {
+            throw new NoResultsFoundException();
+        }
         return all.map(this::convertToRestaurantDTO);
     }
 

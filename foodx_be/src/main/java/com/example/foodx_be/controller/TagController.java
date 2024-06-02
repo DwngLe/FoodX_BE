@@ -1,6 +1,6 @@
 package com.example.foodx_be.controller;
 
-import com.example.foodx_be.dto.TagDTO;
+import com.example.foodx_be.dto.response.TagDTO;
 import com.example.foodx_be.service.TagService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -1,6 +1,6 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.TagDTO;
+import com.example.foodx_be.dto.response.TagDTO;
 import com.example.foodx_be.enity.Tag;
 
 import java.util.List;

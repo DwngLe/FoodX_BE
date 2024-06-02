@@ -1,10 +1,8 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.TagDTO;
+import com.example.foodx_be.dto.response.TagDTO;
 import com.example.foodx_be.enity.Tag;
-import com.example.foodx_be.enity.User;
 import com.example.foodx_be.exception.NoResultsFoundException;
-import com.example.foodx_be.exception.UserNotFoundException;
 import com.example.foodx_be.repository.TagRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

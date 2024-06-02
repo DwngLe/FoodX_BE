@@ -1,9 +1,9 @@
 package com.example.foodx_be.controller;
 
-import com.example.foodx_be.dto.BusinessProofDTO;
-import com.example.foodx_be.dto.RestaurantDTO;
-import com.example.foodx_be.dto.RestaurantUpdateDTO;
-import com.example.foodx_be.dto.TagDTO;
+import com.example.foodx_be.dto.response.BusinessProofDTO;
+import com.example.foodx_be.dto.response.RestaurantDTO;
+import com.example.foodx_be.dto.response.RestaurantUpdateDTO;
+import com.example.foodx_be.dto.response.TagDTO;
 import com.example.foodx_be.service.AdminService;
 import com.example.foodx_be.service.BusinessProofService;
 import com.example.foodx_be.service.RestaurantService;

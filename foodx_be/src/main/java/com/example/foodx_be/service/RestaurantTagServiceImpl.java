@@ -1,7 +1,7 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.PageRequestDTO;
-import com.example.foodx_be.dto.RequestDTO;
+import com.example.foodx_be.dto.response.PageRequestDTO;
+import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.RestaurantTag;
 import com.example.foodx_be.enity.Tag;

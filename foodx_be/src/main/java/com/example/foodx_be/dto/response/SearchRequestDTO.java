@@ -1,4 +1,4 @@
-package com.example.foodx_be.dto;
+package com.example.foodx_be.dto.response;
 
 import com.example.foodx_be.ulti.Operation;
 import lombok.AllArgsConstructor;

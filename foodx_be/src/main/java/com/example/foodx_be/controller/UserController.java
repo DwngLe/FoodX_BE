@@ -1,8 +1,8 @@
 package com.example.foodx_be.controller;
 
-import com.example.foodx_be.dto.AddBusinessProofCommand;
-import com.example.foodx_be.dto.UpdateUserComand;
-import com.example.foodx_be.dto.UserDTO;
+import com.example.foodx_be.dto.request.AddBusinessProofCommand;
+import com.example.foodx_be.dto.request.UpdateUserComand;
+import com.example.foodx_be.dto.response.UserDTO;
 import com.example.foodx_be.enity.User;
 import com.example.foodx_be.repository.UserRepository;
 import com.example.foodx_be.service.BusinessProofService;

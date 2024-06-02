@@ -1,9 +1,9 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.RegisterCommand;
-import com.example.foodx_be.dto.UpdateUserComand;
-import com.example.foodx_be.dto.UserBasicInfor;
-import com.example.foodx_be.dto.UserDTO;
+import com.example.foodx_be.dto.request.RegisterCommand;
+import com.example.foodx_be.dto.request.UpdateUserComand;
+import com.example.foodx_be.dto.response.UserBasicInfor;
+import com.example.foodx_be.dto.response.UserDTO;
 import com.example.foodx_be.enity.User;
 import com.example.foodx_be.exception.UserExistedException;
 import com.example.foodx_be.exception.UserNotFoundException;
@@ -14,9 +14,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import java.io.IOException;
 import java.util.*;
@@ -40,12 +40,12 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDTO saveUser(RegisterCommand registerCommand) {
-
-        Optional<User> userRegister = userRepository.findByUsername(registerCommand.getUsername());
-        if(userRegister.isPresent()){
+        if (userRepository.existsByUsername(registerCommand.getUsername())) {
             throw new UserExistedException(registerCommand.getUsername());
         }
         User user = convertToUser(registerCommand);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return convertToDTO(user);

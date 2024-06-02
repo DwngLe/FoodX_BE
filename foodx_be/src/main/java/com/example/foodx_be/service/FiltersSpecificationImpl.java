@@ -1,12 +1,13 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.SearchRequestDTO;
+import com.example.foodx_be.dto.response.SearchRequestDTO;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.RestaurantTag;
 import com.example.foodx_be.enity.Tag;
 import com.example.foodx_be.ulti.GlobalOperator;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.metamodel.Attribute;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class FiltersSpecificationImpl<T> {
 
     public Specification<T> getSearchSpecification(List<SearchRequestDTO> searchRequestDTOList, GlobalOperator operator) {
         return (root, query, criteriaBuilder) -> {
+            for (Attribute<?, ?> attribute : root.getModel().getAttributes()) {
+                System.out.println("Attribute: " + attribute.getName());
+            }
             List<Predicate> predicates = new ArrayList<>();
 
             for (SearchRequestDTO requestDTO : searchRequestDTOList) {
@@ -65,15 +69,15 @@ public class FiltersSpecificationImpl<T> {
                         predicates.add(between);
                         break;
                     case TAG_IN:
-                        // Trường hợp tìm kiếm theo danh sách ID Tag
                         String[] tagIds = requestDTO.getValue().split(", ");
                         List<UUID> uuidList = new ArrayList<>();
                         for (String tagId : tagIds) {
                             uuidList.add(UUID.fromString(tagId));
                         }
-                        Join<Restaurant, RestaurantTag> restaurantTagJoin = root.join("restaurantTagList"); // Join từ thực thể Restaurant tới RestaurantTag
-                        Join<RestaurantTag, Tag> tagJoin = restaurantTagJoin.join("tag"); // Join từ RestaurantTag tới Tag
-                        Predicate tagInPredicate = tagJoin.get("id").in(uuidList);
+
+                        Join<Restaurant, RestaurantTag> tagRestaurantTagJoin = root.join("restaurantTagList");
+                        Join<RestaurantTag, Tag> restaurantJoin = tagRestaurantTagJoin.join("tag");
+                        Predicate tagInPredicate = restaurantJoin.get("id").in(uuidList);
                         predicates.add(tagInPredicate);
                         break;
                     default:

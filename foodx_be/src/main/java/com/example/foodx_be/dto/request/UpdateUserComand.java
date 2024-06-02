@@ -1,4 +1,4 @@
-package com.example.foodx_be.dto;
+package com.example.foodx_be.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

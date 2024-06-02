@@ -1,4 +1,4 @@
-package com.example.foodx_be.dto;
+package com.example.foodx_be.dto.request;
 
 import lombok.Builder;
 import lombok.Data;

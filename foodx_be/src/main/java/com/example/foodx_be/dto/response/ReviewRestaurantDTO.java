@@ -1,4 +1,4 @@
-package com.example.foodx_be.dto;
+package com.example.foodx_be.dto.response;
 
 import com.example.foodx_be.enity.ReviewImage;
 import lombok.Builder;

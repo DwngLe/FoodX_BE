@@ -1,10 +1,9 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.OpenTimeDTO;
+import com.example.foodx_be.dto.response.OpenTimeDTO;
 import com.example.foodx_be.enity.OpenTime;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.repository.OpenTimeRepository;
-import com.example.foodx_be.repository.RestaurantRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

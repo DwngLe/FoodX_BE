@@ -1,5 +1,6 @@
-package com.example.foodx_be.dto;
+package com.example.foodx_be.dto.request;
 
+import com.example.foodx_be.dto.response.OpenTimeDTO;
 import com.example.foodx_be.ulti.RestaurantState;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;

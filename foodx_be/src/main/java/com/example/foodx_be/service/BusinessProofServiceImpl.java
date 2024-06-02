@@ -1,7 +1,7 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.AddBusinessProofCommand;
-import com.example.foodx_be.dto.BusinessProofDTO;
+import com.example.foodx_be.dto.request.AddBusinessProofCommand;
+import com.example.foodx_be.dto.response.BusinessProofDTO;
 import com.example.foodx_be.enity.BusinessProof;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.User;

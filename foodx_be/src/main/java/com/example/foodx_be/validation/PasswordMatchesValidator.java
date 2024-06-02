@@ -1,6 +1,6 @@
 package com.example.foodx_be.validation;
 
-import com.example.foodx_be.dto.RegisterCommand;
+import com.example.foodx_be.dto.request.RegisterCommand;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
