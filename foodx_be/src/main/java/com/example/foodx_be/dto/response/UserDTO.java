@@ -3,6 +3,7 @@ package com.example.foodx_be.dto.response;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,4 +23,5 @@ public class UserDTO {
     private String city;
     private LocalDate jointDate;
     private int points;
+    private Set<String> roles;
 }

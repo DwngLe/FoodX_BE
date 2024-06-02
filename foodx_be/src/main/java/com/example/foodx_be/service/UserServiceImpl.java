@@ -8,6 +8,7 @@ import com.example.foodx_be.enity.User;
 import com.example.foodx_be.exception.UserExistedException;
 import com.example.foodx_be.exception.UserNotFoundException;
 import com.example.foodx_be.repository.UserRepository;
+import com.example.foodx_be.ulti.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -47,6 +48,10 @@ public class UserServiceImpl implements UserService{
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+        user.setRoles(roles);
+
         userRepository.save(user);
         return convertToDTO(user);
     }

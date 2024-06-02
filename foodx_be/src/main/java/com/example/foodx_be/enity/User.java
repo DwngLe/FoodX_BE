@@ -12,6 +12,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -71,12 +72,10 @@ public class User {
     private Role role;
     @Enumerated(EnumType.STRING)
     private AccountState accountState;
+    private Set<String> roles;
 
     @PrePersist
     public void control(){
-        if(role == null){
-            role = Role.USER;
-        }
         if(jointDate == null){
             jointDate = LocalDate.now();
         }
