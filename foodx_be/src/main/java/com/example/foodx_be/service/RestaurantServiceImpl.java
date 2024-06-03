@@ -154,7 +154,10 @@ public class RestaurantServiceImpl implements RestaurantService {
         updateRestaurant.setRestaurant(restaurant);
         updateRestaurantRepository.save(updateRestaurant);
 
-        updateOpenTimeService.saveUpdateOpenTime(updateRestaurantCommand.getOpenTimeList(), updateRestaurant);
+
+        if (updateRestaurantCommand.getOpenTimeList() != null) {
+            updateOpenTimeService.saveUpdateOpenTime(updateRestaurantCommand.getOpenTimeList(), updateRestaurant);
+        }
 
     }
 

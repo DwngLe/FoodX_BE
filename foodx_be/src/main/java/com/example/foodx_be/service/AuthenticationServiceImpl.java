@@ -36,6 +36,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         var token = generateToken(user);
         return AuthenticationResponse.builder()
+                .id(user.getId())
                 .token(token)
                 .authenticated(true)
                 .build();
@@ -46,7 +47,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         //data trong body dc goi la claim
         //claim tieu chuan:
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getUsername())
+                .subject(user.getId().toString())
                 .issuer("DuongLe")//issue tu ai, thuong la domain service
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()))
