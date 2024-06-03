@@ -36,8 +36,6 @@ public class AddRestaurantCommand {
     private Boolean offerDelivery;
     private Boolean offerTakeaway;
     private Boolean outdoorSeating;
-    @NotBlank(message = "User who add this restaurant cannot be empty")
-    private UUID idUser;
     private List<OpenTimeDTO> openTimeList;
     private List<UUID> listIdTag;
 }

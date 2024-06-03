@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -92,9 +94,12 @@ public class UserServiceImpl implements UserService{
         return new PageImpl<>(subList, pageable, userDTOList.size());
     }
 
+    @PostAuthorize("returnObject.id.toString() == authentication.principal.claims['sub']") //phai chuyen UUID ve String
     @Override
     public UserDTO updateUser(UpdateUserComand updateUserComand) {
-        Optional<User> optionalUser = userRepository.findById(updateUserComand.getId());
+        var context = SecurityContextHolder.getContext();
+        UUID idUser = (UUID.fromString(context.getAuthentication().getName()));
+        Optional<User> optionalUser = userRepository.findById(idUser);
         User userOld = unwrapUser(optionalUser);
         User userNew = convertToUser(updateUserComand);
 
@@ -177,6 +182,14 @@ public class UserServiceImpl implements UserService{
         user.setPoints(user.getPoints() + point);
         userRepository.save(user);
         return user;
+    }
+
+    @Override
+    public UserDTO getMyInfo() {
+        var context = SecurityContextHolder.getContext();
+        UUID idUser = UUID.fromString(context.getAuthentication().getName());
+        User user = userRepository.findById(idUser).orElseThrow(() -> new UserNotFoundException());
+        return convertToDTO(user);
     }
 
     @Override

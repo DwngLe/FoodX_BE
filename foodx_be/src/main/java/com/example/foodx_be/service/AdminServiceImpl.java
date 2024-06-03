@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ public class AdminServiceImpl implements AdminService {
     private UpdateRestaurantRepository updateRestaurantRepository;
     private RestaurantRepository restaurantRepository;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public void reviewRestaurantState(UUID idRestaurant, RestaurantState restaurantState) {
         Restaurant restaurantAdd = restaurantService.getRestaurantEnity(idRestaurant);
@@ -38,6 +40,7 @@ public class AdminServiceImpl implements AdminService {
         restaurantRepository.save(restaurantAdd);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public Page<RestaurantUpdateDTO> getRestaurantUpdateList(int pageNo, int limit, UpdateState updateState) {
         List<UpdateRestaurant> updateRestaurantList = updateRestaurantRepository.findAllByUpdateState(updateState);
@@ -57,7 +60,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public void reviewRestaurantUpdate(UUID idRestaurantUpdate, UpdateState updateState) {
         UpdateRestaurant updateRestaurant = unwrarpRestaurant(updateRestaurantRepository.findById(idRestaurantUpdate));

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,7 +57,9 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public void addReview(AddReviewRestaurantCommand reviewCommand, MultipartFile[] multipartFiles) throws IOException {
         //update user and restaurant point
-        User userReview = userService.updateUserPoint(reviewCommand.getIdUser(), POINTS_REVIEW);
+        var context = SecurityContextHolder.getContext();
+        UUID idUser = UUID.fromString(context.getAuthentication().getName());
+        User userReview = userService.updateUserPoint(idUser, POINTS_REVIEW);
         Restaurant restaurant = restaurantService.updateRestaurantPoint(reviewCommand.getRestaurantId(), reviewCommand.getStarNumber(), REVIEW_ADD_COUNT);
 
         //add review

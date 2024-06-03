@@ -8,7 +8,6 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Builder
@@ -39,7 +38,5 @@ public class UpdateRestaurantCommand {
     private Boolean outdoorSeating;
     @NotBlank(message = "Does restaurant is active or not?")
     private RestaurantState restaurantState;
-    @NotBlank(message = "User who update this restaurant cannot be empty")
-    private UUID idUser;
     private List<OpenTimeDTO> openTimeList;
 }

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,7 +33,8 @@ public class BusinessProofServiceImpl implements BusinessProofService {
 
     @Override
     public void addBusinessProof(AddBusinessProofCommand addBusinessProofCommand, MultipartFile multipartFile) throws IOException {
-        User userOwner = userService.getUser(addBusinessProofCommand.getIdUser());
+        var context = SecurityContextHolder.getContext();
+        User userOwner = userService.getUser(UUID.fromString(context.getAuthentication().getName()));
         Restaurant restaurant = restaurantService.getRestaurantEnity(addBusinessProofCommand.getIdRestaurant());
 
         Map result = cloudiaryService.uploadFile(multipartFile, FOLDER_UPLOAD);

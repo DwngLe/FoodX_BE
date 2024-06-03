@@ -9,6 +9,5 @@ import java.util.UUID;
 @Builder
 public class AddBusinessProofCommand {
     private OwnerRole ownerRole;
-    private UUID idUser;
     private UUID idRestaurant;
 }

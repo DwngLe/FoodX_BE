@@ -118,6 +118,12 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/myInfo")
+    public ResponseEntity<UserDTO> getMyInfo() {
+        return new ResponseEntity<>(userService.getMyInfo(), HttpStatus.OK);
+    }
+
+
     @Operation(
             summary = "Gừi yêu cầu xác thực nhà hàng",
             responses = {
@@ -143,7 +149,7 @@ public class UserController {
     @PostMapping("/claimBusiness/{idRestaurant}")
     public ResponseEntity<HttpStatus> addBusinessProof(@PathVariable UUID idRestaurant,
                                                        @RequestPart("data") AddBusinessProofCommand addBusinessProofCommand,
-                                                       @RequestPart MultipartFile multipartFile) throws IOException{
+                                                       @RequestPart(value = "multipartFile") MultipartFile multipartFile) throws IOException {
         addBusinessProofCommand.setIdRestaurant(idRestaurant);
         businessProofService.addBusinessProof(addBusinessProofCommand, multipartFile);
         return  new ResponseEntity<>(HttpStatus.OK);

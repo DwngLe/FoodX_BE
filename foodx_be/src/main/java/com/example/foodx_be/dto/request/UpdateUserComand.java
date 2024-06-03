@@ -5,12 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.UUID;
-
 @Data
 @Builder
 public class UpdateUserComand {
-    private UUID id;
     @NotBlank(message = "Name cannot be empty")
     private String name;
     @NotBlank(message =  "Phone cannot be empty")

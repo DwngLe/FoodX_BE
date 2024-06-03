@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -41,7 +42,8 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public void addRestaurant(AddRestaurantCommand addRestaurantCommand) {
-        User user = userService.getUser(addRestaurantCommand.getIdUser());
+        var context = SecurityContextHolder.getContext();
+        User user = userService.getUser(UUID.fromString(context.getAuthentication().getName()));
         Restaurant restaurant = convertToRestaurantEnity(addRestaurantCommand);
         restaurant.setUserAdd(user);
         restaurantRepository.save(restaurant);
@@ -146,7 +148,8 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public void updateRestaurant(UUID idRestaurant, UpdateRestaurantCommand updateRestaurantCommand) {
-        User userUpdate = userService.getUser(updateRestaurantCommand.getIdUser());
+        var context = SecurityContextHolder.getContext();
+        User userUpdate = userService.getUser(UUID.fromString(context.getAuthentication().getName()));
         Restaurant restaurant = getRestaurantEnity(idRestaurant);
 
         UpdateRestaurant updateRestaurant = convertToUpdateRestaurantEnity(updateRestaurantCommand);
