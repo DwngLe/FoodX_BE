@@ -6,9 +6,12 @@ import com.example.foodx_be.enity.BusinessProof;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.User;
 import com.example.foodx_be.exception.NoResultsFoundException;
+import com.example.foodx_be.mapper.UserMapper;
 import com.example.foodx_be.repository.BusinessProofRepository;
 import com.example.foodx_be.ulti.UpdateState;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -21,13 +24,15 @@ import java.io.IOException;
 import java.util.*;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BusinessProofServiceImpl implements BusinessProofService {
-    private UserService userService;
-    private RestaurantService restaurantService;
-    private CloudiaryService cloudiaryService;
+    UserService userService;
+    RestaurantService restaurantService;
+    CloudiaryService cloudiaryService;
+    UserMapper userMapper;
 
-    private BusinessProofRepository businessProofRepository;
+    BusinessProofRepository businessProofRepository;
 
     private final String FOLDER_UPLOAD = "Business Proof";
 
@@ -113,7 +118,7 @@ public class BusinessProofServiceImpl implements BusinessProofService {
                 .restaurantName(businessProof.getRestaurant().getRestaurantName());
 
         if (businessProof.getUserOwner() != null) {
-            builder.userOwner(userService.convertToDTO(businessProof.getUserOwner()));
+            builder.userOwner(userMapper.toUserResponse(businessProof.getUserOwner()));
         }
         return builder.build();
     }

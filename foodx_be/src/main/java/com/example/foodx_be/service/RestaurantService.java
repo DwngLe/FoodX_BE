@@ -1,7 +1,7 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.request.AddRestaurantCommand;
-import com.example.foodx_be.dto.request.UpdateRestaurantCommand;
+import com.example.foodx_be.dto.request.RestaurantCreationRequest;
+import com.example.foodx_be.dto.request.RestaurantUpdateRequest;
 import com.example.foodx_be.dto.response.LocationDTO;
 import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.dto.response.RestaurantDTO;
@@ -13,7 +13,7 @@ import org.springframework.data.domain.Page;
 import java.util.UUID;
 
 public interface RestaurantService {
-    void addRestaurant(AddRestaurantCommand addRestaurantCommand);
+    void addRestaurant(RestaurantCreationRequest restaurantCreationRequest);
 
     RestaurantDTO getRestaurantDTO(UUID idRestaurant);
 
@@ -27,7 +27,7 @@ public interface RestaurantService {
 
     Page<RestaurantDTO> getNearByRestaurant(RequestDTO requestDTO, LocationDTO locationDTO);
 
-    void updateRestaurant(UUID restaurant, UpdateRestaurantCommand updateRestaurantCommand);
+    void updateRestaurant(UUID restaurant, RestaurantUpdateRequest restaurantUpdateRequest);
 
     void saveRestaurantEnity(Restaurant restaurant);
 

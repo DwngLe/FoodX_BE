@@ -15,7 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @PasswordMatches
-public class RegisterCommand {
+public class UserCreationRequest {
     @ValidUsername
     @NotBlank
     private String username;

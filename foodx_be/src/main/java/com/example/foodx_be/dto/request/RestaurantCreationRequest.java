@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class AddRestaurantCommand {
+public class RestaurantCreationRequest {
     @NotBlank(message = "Name cannot be empty")
     private String restaurantName;
     @NotBlank(message = "House number cannot be empty")

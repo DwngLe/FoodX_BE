@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UpdateUserComand {
+public class UserUpdateRequest {
     @NotBlank(message = "Name cannot be empty")
     private String name;
     @NotBlank(message =  "Phone cannot be empty")

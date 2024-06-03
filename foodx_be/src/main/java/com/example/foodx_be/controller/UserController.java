@@ -1,8 +1,8 @@
 package com.example.foodx_be.controller;
 
 import com.example.foodx_be.dto.request.AddBusinessProofCommand;
-import com.example.foodx_be.dto.request.UpdateUserComand;
-import com.example.foodx_be.dto.response.UserDTO;
+import com.example.foodx_be.dto.request.UserUpdateRequest;
+import com.example.foodx_be.dto.response.UserResponse;
 import com.example.foodx_be.enity.User;
 import com.example.foodx_be.repository.UserRepository;
 import com.example.foodx_be.service.BusinessProofService;
@@ -44,7 +44,7 @@ public class UserController {
 
     )
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> findById(@PathVariable UUID id) {
+    public ResponseEntity<UserResponse> findById(@PathVariable UUID id) {
         return new ResponseEntity<>(userService.getUserByID(id), HttpStatus.OK);
     }
 
@@ -67,8 +67,8 @@ public class UserController {
 
     )
     @PostMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UpdateUserComand updateUserComand) {
-        return new ResponseEntity<>(userService.updateUser(updateUserComand), HttpStatus.OK);
+    public ResponseEntity<UserResponse> updateUser(@RequestBody UserUpdateRequest userUpdateRequest) {
+        return new ResponseEntity<>(userService.updateUser(userUpdateRequest), HttpStatus.OK);
     }
 
 
@@ -87,9 +87,9 @@ public class UserController {
 
     )
     @GetMapping("/search")
-    public ResponseEntity<Page<UserDTO>> findUsersByName(@RequestParam(name = "name") String name,
-                                                         @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
-                                                         @RequestParam(name = "limit", defaultValue = "5") int limit) {
+    public ResponseEntity<Page<UserResponse>> findUsersByName(@RequestParam(name = "name") String name,
+                                                              @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
+                                                              @RequestParam(name = "limit", defaultValue = "5") int limit) {
         return new ResponseEntity<>(userService.getUsersByName(pageNo, limit, name), HttpStatus.OK);
     }
 
@@ -119,7 +119,7 @@ public class UserController {
     }
 
     @GetMapping("/myInfo")
-    public ResponseEntity<UserDTO> getMyInfo() {
+    public ResponseEntity<UserResponse> getMyInfo() {
         return new ResponseEntity<>(userService.getMyInfo(), HttpStatus.OK);
     }
 

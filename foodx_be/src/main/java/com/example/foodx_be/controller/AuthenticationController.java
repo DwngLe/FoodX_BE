@@ -1,9 +1,9 @@
 package com.example.foodx_be.controller;
 
 import com.example.foodx_be.dto.request.AuthenticationRequest;
-import com.example.foodx_be.dto.request.RegisterCommand;
+import com.example.foodx_be.dto.request.UserCreationRequest;
 import com.example.foodx_be.dto.response.AuthenticationResponse;
-import com.example.foodx_be.dto.response.UserDTO;
+import com.example.foodx_be.dto.response.UserResponse;
 import com.example.foodx_be.service.AuthenticationService;
 import com.example.foodx_be.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,8 +42,8 @@ public class AuthenticationController {
             }
     )
     @PostMapping("/register")
-    private ResponseEntity<UserDTO> register(@Valid @RequestBody RegisterCommand registerCommand) {
-        return new ResponseEntity<>(userService.saveUser(registerCommand), HttpStatus.CREATED);
+    private ResponseEntity<UserResponse> register(@Valid @RequestBody UserCreationRequest userCreationRequest) {
+        return new ResponseEntity<>(userService.saveUser(userCreationRequest), HttpStatus.CREATED);
     }
 
     @Operation(

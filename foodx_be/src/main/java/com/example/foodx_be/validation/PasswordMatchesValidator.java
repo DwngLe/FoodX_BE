@@ -1,6 +1,6 @@
 package com.example.foodx_be.validation;
 
-import com.example.foodx_be.dto.request.RegisterCommand;
+import com.example.foodx_be.dto.request.UserCreationRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -12,7 +12,7 @@ public class PasswordMatchesValidator implements ConstraintValidator<PasswordMat
 
     @Override
     public boolean isValid(Object obj, ConstraintValidatorContext context) {
-        RegisterCommand registerCommand = (RegisterCommand) obj;
-        return registerCommand.getPassword().equals(registerCommand.getRepeatPassword());
+        UserCreationRequest userCreationRequest = (UserCreationRequest) obj;
+        return userCreationRequest.getPassword().equals(userCreationRequest.getRepeatPassword());
     }
 }

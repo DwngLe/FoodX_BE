@@ -36,8 +36,8 @@ public class RestaurantDTO {
     private Boolean offerDelivery;
     private Boolean offerTakeaway;
     private Boolean outdoorSeating;
-    private UserBasicInfor userAdd;
-    private UserBasicInfor userUpdate;
+    private UserBasicInforResponse userAdd;
+    private UserBasicInforResponse userUpdate;
     private UpdateState updateState;
     @JsonFormat(pattern = "HH:mm:ss dd:MM:yyyy")
     private LocalDateTime updateTime;

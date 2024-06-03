@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class UpdateRestaurantCommand {
+public class RestaurantUpdateRequest {
     @NotBlank(message = "Name cannot be empty")
     private String restaurantName;
     @NotBlank(message = "House number cannot be empty")

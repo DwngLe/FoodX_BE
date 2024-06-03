@@ -1,7 +1,7 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.request.AddRestaurantCommand;
-import com.example.foodx_be.dto.request.UpdateRestaurantCommand;
+import com.example.foodx_be.dto.request.RestaurantCreationRequest;
+import com.example.foodx_be.dto.request.RestaurantUpdateRequest;
 import com.example.foodx_be.dto.response.*;
 import com.example.foodx_be.enity.*;
 import com.example.foodx_be.exception.NoResultsFoundException;
@@ -41,16 +41,16 @@ public class RestaurantServiceImpl implements RestaurantService {
     private UpdateRestaurantRepository updateRestaurantRepository;
 
     @Override
-    public void addRestaurant(AddRestaurantCommand addRestaurantCommand) {
+    public void addRestaurant(RestaurantCreationRequest restaurantCreationRequest) {
         var context = SecurityContextHolder.getContext();
         User user = userService.getUser(UUID.fromString(context.getAuthentication().getName()));
-        Restaurant restaurant = convertToRestaurantEnity(addRestaurantCommand);
+        Restaurant restaurant = convertToRestaurantEnity(restaurantCreationRequest);
         restaurant.setUserAdd(user);
         restaurantRepository.save(restaurant);
 
-        openTimeService.saveOpenTime(addRestaurantCommand.getOpenTimeList(), restaurant);
+        openTimeService.saveOpenTime(restaurantCreationRequest.getOpenTimeList(), restaurant);
 
-        List<UUID> listID = addRestaurantCommand.getListIdTag();
+        List<UUID> listID = restaurantCreationRequest.getListIdTag();
         for (UUID uuid : listID) {
             Tag tag = tagService.getTagEity(uuid);
             restaurantTagService.saveRestaurantTag(restaurant, tag);
@@ -147,19 +147,19 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public void updateRestaurant(UUID idRestaurant, UpdateRestaurantCommand updateRestaurantCommand) {
+    public void updateRestaurant(UUID idRestaurant, RestaurantUpdateRequest restaurantUpdateRequest) {
         var context = SecurityContextHolder.getContext();
         User userUpdate = userService.getUser(UUID.fromString(context.getAuthentication().getName()));
         Restaurant restaurant = getRestaurantEnity(idRestaurant);
 
-        UpdateRestaurant updateRestaurant = convertToUpdateRestaurantEnity(updateRestaurantCommand);
+        UpdateRestaurant updateRestaurant = convertToUpdateRestaurantEnity(restaurantUpdateRequest);
         updateRestaurant.setUserUpdate(userUpdate);
         updateRestaurant.setRestaurant(restaurant);
         updateRestaurantRepository.save(updateRestaurant);
 
 
-        if (updateRestaurantCommand.getOpenTimeList() != null) {
-            updateOpenTimeService.saveUpdateOpenTime(updateRestaurantCommand.getOpenTimeList(), updateRestaurant);
+        if (restaurantUpdateRequest.getOpenTimeList() != null) {
+            updateOpenTimeService.saveUpdateOpenTime(restaurantUpdateRequest.getOpenTimeList(), updateRestaurant);
         }
 
     }
@@ -192,46 +192,46 @@ public class RestaurantServiceImpl implements RestaurantService {
         else throw new NoResultsFoundException();
     }
 
-    private Restaurant convertToRestaurantEnity(AddRestaurantCommand addRestaurantCommand) {
+    private Restaurant convertToRestaurantEnity(RestaurantCreationRequest restaurantCreationRequest) {
         return Restaurant.builder()
-                .restaurantName(addRestaurantCommand.getRestaurantName())
-                .houseNumber(addRestaurantCommand.getHouseNumber())
-                .ward(addRestaurantCommand.getWard())
-                .district(addRestaurantCommand.getDistrict())
-                .city(addRestaurantCommand.getCity())
-                .longitude(addRestaurantCommand.getLongitude())
-                .latitude(addRestaurantCommand.getLatitude())
-                .description(addRestaurantCommand.getDescription())
-                .phoneNumber(addRestaurantCommand.getPhoneNumber())
-                .email(addRestaurantCommand.getEmail())
-                .website(addRestaurantCommand.getWebsite())
-                .facebookLink(addRestaurantCommand.getFacebookLink())
-                .instagramLink(addRestaurantCommand.getInstagramLink())
-                .offerDelivery(addRestaurantCommand.getOfferDelivery())
-                .outdoorSeating(addRestaurantCommand.getOutdoorSeating())
-                .offerTakeaway(addRestaurantCommand.getOfferTakeaway())
+                .restaurantName(restaurantCreationRequest.getRestaurantName())
+                .houseNumber(restaurantCreationRequest.getHouseNumber())
+                .ward(restaurantCreationRequest.getWard())
+                .district(restaurantCreationRequest.getDistrict())
+                .city(restaurantCreationRequest.getCity())
+                .longitude(restaurantCreationRequest.getLongitude())
+                .latitude(restaurantCreationRequest.getLatitude())
+                .description(restaurantCreationRequest.getDescription())
+                .phoneNumber(restaurantCreationRequest.getPhoneNumber())
+                .email(restaurantCreationRequest.getEmail())
+                .website(restaurantCreationRequest.getWebsite())
+                .facebookLink(restaurantCreationRequest.getFacebookLink())
+                .instagramLink(restaurantCreationRequest.getInstagramLink())
+                .offerDelivery(restaurantCreationRequest.getOfferDelivery())
+                .outdoorSeating(restaurantCreationRequest.getOutdoorSeating())
+                .offerTakeaway(restaurantCreationRequest.getOfferTakeaway())
                 .build();
     }
 
-    private UpdateRestaurant convertToUpdateRestaurantEnity(UpdateRestaurantCommand updateRestaurantCommand) {
+    private UpdateRestaurant convertToUpdateRestaurantEnity(RestaurantUpdateRequest restaurantUpdateRequest) {
         return UpdateRestaurant.builder()
-                .restaurantName(updateRestaurantCommand.getRestaurantName())
-                .houseNumber(updateRestaurantCommand.getHouseNumber())
-                .ward(updateRestaurantCommand.getWard())
-                .district(updateRestaurantCommand.getDistrict())
-                .city(updateRestaurantCommand.getCity())
-                .longitude(updateRestaurantCommand.getLongitude())
-                .latitude(updateRestaurantCommand.getLatitude())
-                .description(updateRestaurantCommand.getDescription())
-                .phoneNumber(updateRestaurantCommand.getPhoneNumber())
-                .email(updateRestaurantCommand.getEmail())
-                .website(updateRestaurantCommand.getWebsite())
-                .facebookLink(updateRestaurantCommand.getFacebookLink())
-                .instagramLink(updateRestaurantCommand.getInstagramLink())
-                .offerDelivery(updateRestaurantCommand.getOfferDelivery())
-                .outdoorSeating(updateRestaurantCommand.getOutdoorSeating())
-                .offerTakeaway(updateRestaurantCommand.getOfferTakeaway())
-                .restaurantState(updateRestaurantCommand.getRestaurantState())
+                .restaurantName(restaurantUpdateRequest.getRestaurantName())
+                .houseNumber(restaurantUpdateRequest.getHouseNumber())
+                .ward(restaurantUpdateRequest.getWard())
+                .district(restaurantUpdateRequest.getDistrict())
+                .city(restaurantUpdateRequest.getCity())
+                .longitude(restaurantUpdateRequest.getLongitude())
+                .latitude(restaurantUpdateRequest.getLatitude())
+                .description(restaurantUpdateRequest.getDescription())
+                .phoneNumber(restaurantUpdateRequest.getPhoneNumber())
+                .email(restaurantUpdateRequest.getEmail())
+                .website(restaurantUpdateRequest.getWebsite())
+                .facebookLink(restaurantUpdateRequest.getFacebookLink())
+                .instagramLink(restaurantUpdateRequest.getInstagramLink())
+                .offerDelivery(restaurantUpdateRequest.getOfferDelivery())
+                .outdoorSeating(restaurantUpdateRequest.getOutdoorSeating())
+                .offerTakeaway(restaurantUpdateRequest.getOfferTakeaway())
+                .restaurantState(restaurantUpdateRequest.getRestaurantState())
                 .build();
     }
 

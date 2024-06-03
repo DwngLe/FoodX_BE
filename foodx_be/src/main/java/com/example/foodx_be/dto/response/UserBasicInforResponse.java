@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class UserBasicInfor {
+public class UserBasicInforResponse {
     private UUID idUser;
     private String name;
     private String avatarLink;

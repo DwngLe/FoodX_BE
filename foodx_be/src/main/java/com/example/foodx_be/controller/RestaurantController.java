@@ -1,7 +1,7 @@
 package com.example.foodx_be.controller;
 
-import com.example.foodx_be.dto.request.AddRestaurantCommand;
-import com.example.foodx_be.dto.request.UpdateRestaurantCommand;
+import com.example.foodx_be.dto.request.RestaurantCreationRequest;
+import com.example.foodx_be.dto.request.RestaurantUpdateRequest;
 import com.example.foodx_be.dto.response.NearbyRequestDTO;
 import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.dto.response.RestaurantDTO;
@@ -37,8 +37,8 @@ public class RestaurantController {
             }
     )
     @PostMapping("")
-    public ResponseEntity<HttpStatus> addRestaurant(@RequestBody AddRestaurantCommand addRestaurantCommand) {
-        restaurantService.addRestaurant(addRestaurantCommand);
+    public ResponseEntity<HttpStatus> addRestaurant(@RequestBody RestaurantCreationRequest restaurantCreationRequest) {
+        restaurantService.addRestaurant(restaurantCreationRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -121,8 +121,8 @@ public class RestaurantController {
     )
     @PostMapping("/{idRestaurant}")
     public ResponseEntity<HttpStatus> updateRestaurant(@PathVariable UUID idRestaurant,
-                                                       @RequestBody UpdateRestaurantCommand updateRestaurantCommand) {
-        restaurantService.updateRestaurant(idRestaurant, updateRestaurantCommand);
+                                                       @RequestBody RestaurantUpdateRequest restaurantUpdateRequest) {
+        restaurantService.updateRestaurant(idRestaurant, restaurantUpdateRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

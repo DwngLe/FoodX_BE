@@ -1,12 +1,13 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.request.RegisterCommand;
-import com.example.foodx_be.dto.request.UpdateUserComand;
-import com.example.foodx_be.dto.response.UserBasicInfor;
-import com.example.foodx_be.dto.response.UserDTO;
+import com.example.foodx_be.dto.request.UserCreationRequest;
+import com.example.foodx_be.dto.request.UserUpdateRequest;
+import com.example.foodx_be.dto.response.UserBasicInforResponse;
+import com.example.foodx_be.dto.response.UserResponse;
 import com.example.foodx_be.enity.User;
 import com.example.foodx_be.exception.UserExistedException;
 import com.example.foodx_be.exception.UserNotFoundException;
+import com.example.foodx_be.mapper.UserMapper;
 import com.example.foodx_be.repository.UserRepository;
 import com.example.foodx_be.ulti.Role;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ import java.util.*;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService{
     private CloudiaryService cloudiaryService;
+    private UserMapper userMapper;
 
     private UserRepository userRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -42,20 +44,18 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserDTO saveUser(RegisterCommand registerCommand) {
-        if (userRepository.existsByUsername(registerCommand.getUsername())) {
-            throw new UserExistedException(registerCommand.getUsername());
+    public UserResponse saveUser(UserCreationRequest userCreationRequest) {
+        if (userRepository.existsByUsername(userCreationRequest.getUsername())) {
+            throw new UserExistedException(userCreationRequest.getUsername());
         }
-        User user = convertToUser(registerCommand);
+        User user = userMapper.toUser(userCreationRequest);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         HashSet<String> roles = new HashSet<>();
         roles.add(Role.USER.name());
         user.setRoles(roles);
-
-        userRepository.save(user);
-        return convertToDTO(user);
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @Override
@@ -71,50 +71,38 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserDTO getUserByID(UUID id) {
+    public UserResponse getUserByID(UUID id) {
         Optional<User> user = userRepository.findById(id);
-        return convertToDTO(unwrapUser(user));
+        return userMapper.toUserResponse(unwrapUser(user));
     }
 
     @Override
-    public Page<UserDTO> getUsersByName(int pageNo, int limit, String name) {
+    public Page<UserResponse> getUsersByName(int pageNo, int limit, String name) {
         List<User> userList = userRepository.findByNameContaining(name);
         if(userList.isEmpty()){
             throw new UserNotFoundException();
         }
-        List<UserDTO> userDTOList = new ArrayList<>();
+        List<UserResponse> userResponseList = new ArrayList<>();
         for (User user : userList) {
-            userDTOList.add(convertToDTO(user));
+            userResponseList.add(userMapper.toUserResponse(user));
         }
         Pageable pageable = PageRequest.of(pageNo, limit);
 
         int startIndex = (int) pageable.getOffset();
-        int endIndex = (int)Math.min(pageable.getOffset() + pageable.getPageSize(), userDTOList.size());
-        List<UserDTO> subList = userDTOList.subList(startIndex, endIndex);
-        return new PageImpl<>(subList, pageable, userDTOList.size());
+        int endIndex = (int) Math.min(pageable.getOffset() + pageable.getPageSize(), userResponseList.size());
+        List<UserResponse> subList = userResponseList.subList(startIndex, endIndex);
+        return new PageImpl<>(subList, pageable, userResponseList.size());
     }
 
     @PostAuthorize("returnObject.id.toString() == authentication.principal.claims['sub']") //phai chuyen UUID ve String
     @Override
-    public UserDTO updateUser(UpdateUserComand updateUserComand) {
+    public UserResponse updateUser(UserUpdateRequest userUpdateRequest) {
         var context = SecurityContextHolder.getContext();
         UUID idUser = (UUID.fromString(context.getAuthentication().getName()));
         Optional<User> optionalUser = userRepository.findById(idUser);
-        User userOld = unwrapUser(optionalUser);
-        User userNew = convertToUser(updateUserComand);
-
-        userOld.setName(userNew.getName());
-        userOld.setPhoneNumber(userNew.getPhoneNumber());
-        userOld.setEmail(userNew.getEmail());
-        userOld.setAvatarLink(userNew.getAvatarLink());
-        userOld.setFacebookLink(userNew.getFacebookLink());
-        userOld.setInstagramLink(userNew.getInstagramLink());
-        userOld.setWard(userNew.getWard());
-        userOld.setDistrict(userNew.getDistrict());
-        userOld.setCity(userNew.getCity());
-
-        userRepository.save(userOld);
-        return convertToDTO(userOld);
+        User user = unwrapUser(optionalUser);
+        userMapper.updateUser(user, userUpdateRequest);
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
 
@@ -124,55 +112,12 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User convertToUser(RegisterCommand userDTO) {
-        return User.builder()
-                .username(userDTO.getUsername())
-                .password(userDTO.getPassword())
-                .name(userDTO.getName())
-                .phoneNumber(userDTO.getPhoneNumber())
-                .email(userDTO.getEmail())
-                .ward(userDTO.getWard())
-                .district(userDTO.getDistrict())
-                .city(userDTO.getCity())
-                .build();
-    }
-
-    @Override
-    public User convertToUser(UserDTO userDTO) {
-        return User.builder()
-                .name(userDTO.getName())
-                .phoneNumber(userDTO.getPhoneNumber())
-                .email(userDTO.getEmail())
-                .avatarLink(userDTO.getAvatarLink())
-                .facebookLink(userDTO.getFacebookLink())
-                .instagramLink(userDTO.getInstagramLink())
-                .ward(userDTO.getWard())
-                .district(userDTO.getDistrict())
-                .city(userDTO.getCity())
-                .build();
-    }
-
-    @Override
-    public UserBasicInfor convertTouserBasicInfor(User user) {
-        return UserBasicInfor.builder()
+    public UserBasicInforResponse convertTouserBasicInfor(User user) {
+        return UserBasicInforResponse.builder()
                 .idUser(user.getId())
                 .name(user.getName())
                 .avatarLink(user.getAvatarLink())
                 .points(user.getPoints())
-                .build();
-    }
-
-    public User convertToUser(UpdateUserComand updateUserComand) {
-        return User.builder()
-                .name(updateUserComand.getName())
-                .phoneNumber(updateUserComand.getPhoneNumber())
-                .email(updateUserComand.getEmail())
-                .avatarLink(updateUserComand.getAvatarLink())
-                .facebookLink(updateUserComand.getFacebookLink())
-                .instagramLink(updateUserComand.getInstagramLink())
-                .ward(updateUserComand.getWard())
-                .district(updateUserComand.getDistrict())
-                .city(updateUserComand.getCity())
                 .build();
     }
 
@@ -185,29 +130,10 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserDTO getMyInfo() {
+    public UserResponse getMyInfo() {
         var context = SecurityContextHolder.getContext();
         UUID idUser = UUID.fromString(context.getAuthentication().getName());
         User user = userRepository.findById(idUser).orElseThrow(() -> new UserNotFoundException());
-        return convertToDTO(user);
+        return userMapper.toUserResponse(user);
     }
-
-    @Override
-    public UserDTO convertToDTO(User user) {
-        return UserDTO.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .phoneNumber(user.getPhoneNumber())
-                .email(user.getEmail())
-                .avatarLink(user.getAvatarLink())
-                .facebookLink(user.getFacebookLink())
-                .instagramLink(user.getInstagramLink())
-                .ward(user.getWard())
-                .district(user.getDistrict())
-                .city(user.getCity())
-                .jointDate(user.getJointDate())
-                .points(user.getPoints())
-                .build();
-    }
-
 }

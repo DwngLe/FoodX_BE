@@ -14,7 +14,7 @@ public class BusinessProofDTO {
     private OwnerRole ownerRole;
     private String businessProofUrl;
     private UpdateState updateState;
-    private UserDTO userOwner;
+    private UserResponse userOwner;
     private UUID idRestaurant;
     private String restaurantName;
 

@@ -10,7 +10,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class UserDTO {
+public class UserResponse {
     private UUID id;
     private String name;
     private String phoneNumber;

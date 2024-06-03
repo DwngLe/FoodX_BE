@@ -1,10 +1,10 @@
 package com.example.foodx_be.service;
 
 
-import com.example.foodx_be.dto.request.RegisterCommand;
-import com.example.foodx_be.dto.request.UpdateUserComand;
-import com.example.foodx_be.dto.response.UserBasicInfor;
-import com.example.foodx_be.dto.response.UserDTO;
+import com.example.foodx_be.dto.request.UserCreationRequest;
+import com.example.foodx_be.dto.request.UserUpdateRequest;
+import com.example.foodx_be.dto.response.UserBasicInforResponse;
+import com.example.foodx_be.dto.response.UserResponse;
 import com.example.foodx_be.enity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,28 +13,22 @@ import java.io.IOException;
 import java.util.UUID;
 
 public interface UserService {
-    UserDTO saveUser(RegisterCommand registerCommand);
+    UserResponse saveUser(UserCreationRequest userCreationRequest);
 
     User getUser(String username);
     User getUser(UUID idUser);
 
-    UserDTO getUserByID(UUID id);
+    UserResponse getUserByID(UUID id);
 
-    Page<UserDTO> getUsersByName(int pageNo, int limit, String name);
+    Page<UserResponse> getUsersByName(int pageNo, int limit, String name);
 
-    UserDTO updateUser(UpdateUserComand updateUserComand);
+    UserResponse updateUser(UserUpdateRequest userUpdateRequest);
 
     void updateUserAvatar(UUID idUser, MultipartFile multipartFile) throws IOException;
 
-    UserDTO convertToDTO(User user);
+    UserBasicInforResponse convertTouserBasicInfor(User user);
 
-    User convertToUser(RegisterCommand registerCommand);
-
-    User convertToUser(UserDTO userDTO);
-    UserBasicInfor convertTouserBasicInfor(User user);
-
-    User convertToUser(UpdateUserComand updateUserComand);
     User updateUserPoint(UUID idUser, int point);
 
-    UserDTO getMyInfo();
+    UserResponse getMyInfo();
 }
