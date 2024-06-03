@@ -1,4 +1,4 @@
-package com.example.foodx_be.security;
+package com.example.foodx_be.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

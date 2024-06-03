@@ -5,7 +5,8 @@ import com.example.foodx_be.dto.response.BusinessProofDTO;
 import com.example.foodx_be.enity.BusinessProof;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.User;
-import com.example.foodx_be.exception.NoResultsFoundException;
+import com.example.foodx_be.exception.AppException;
+import com.example.foodx_be.exception.ErrorCode;
 import com.example.foodx_be.mapper.UserMapper;
 import com.example.foodx_be.repository.BusinessProofRepository;
 import com.example.foodx_be.ulti.UpdateState;
@@ -79,7 +80,7 @@ public class BusinessProofServiceImpl implements BusinessProofService {
     public Page<BusinessProofDTO> getListBusinessProofByState(int pageNo, int limit, UpdateState state) {
         List<BusinessProof> businessProofList = businessProofRepository.findAllByUpdateState(state);
         if (businessProofList.isEmpty()) {
-            throw new NoResultsFoundException();
+            throw new AppException(ErrorCode.BUSINESS_NOT_EXISTED);
         }
         return convertListBusinessProofToPage(businessProofList, pageNo, limit);
     }
@@ -100,7 +101,7 @@ public class BusinessProofServiceImpl implements BusinessProofService {
 
     static BusinessProof unwrapBusinessProof(Optional<BusinessProof> entity) {
         if (entity.isPresent()) return entity.get();
-        else throw new NoResultsFoundException();
+        else throw new AppException(ErrorCode.BUSINESS_NOT_EXISTED);
     }
 
     @Override

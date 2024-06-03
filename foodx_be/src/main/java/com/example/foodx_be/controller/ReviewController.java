@@ -2,13 +2,12 @@ package com.example.foodx_be.controller;
 
 import com.example.foodx_be.dto.request.AddReviewRestaurantCommand;
 import com.example.foodx_be.dto.response.ReviewRestaurantDTO;
+import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,10 +40,10 @@ public class ReviewController {
 
     )
     @PostMapping("")
-    public ResponseEntity<HttpStatus> addReview(@RequestPart("data") AddReviewRestaurantCommand addReviewCommand,
-                                                @RequestPart(value = "multipartFiles", required = false) MultipartFile[] multipartFiles) throws IOException {
+    public APIResponse<Void> addReview(@RequestPart("data") AddReviewRestaurantCommand addReviewCommand,
+                                       @RequestPart(value = "multipartFiles", required = false) MultipartFile[] multipartFiles) throws IOException {
         reviewService.addReview(addReviewCommand, multipartFiles);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return APIResponse.<Void>builder().build();
     }
 
     @Operation(
@@ -63,10 +62,12 @@ public class ReviewController {
 
     )
     @GetMapping("/{idRestaurant}")
-    public ResponseEntity<Page<ReviewRestaurantDTO>> getListReviewOfRestaurant(@PathVariable UUID idRestaurant,
+    public APIResponse<Page<ReviewRestaurantDTO>> getListReviewOfRestaurant(@PathVariable UUID idRestaurant,
                                                                                @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
                                                                                @RequestParam(name = "limit", defaultValue = "5") int limit) {
-        return new ResponseEntity<>(reviewService.getListReviewOfRestaurant(pageNo, limit, idRestaurant), HttpStatus.OK);
+        return APIResponse.<Page<ReviewRestaurantDTO>>builder()
+                .result(reviewService.getListReviewOfRestaurant(pageNo, limit, idRestaurant))
+                .build();
     }
 
     @Operation(
@@ -84,9 +85,11 @@ public class ReviewController {
             }
     )
     @GetMapping("/recent")
-    public ResponseEntity<List<ReviewRestaurantDTO>> getListRecentReview(@RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
+    public APIResponse<List<ReviewRestaurantDTO>> getListRecentReview(@RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
                                                                          @RequestParam(name = "limit", defaultValue = "5") int limit) {
-        return new ResponseEntity<>(reviewService.getListRecentReview(pageNo, limit), HttpStatus.OK);
+        return APIResponse.<List<ReviewRestaurantDTO>>builder()
+                .result(reviewService.getListRecentReview(pageNo, limit))
+                .build();
 
     }
 }

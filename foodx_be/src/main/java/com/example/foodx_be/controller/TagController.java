@@ -1,12 +1,11 @@
 package com.example.foodx_be.controller;
 
 import com.example.foodx_be.dto.response.TagDTO;
+import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.TagService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +33,9 @@ public class TagController {
 
     )
     @GetMapping("")
-    public ResponseEntity<List<TagDTO>> getListTag(){
-        return new ResponseEntity<>(tagService.getListTag(), HttpStatus.OK);
+    public APIResponse<List<TagDTO>> getListTag() {
+        return APIResponse.<List<TagDTO>>builder()
+                .result(tagService.getListTag())
+                .build();
     }
 }

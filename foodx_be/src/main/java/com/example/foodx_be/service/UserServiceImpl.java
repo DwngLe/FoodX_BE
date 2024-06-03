@@ -5,8 +5,8 @@ import com.example.foodx_be.dto.request.UserUpdateRequest;
 import com.example.foodx_be.dto.response.UserBasicInforResponse;
 import com.example.foodx_be.dto.response.UserResponse;
 import com.example.foodx_be.enity.User;
-import com.example.foodx_be.exception.UserExistedException;
-import com.example.foodx_be.exception.UserNotFoundException;
+import com.example.foodx_be.exception.AppException;
+import com.example.foodx_be.exception.ErrorCode;
 import com.example.foodx_be.mapper.UserMapper;
 import com.example.foodx_be.repository.UserRepository;
 import com.example.foodx_be.ulti.Role;
@@ -18,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,10 +45,9 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserResponse saveUser(UserCreationRequest userCreationRequest) {
         if (userRepository.existsByUsername(userCreationRequest.getUsername())) {
-            throw new UserExistedException(userCreationRequest.getUsername());
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
         User user = userMapper.toUser(userCreationRequest);
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         HashSet<String> roles = new HashSet<>();
@@ -80,7 +78,7 @@ public class UserServiceImpl implements UserService{
     public Page<UserResponse> getUsersByName(int pageNo, int limit, String name) {
         List<User> userList = userRepository.findByNameContaining(name);
         if(userList.isEmpty()){
-            throw new UserNotFoundException();
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
         }
         List<UserResponse> userResponseList = new ArrayList<>();
         for (User user : userList) {
@@ -108,7 +106,7 @@ public class UserServiceImpl implements UserService{
 
     static User unwrapUser(Optional<User> entity) {
         if (entity.isPresent()) return entity.get();
-        else throw new UserNotFoundException();
+        else throw new AppException(ErrorCode.USER_NOT_EXISTED);
     }
 
     @Override
@@ -133,7 +131,7 @@ public class UserServiceImpl implements UserService{
     public UserResponse getMyInfo() {
         var context = SecurityContextHolder.getContext();
         UUID idUser = UUID.fromString(context.getAuthentication().getName());
-        User user = userRepository.findById(idUser).orElseThrow(() -> new UserNotFoundException());
+        User user = userRepository.findById(idUser).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return userMapper.toUserResponse(user);
     }
 }

@@ -4,6 +4,7 @@ import com.example.foodx_be.dto.response.BusinessProofDTO;
 import com.example.foodx_be.dto.response.RestaurantDTO;
 import com.example.foodx_be.dto.response.RestaurantUpdateDTO;
 import com.example.foodx_be.dto.response.TagDTO;
+import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.AdminService;
 import com.example.foodx_be.service.BusinessProofService;
 import com.example.foodx_be.service.RestaurantService;
@@ -15,8 +16,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,10 +51,12 @@ public class AdminController {
 
     )
     @GetMapping("/reviewUpdates")
-    public ResponseEntity<Page<RestaurantUpdateDTO>> getUpdateRestaurantList(@RequestParam UpdateState updateState,
+    public APIResponse<Page<RestaurantUpdateDTO>> getUpdateRestaurantList(@RequestParam UpdateState updateState,
                                                                              @RequestParam int pageNo,
                                                                              @RequestParam int limit) {
-        return new ResponseEntity<>(adminService.getRestaurantUpdateList(pageNo, limit, updateState), HttpStatus.OK);
+        return APIResponse.<Page<RestaurantUpdateDTO>>builder()
+                .result(adminService.getRestaurantUpdateList(pageNo, limit, updateState))
+                .build();
     }
 
     @Operation(
@@ -78,10 +79,10 @@ public class AdminController {
 
     )
     @PostMapping("/reviewUpdates/{idUpdate}")
-    public ResponseEntity<HttpStatus> reviewRestaurantUpdate(@PathVariable UUID idUpdate,
+    public APIResponse<Void> reviewRestaurantUpdate(@PathVariable UUID idUpdate,
                                                              @RequestParam UpdateState updateState) {
         adminService.reviewRestaurantUpdate(idUpdate, updateState);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return APIResponse.<Void>builder().build();
     }
 
     @Operation(
@@ -104,10 +105,10 @@ public class AdminController {
 
     )
     @PostMapping("/restaurants/{idRestaurant}/updateState")
-    public ResponseEntity<HttpStatus> reviewRestaurantUpdate(@PathVariable UUID idRestaurant,
+    public APIResponse<Void> reviewRestaurantUpdate(@PathVariable UUID idRestaurant,
                                                              @RequestParam RestaurantState restaurantState) {
         adminService.reviewRestaurantState(idRestaurant, restaurantState);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return APIResponse.<Void>builder().build();
     }
 
     @Operation(
@@ -130,10 +131,12 @@ public class AdminController {
 
     )
     @GetMapping("/restaurants")
-    public ResponseEntity<Page<RestaurantDTO>> getRestaurantByRestaurantState(@RequestParam RestaurantState restaurantState,
+    public APIResponse<Page<RestaurantDTO>> getRestaurantByRestaurantState(@RequestParam RestaurantState restaurantState,
                                                                               @RequestParam(defaultValue = "0") int pageNo,
                                                                               @RequestParam(defaultValue = "10") int limit) {
-        return new ResponseEntity<>(restaurantService.getRestaurantByRestaurantState(pageNo, limit, restaurantState), HttpStatus.OK);
+        return APIResponse.<Page<RestaurantDTO>>builder()
+                .result(restaurantService.getRestaurantByRestaurantState(pageNo, limit, restaurantState))
+                .build();
     }
 
     @Operation(
@@ -156,10 +159,12 @@ public class AdminController {
 
     )
     @GetMapping("/businessProofs")
-    public ResponseEntity<Page<BusinessProofDTO>> getListBusinessProofByState(@RequestParam UpdateState state,
+    public APIResponse<Page<BusinessProofDTO>> getListBusinessProofByState(@RequestParam UpdateState state,
                                                                               @RequestParam int pageNo,
                                                                               @RequestParam int limit) {
-        return new ResponseEntity<>(businessProofService.getListBusinessProofByState(pageNo, limit, state), HttpStatus.OK);
+        return APIResponse.<Page<BusinessProofDTO>>builder()
+                .result(businessProofService.getListBusinessProofByState(pageNo, limit, state))
+                .build();
     }
 
     @Operation(
@@ -182,8 +187,10 @@ public class AdminController {
 
     )
     @GetMapping("/businessProofs/{idBusinessProof}")
-    public ResponseEntity<BusinessProofDTO> getBusinessProof(@PathVariable UUID idBusinessProof) {
-        return new ResponseEntity<>(businessProofService.getBusinessProof(idBusinessProof), HttpStatus.OK);
+    public APIResponse<BusinessProofDTO> getBusinessProof(@PathVariable UUID idBusinessProof) {
+        return APIResponse.<BusinessProofDTO>builder()
+                .result(businessProofService.getBusinessProof(idBusinessProof))
+                .build();
     }
 
     @Operation(
@@ -206,10 +213,10 @@ public class AdminController {
 
     )
     @PostMapping("/businessProofs/{idBusinessProof}")
-    public ResponseEntity<HttpStatus> reviewBusinessProof(@PathVariable UUID idBusinessProof,
+    public APIResponse<Void> reviewBusinessProof(@PathVariable UUID idBusinessProof,
                                                           @RequestParam UpdateState updateState) {
         businessProofService.reviewBusinessProof(idBusinessProof, updateState);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return APIResponse.<Void>builder().build();
     }
 
     @Operation(
@@ -228,9 +235,9 @@ public class AdminController {
 
     )
     @PostMapping("/tags")
-    public ResponseEntity<HttpStatus> addTag(@RequestBody List<TagDTO> tagDTOList) {
+    public APIResponse<Void> addTag(@RequestBody List<TagDTO> tagDTOList) {
         tagService.addTag(tagDTOList);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return APIResponse.<Void>builder().build();
     }
 
 

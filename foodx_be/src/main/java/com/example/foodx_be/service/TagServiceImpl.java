@@ -2,7 +2,8 @@ package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.response.TagDTO;
 import com.example.foodx_be.enity.Tag;
-import com.example.foodx_be.exception.NoResultsFoundException;
+import com.example.foodx_be.exception.AppException;
+import com.example.foodx_be.exception.ErrorCode;
 import com.example.foodx_be.repository.TagRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -62,5 +63,5 @@ public class TagServiceImpl implements TagService{
 
     static Tag unwrapUser(Optional<Tag> entity) {
         if (entity.isPresent()) return entity.get();
-        else throw new NoResultsFoundException();
+        else throw new AppException(ErrorCode.TAG_NOT_EXISTED);
     }}

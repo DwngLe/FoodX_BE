@@ -4,14 +4,13 @@ import com.example.foodx_be.dto.request.AuthenticationRequest;
 import com.example.foodx_be.dto.request.UserCreationRequest;
 import com.example.foodx_be.dto.response.AuthenticationResponse;
 import com.example.foodx_be.dto.response.UserResponse;
+import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.AuthenticationService;
 import com.example.foodx_be.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,8 +41,10 @@ public class AuthenticationController {
             }
     )
     @PostMapping("/register")
-    private ResponseEntity<UserResponse> register(@Valid @RequestBody UserCreationRequest userCreationRequest) {
-        return new ResponseEntity<>(userService.saveUser(userCreationRequest), HttpStatus.CREATED);
+    private APIResponse<UserResponse> register(@Valid @RequestBody UserCreationRequest userCreationRequest) {
+        return APIResponse.<UserResponse>builder()
+                .result(userService.saveUser(userCreationRequest))
+                .build();
     }
 
     @Operation(
@@ -61,7 +62,9 @@ public class AuthenticationController {
             }
     )
     @PostMapping("/login")
-    private ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        return new ResponseEntity<>(authenticationService.authenticate(request), HttpStatus.OK);
+    private APIResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+        return APIResponse.<AuthenticationResponse>builder()
+                .result(authenticationService.authenticate(request))
+                .build();
     }
 }

@@ -12,9 +12,14 @@ public enum ErrorCode {
     USERNAME_INVALID(1003, "Username must be at least {min} characters", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(1004, "Password must be at least {min} characters", HttpStatus.BAD_REQUEST),
     USER_NOT_EXISTED(1005, "User not existed", HttpStatus.NOT_FOUND),
-    UNAUTHENTICATED(1006, "UnAuthenticatedException", HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(1007, "You do not have permission", HttpStatus.FORBIDDEN),
-    INVALID_DOB(1008, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
+    TAG_NOT_EXISTED(1006, "Restaurant's tag not existed", HttpStatus.NOT_FOUND),
+
+    RESTAURANT_NOT_EXISTED(1006, "Restaurant not existed", HttpStatus.NOT_FOUND),
+    BUSINESS_NOT_EXISTED(1007, "Business not existed", HttpStatus.NOT_FOUND),
+
+    UNAUTHENTICATED(2000, "Cannot Authenticated", HttpStatus.UNAUTHORIZED),
+    UNAUTHORIZED(2001, "You do not have permission", HttpStatus.FORBIDDEN),
+    INVALID_DOB(3008, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

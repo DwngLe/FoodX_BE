@@ -6,7 +6,8 @@ import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.Review;
 import com.example.foodx_be.enity.ReviewImage;
 import com.example.foodx_be.enity.User;
-import com.example.foodx_be.exception.NoResultsFoundException;
+import com.example.foodx_be.exception.AppException;
+import com.example.foodx_be.exception.ErrorCode;
 import com.example.foodx_be.repository.ReviewImageRepository;
 import com.example.foodx_be.repository.ReviewRepository;
 import lombok.AllArgsConstructor;
@@ -45,7 +46,7 @@ public class ReviewServiceImpl implements ReviewService {
         Pageable pageable = PageRequest.of(pageNo, limit);
         List<Review> reviewList = reviewRepository.findAllByOrderByReviewDateDesc(pageable);
         if (reviewList.isEmpty()) {
-            throw new NoResultsFoundException();
+            throw new AppException(ErrorCode.RESTAURANT_NOT_EXISTED);
         }
         List<ReviewRestaurantDTO> reviewRestaurantDTOList = new ArrayList<>();
         for (Review review : reviewList) {
@@ -92,7 +93,7 @@ public class ReviewServiceImpl implements ReviewService {
     public Page<ReviewRestaurantDTO> getListReviewOfRestaurant(int pageNo, int limit, UUID idRestaurant) {
         List<Review> reviewList = reviewRepository.findAllByRestaurantId(idRestaurant);
         if (reviewList.isEmpty()) {
-            throw new NoResultsFoundException();
+            throw new AppException(ErrorCode.RESTAURANT_NOT_EXISTED);
         }
         List<ReviewRestaurantDTO> reviewRestaurantDTOList = new ArrayList<>();
         for (Review review : reviewList) {

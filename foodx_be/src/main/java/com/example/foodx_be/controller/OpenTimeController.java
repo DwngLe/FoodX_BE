@@ -1,12 +1,11 @@
 package com.example.foodx_be.controller;
 
 import com.example.foodx_be.dto.response.OpenTimeDTO;
+import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.OpenTimeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,8 +36,10 @@ public class OpenTimeController {
 
     )
     @GetMapping("/{idRestaurant}")
-    public ResponseEntity<List<OpenTimeDTO>> getOpenTimeOfRestaurant(@PathVariable UUID idRestaurant){
-        return new ResponseEntity<>(openTimeService.getOpenTimeOfRestaurant(idRestaurant) ,HttpStatus.OK);
+    public APIResponse<List<OpenTimeDTO>> getOpenTimeOfRestaurant(@PathVariable UUID idRestaurant) {
+        return APIResponse.<List<OpenTimeDTO>>builder()
+                .result(openTimeService.getOpenTimeOfRestaurant(idRestaurant))
+                .build();
     }
 
 

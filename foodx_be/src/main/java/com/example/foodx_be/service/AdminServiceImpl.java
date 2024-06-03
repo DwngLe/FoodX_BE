@@ -5,7 +5,8 @@ import com.example.foodx_be.enity.OpenTime;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.UpdateOpenTime;
 import com.example.foodx_be.enity.UpdateRestaurant;
-import com.example.foodx_be.exception.NoResultsFoundException;
+import com.example.foodx_be.exception.AppException;
+import com.example.foodx_be.exception.ErrorCode;
 import com.example.foodx_be.repository.RestaurantRepository;
 import com.example.foodx_be.repository.UpdateRestaurantRepository;
 import com.example.foodx_be.ulti.RestaurantState;
@@ -45,7 +46,7 @@ public class AdminServiceImpl implements AdminService {
     public Page<RestaurantUpdateDTO> getRestaurantUpdateList(int pageNo, int limit, UpdateState updateState) {
         List<UpdateRestaurant> updateRestaurantList = updateRestaurantRepository.findAllByUpdateState(updateState);
         if (updateRestaurantList.isEmpty()) {
-            throw new NoResultsFoundException();
+            throw new AppException(ErrorCode.RESTAURANT_NOT_EXISTED);
         }
         List<RestaurantUpdateDTO> restaurantUpdateDTOList = new ArrayList<>();
         for (UpdateRestaurant updateRestaurant : updateRestaurantList) {
@@ -70,7 +71,7 @@ public class AdminServiceImpl implements AdminService {
                 updateFromRestaurantUpdate(updateRestaurant, restaurant);
                 restaurantRepository.save(restaurant);
             } catch (Exception e) {
-                throw new NoResultsFoundException();
+                throw new AppException(ErrorCode.RESTAURANT_NOT_EXISTED);
             }
         }
         updateRestaurant.setUpdateState(updateState);
@@ -80,7 +81,7 @@ public class AdminServiceImpl implements AdminService {
 
     static UpdateRestaurant unwrarpRestaurant(Optional<UpdateRestaurant> entity) {
         if (entity.isPresent()) return entity.get();
-        else throw new NoResultsFoundException();
+        else throw new AppException(ErrorCode.RESTAURANT_NOT_EXISTED);
     }
 
 

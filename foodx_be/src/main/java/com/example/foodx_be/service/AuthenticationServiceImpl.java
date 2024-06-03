@@ -3,8 +3,8 @@ package com.example.foodx_be.service;
 import com.example.foodx_be.dto.request.AuthenticationRequest;
 import com.example.foodx_be.dto.response.AuthenticationResponse;
 import com.example.foodx_be.enity.User;
-import com.example.foodx_be.exception.UnAuthenticatedException;
-import com.example.foodx_be.exception.UserNotFoundException;
+import com.example.foodx_be.exception.AppException;
+import com.example.foodx_be.exception.ErrorCode;
 import com.example.foodx_be.repository.UserRepository;
 import com.example.foodx_be.security.SecurityConstants;
 import com.nimbusds.jose.*;
@@ -29,10 +29,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
         var user = userRepository.findByUsername(authenticationRequest.getUsername())
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         Boolean authenticated = bCryptPasswordEncoder.matches(authenticationRequest.getPassword(), user.getPassword());
         if (!authenticated) {
-            throw new UnAuthenticatedException();
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
         var token = generateToken(user);
         return AuthenticationResponse.builder()

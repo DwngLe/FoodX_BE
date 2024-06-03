@@ -4,7 +4,8 @@ import com.example.foodx_be.dto.request.RestaurantCreationRequest;
 import com.example.foodx_be.dto.request.RestaurantUpdateRequest;
 import com.example.foodx_be.dto.response.*;
 import com.example.foodx_be.enity.*;
-import com.example.foodx_be.exception.NoResultsFoundException;
+import com.example.foodx_be.exception.AppException;
+import com.example.foodx_be.exception.ErrorCode;
 import com.example.foodx_be.repository.RestaurantRepository;
 import com.example.foodx_be.repository.UpdateRestaurantRepository;
 import com.example.foodx_be.ulti.BoundingBoxCalculator;
@@ -90,7 +91,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
         Page<Restaurant> all = restaurantRepository.findAll(restaurantSpecification, pageable);
         if (all.getContent().isEmpty()) {
-            throw new NoResultsFoundException();
+            throw new AppException(ErrorCode.RESTAURANT_NOT_EXISTED);
         }
         return all.map(this::convertToRestaurantDTO);
     }
@@ -102,7 +103,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
         List<Restaurant> restaurantList = restaurantRepository.findAllByRestaurantState(restaurantState);
         if (restaurantList.isEmpty()) {
-            throw new NoResultsFoundException();
+            throw new AppException(ErrorCode.RESTAURANT_NOT_EXISTED);
         }
         return converListRestaurantEnityToPage(restaurantList, pageNo, limit);
     }
@@ -122,7 +123,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
         Page<Restaurant> all = restaurantRepository.findAll(restaurantSpecification, pageable);
         if (all.getContent().isEmpty()) {
-            throw new NoResultsFoundException();
+            throw new AppException(ErrorCode.RESTAURANT_NOT_EXISTED);
         }
         return all.map(this::convertToRestaurantDTO);
     }
@@ -189,7 +190,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     static Restaurant unwrarpRestaurant(Optional<Restaurant> entity) {
         if (entity.isPresent()) return entity.get();
-        else throw new NoResultsFoundException();
+        else throw new AppException(ErrorCode.RESTAURANT_NOT_EXISTED);
     }
 
     private Restaurant convertToRestaurantEnity(RestaurantCreationRequest restaurantCreationRequest) {

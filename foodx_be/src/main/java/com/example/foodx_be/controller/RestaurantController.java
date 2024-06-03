@@ -6,13 +6,12 @@ import com.example.foodx_be.dto.response.NearbyRequestDTO;
 import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.dto.response.RestaurantDTO;
 import com.example.foodx_be.enity.RestaurantTag;
+import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.RestaurantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -37,9 +36,9 @@ public class RestaurantController {
             }
     )
     @PostMapping("")
-    public ResponseEntity<HttpStatus> addRestaurant(@RequestBody RestaurantCreationRequest restaurantCreationRequest) {
+    public APIResponse<Void> addRestaurant(@RequestBody RestaurantCreationRequest restaurantCreationRequest) {
         restaurantService.addRestaurant(restaurantCreationRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return APIResponse.<Void>builder().build();
     }
 
     @Operation(
@@ -57,8 +56,10 @@ public class RestaurantController {
 
     )
     @GetMapping("/{idRestaurant}")
-    public ResponseEntity<RestaurantDTO> getRestaurant(@PathVariable UUID idRestaurant) {
-        return new ResponseEntity<>(restaurantService.getRestaurantDTO(idRestaurant), HttpStatus.OK);
+    public APIResponse<RestaurantDTO> getRestaurant(@PathVariable UUID idRestaurant) {
+        return APIResponse.<RestaurantDTO>builder()
+                .result(restaurantService.getRestaurantDTO(idRestaurant))
+                .build();
     }
 
     @Operation(
@@ -76,8 +77,10 @@ public class RestaurantController {
             }
     )
     @PostMapping("/specification")
-    public ResponseEntity<Page<RestaurantDTO>> getRestaurants(@RequestBody RequestDTO requestDTO) {
-        return new ResponseEntity<>(restaurantService.getRestaurantBySpecification(requestDTO), HttpStatus.OK);
+    public APIResponse<Page<RestaurantDTO>> getRestaurants(@RequestBody RequestDTO requestDTO) {
+        return APIResponse.<Page<RestaurantDTO>>builder()
+                .result(restaurantService.getRestaurantBySpecification(requestDTO))
+                .build();
     }
 
     @Operation(
@@ -96,8 +99,10 @@ public class RestaurantController {
     )
     //for testing purpose
     @PostMapping("/search/tag")
-    public ResponseEntity<Page<RestaurantTag>> getRestaurantsByTag(@RequestBody RequestDTO requestDTO) {
-        return new ResponseEntity<>(restaurantService.getListRestaurantByTag(requestDTO), HttpStatus.OK);
+    public APIResponse<Page<RestaurantTag>> getRestaurantsByTag(@RequestBody RequestDTO requestDTO) {
+        return APIResponse.<Page<RestaurantTag>>builder()
+                .result(restaurantService.getListRestaurantByTag(requestDTO))
+                .build();
     }
 
     @Operation(
@@ -120,10 +125,10 @@ public class RestaurantController {
 
     )
     @PostMapping("/{idRestaurant}")
-    public ResponseEntity<HttpStatus> updateRestaurant(@PathVariable UUID idRestaurant,
+    public APIResponse<Void> updateRestaurant(@PathVariable UUID idRestaurant,
                                                        @RequestBody RestaurantUpdateRequest restaurantUpdateRequest) {
         restaurantService.updateRestaurant(idRestaurant, restaurantUpdateRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return APIResponse.<Void>builder().build();
     }
 
     @Operation(
@@ -142,7 +147,9 @@ public class RestaurantController {
 
     )
     @PostMapping("/nearby")
-    public ResponseEntity<Page<RestaurantDTO>> getRestaurantNearBy(@RequestBody NearbyRequestDTO nearbyRequestDTO) {
-        return new ResponseEntity<>(restaurantService.getNearByRestaurant(nearbyRequestDTO.getRequestDTO(), nearbyRequestDTO.getLocationDTO()), HttpStatus.OK);
+    public APIResponse<Page<RestaurantDTO>> getRestaurantNearBy(@RequestBody NearbyRequestDTO nearbyRequestDTO) {
+        return APIResponse.<Page<RestaurantDTO>>builder()
+                .result(restaurantService.getNearByRestaurant(nearbyRequestDTO.getRequestDTO(), nearbyRequestDTO.getLocationDTO()))
+                .build();
     }
 }

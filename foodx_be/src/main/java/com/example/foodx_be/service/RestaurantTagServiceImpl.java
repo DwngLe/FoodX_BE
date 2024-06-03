@@ -5,7 +5,8 @@ import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.RestaurantTag;
 import com.example.foodx_be.enity.Tag;
-import com.example.foodx_be.exception.NoResultsFoundException;
+import com.example.foodx_be.exception.AppException;
+import com.example.foodx_be.exception.ErrorCode;
 import com.example.foodx_be.repository.RestaurantTagRepository;
 import com.example.foodx_be.ulti.GlobalOperator;
 import lombok.AllArgsConstructor;
@@ -47,7 +48,7 @@ public class RestaurantTagServiceImpl implements RestaurantTagService {
 
         Page<RestaurantTag> all = restaurantTagRepository.findAll(restaurantSpecification, pageable);
         if (all.getContent().isEmpty()) {
-            throw new NoResultsFoundException();
+            throw new AppException(ErrorCode.TAG_NOT_EXISTED);
         }
 
         return all;

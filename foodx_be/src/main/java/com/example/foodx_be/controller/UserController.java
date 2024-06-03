@@ -4,6 +4,7 @@ import com.example.foodx_be.dto.request.AddBusinessProofCommand;
 import com.example.foodx_be.dto.request.UserUpdateRequest;
 import com.example.foodx_be.dto.response.UserResponse;
 import com.example.foodx_be.enity.User;
+import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.repository.UserRepository;
 import com.example.foodx_be.service.BusinessProofService;
 import com.example.foodx_be.service.FiltersSpecificationImpl;
@@ -12,8 +13,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,8 +43,10 @@ public class UserController {
 
     )
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> findById(@PathVariable UUID id) {
-        return new ResponseEntity<>(userService.getUserByID(id), HttpStatus.OK);
+    public APIResponse<UserResponse> findById(@PathVariable UUID id) {
+        return APIResponse.<UserResponse>builder()
+                .result(userService.getUserByID(id))
+                .build();
     }
 
     @Operation(
@@ -67,8 +68,10 @@ public class UserController {
 
     )
     @PostMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@RequestBody UserUpdateRequest userUpdateRequest) {
-        return new ResponseEntity<>(userService.updateUser(userUpdateRequest), HttpStatus.OK);
+    public APIResponse<UserResponse> updateUser(@RequestBody UserUpdateRequest userUpdateRequest) {
+        return APIResponse.<UserResponse>builder()
+                .result(userService.updateUser(userUpdateRequest))
+                .build();
     }
 
 
@@ -87,10 +90,12 @@ public class UserController {
 
     )
     @GetMapping("/search")
-    public ResponseEntity<Page<UserResponse>> findUsersByName(@RequestParam(name = "name") String name,
+    public APIResponse<Page<UserResponse>> findUsersByName(@RequestParam(name = "name") String name,
                                                               @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
                                                               @RequestParam(name = "limit", defaultValue = "5") int limit) {
-        return new ResponseEntity<>(userService.getUsersByName(pageNo, limit, name), HttpStatus.OK);
+        return APIResponse.<Page<UserResponse>>builder()
+                .result(userService.getUsersByName(pageNo, limit, name))
+                .build();
     }
 
     @Operation(
@@ -112,15 +117,18 @@ public class UserController {
 
     )
     @PostMapping("/avatar/{idUser}")
-    public ResponseEntity<HttpStatus> updateUserAvatar(@RequestParam MultipartFile multipartFile,
+    public APIResponse<Void> updateUserAvatar(@RequestParam MultipartFile multipartFile,
                                                        @PathVariable UUID idUser) throws IOException {
         userService.updateUserAvatar(idUser, multipartFile);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return APIResponse.<Void>builder()
+                .build();
     }
 
     @GetMapping("/myInfo")
-    public ResponseEntity<UserResponse> getMyInfo() {
-        return new ResponseEntity<>(userService.getMyInfo(), HttpStatus.OK);
+    public APIResponse<UserResponse> getMyInfo() {
+        return APIResponse.<UserResponse>builder()
+                .result(userService.getMyInfo())
+                .build();
     }
 
 
@@ -147,12 +155,13 @@ public class UserController {
 
     )
     @PostMapping("/claimBusiness/{idRestaurant}")
-    public ResponseEntity<HttpStatus> addBusinessProof(@PathVariable UUID idRestaurant,
+    public APIResponse<Void> addBusinessProof(@PathVariable UUID idRestaurant,
                                                        @RequestPart("data") AddBusinessProofCommand addBusinessProofCommand,
                                                        @RequestPart(value = "multipartFile") MultipartFile multipartFile) throws IOException {
         addBusinessProofCommand.setIdRestaurant(idRestaurant);
         businessProofService.addBusinessProof(addBusinessProofCommand, multipartFile);
-        return  new ResponseEntity<>(HttpStatus.OK);
+        return APIResponse.<Void>builder()
+                .build();
     }
 
 
