@@ -1,6 +1,6 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.request.AddBusinessProofCommand;
+import com.example.foodx_be.dto.request.BusinessProofCreationRequest;
 import com.example.foodx_be.dto.response.BusinessProofDTO;
 import com.example.foodx_be.enity.BusinessProof;
 import com.example.foodx_be.ulti.UpdateState;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 public interface BusinessProofService {
-    void addBusinessProof(AddBusinessProofCommand addBusinessProofCommand, MultipartFile multipartFile) throws IOException;
+    void addBusinessProof(BusinessProofCreationRequest businessProofCreationRequest, MultipartFile multipartFile) throws IOException;
 
     Page<BusinessProofDTO> getListBusinessProofByState(int pageNo, int limit, UpdateState state);
 

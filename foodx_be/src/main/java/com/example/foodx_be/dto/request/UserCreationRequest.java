@@ -1,10 +1,10 @@
 package com.example.foodx_be.dto.request;
 
-import com.example.foodx_be.validation.PasswordMatches;
 import com.example.foodx_be.validation.ValidName;
 import com.example.foodx_be.validation.ValidUsername;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,14 +14,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@PasswordMatches
 public class UserCreationRequest {
-    @ValidUsername
+    @ValidUsername(message = "INVALID_USERNAME")
     @NotBlank
+    @Size(min = 5, message = "INVALID_USERNAME")
     private String username;
     @NotBlank(message = "Password cannot be empty")
+    @Size(min = 8, message = "INVALID_PASSWORD")
     private String password;
-    @NotBlank(message = "Repeat Password cannot be empty")
+    @NotBlank(message = "REPEAT_PASSWORD_CANNOT_BE_EMPTY")
     private String repeatPassword;
     @ValidName
     @NotBlank(message = "Name cannot be empty")

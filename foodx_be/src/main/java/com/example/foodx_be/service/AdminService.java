@@ -11,4 +11,5 @@ public interface AdminService {
     Page<RestaurantUpdateDTO> getRestaurantUpdateList(int pageNo, int limit, UpdateState updateState);
     void reviewRestaurantUpdate(UUID idRestaurantUpdate, UpdateState updateState);
     void reviewRestaurantState(UUID idRestaurant, RestaurantState restaurantState);
+
 }

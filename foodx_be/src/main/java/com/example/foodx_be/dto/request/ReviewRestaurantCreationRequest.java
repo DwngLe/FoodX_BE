@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class AddReviewRestaurantCommand {
+public class ReviewRestaurantCreationRequest {
     private String reviewTitle;
     private String reviewContent;
     private Double starNumber;

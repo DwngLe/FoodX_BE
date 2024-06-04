@@ -1,6 +1,6 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.request.AddBusinessProofCommand;
+import com.example.foodx_be.dto.request.BusinessProofCreationRequest;
 import com.example.foodx_be.dto.response.BusinessProofDTO;
 import com.example.foodx_be.enity.BusinessProof;
 import com.example.foodx_be.enity.Restaurant;
@@ -38,10 +38,10 @@ public class BusinessProofServiceImpl implements BusinessProofService {
     private final String FOLDER_UPLOAD = "Business Proof";
 
     @Override
-    public void addBusinessProof(AddBusinessProofCommand addBusinessProofCommand, MultipartFile multipartFile) throws IOException {
+    public void addBusinessProof(BusinessProofCreationRequest businessProofCreationRequest, MultipartFile multipartFile) throws IOException {
         var context = SecurityContextHolder.getContext();
         User userOwner = userService.getUser(UUID.fromString(context.getAuthentication().getName()));
-        Restaurant restaurant = restaurantService.getRestaurantEnity(addBusinessProofCommand.getIdRestaurant());
+        Restaurant restaurant = restaurantService.getRestaurantEnity(businessProofCreationRequest.getIdRestaurant());
 
         Map result = cloudiaryService.uploadFile(multipartFile, FOLDER_UPLOAD);
 
@@ -49,7 +49,7 @@ public class BusinessProofServiceImpl implements BusinessProofService {
         businessProof.setUserOwner(userOwner);
         businessProof.setRestaurant(restaurant);
         businessProof.setUpdateState(UpdateState.PENDING);
-        businessProof.setOwnerRole(addBusinessProofCommand.getOwnerRole());
+        businessProof.setOwnerRole(businessProofCreationRequest.getOwnerRole());
         businessProof.setBusinessProofUrl((String) result.get("url"));
 
         businessProofRepository.save(businessProof);

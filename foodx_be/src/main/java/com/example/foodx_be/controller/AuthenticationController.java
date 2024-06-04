@@ -1,12 +1,16 @@
 package com.example.foodx_be.controller;
 
 import com.example.foodx_be.dto.request.AuthenticationRequest;
+import com.example.foodx_be.dto.request.IntrospectRequest;
+import com.example.foodx_be.dto.request.LogoutRequest;
 import com.example.foodx_be.dto.request.UserCreationRequest;
 import com.example.foodx_be.dto.response.AuthenticationResponse;
+import com.example.foodx_be.dto.response.IntrospectResponse;
 import com.example.foodx_be.dto.response.UserResponse;
 import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.AuthenticationService;
 import com.example.foodx_be.service.UserService;
+import com.nimbusds.jose.JOSEException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -16,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.ParseException;
 
 @Controller
 @RestController
@@ -66,5 +72,18 @@ public class AuthenticationController {
         return APIResponse.<AuthenticationResponse>builder()
                 .result(authenticationService.authenticate(request))
                 .build();
+    }
+
+    @PostMapping("/logout")
+    private APIResponse<Void> logout(@RequestBody LogoutRequest logoutRequest) throws ParseException, JOSEException {
+        authenticationService.logout(logoutRequest);
+        return APIResponse.<Void>builder().build();
+    }
+
+    @PostMapping("/introspect")
+    private APIResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request)
+            throws ParseException, JOSEException {
+        var result = authenticationService.introspect(request);
+        return APIResponse.<IntrospectResponse>builder().result(result).build();
     }
 }

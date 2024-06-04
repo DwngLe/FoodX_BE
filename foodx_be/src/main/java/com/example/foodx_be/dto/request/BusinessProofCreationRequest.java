@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.UUID;
 @Data
 @Builder
-public class AddBusinessProofCommand {
+public class BusinessProofCreationRequest {
     private OwnerRole ownerRole;
     private UUID idRestaurant;
 }

@@ -1,6 +1,6 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.request.AddReviewRestaurantCommand;
+import com.example.foodx_be.dto.request.ReviewRestaurantCreationRequest;
 import com.example.foodx_be.dto.response.ReviewRestaurantDTO;
 import com.example.foodx_be.enity.Review;
 import org.springframework.data.domain.Page;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ReviewService {
-    void addReview(AddReviewRestaurantCommand reviewCommand, MultipartFile[] multipartFiles) throws IOException;
+    void addReview(ReviewRestaurantCreationRequest reviewCommand, MultipartFile[] multipartFiles) throws IOException;
 
     Review getReview(UUID id);
 

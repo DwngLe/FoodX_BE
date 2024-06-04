@@ -1,6 +1,6 @@
 package com.example.foodx_be.controller;
 
-import com.example.foodx_be.dto.request.AddReviewRestaurantCommand;
+import com.example.foodx_be.dto.request.ReviewRestaurantCreationRequest;
 import com.example.foodx_be.dto.response.ReviewRestaurantDTO;
 import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.ReviewService;
@@ -40,7 +40,7 @@ public class ReviewController {
 
     )
     @PostMapping("")
-    public APIResponse<Void> addReview(@RequestPart("data") AddReviewRestaurantCommand addReviewCommand,
+    public APIResponse<Void> addReview(@RequestPart("data") ReviewRestaurantCreationRequest addReviewCommand,
                                        @RequestPart(value = "multipartFiles", required = false) MultipartFile[] multipartFiles) throws IOException {
         reviewService.addReview(addReviewCommand, multipartFiles);
         return APIResponse.<Void>builder().build();

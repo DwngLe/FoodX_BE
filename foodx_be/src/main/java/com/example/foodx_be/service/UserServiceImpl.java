@@ -47,6 +47,9 @@ public class UserServiceImpl implements UserService{
         if (userRepository.existsByUsername(userCreationRequest.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
+        if (!userCreationRequest.getPassword().equals(userCreationRequest.getRepeatPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_MISS_MATCH);
+        }
         User user = userMapper.toUser(userCreationRequest);
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));

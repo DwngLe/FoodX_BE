@@ -1,6 +1,6 @@
 package com.example.foodx_be.controller;
 
-import com.example.foodx_be.dto.request.AddBusinessProofCommand;
+import com.example.foodx_be.dto.request.BusinessProofCreationRequest;
 import com.example.foodx_be.dto.request.UserUpdateRequest;
 import com.example.foodx_be.dto.response.UserResponse;
 import com.example.foodx_be.enity.User;
@@ -156,10 +156,10 @@ public class UserController {
     )
     @PostMapping("/claimBusiness/{idRestaurant}")
     public APIResponse<Void> addBusinessProof(@PathVariable UUID idRestaurant,
-                                                       @RequestPart("data") AddBusinessProofCommand addBusinessProofCommand,
+                                              @RequestPart("data") BusinessProofCreationRequest businessProofCreationRequest,
                                                        @RequestPart(value = "multipartFile") MultipartFile multipartFile) throws IOException {
-        addBusinessProofCommand.setIdRestaurant(idRestaurant);
-        businessProofService.addBusinessProof(addBusinessProofCommand, multipartFile);
+        businessProofCreationRequest.setIdRestaurant(idRestaurant);
+        businessProofService.addBusinessProof(businessProofCreationRequest, multipartFile);
         return APIResponse.<Void>builder()
                 .build();
     }

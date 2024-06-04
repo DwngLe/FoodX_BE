@@ -1,6 +1,6 @@
 package com.example.foodx_be.service;
 
-import com.example.foodx_be.dto.request.AddReviewRestaurantCommand;
+import com.example.foodx_be.dto.request.ReviewRestaurantCreationRequest;
 import com.example.foodx_be.dto.response.ReviewRestaurantDTO;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.Review;
@@ -56,7 +56,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void addReview(AddReviewRestaurantCommand reviewCommand, MultipartFile[] multipartFiles) throws IOException {
+    public void addReview(ReviewRestaurantCreationRequest reviewCommand, MultipartFile[] multipartFiles) throws IOException {
         //update user and restaurant point
         var context = SecurityContextHolder.getContext();
         UUID idUser = UUID.fromString(context.getAuthentication().getName());
@@ -107,7 +107,7 @@ public class ReviewServiceImpl implements ReviewService {
         return new PageImpl<>(subList, pageable, reviewRestaurantDTOList.size());
     }
 
-    public Review converToReviewEnity(AddReviewRestaurantCommand addReviewCommand) {
+    public Review converToReviewEnity(ReviewRestaurantCreationRequest addReviewCommand) {
         return Review.builder()
                 .reviewTitle(addReviewCommand.getReviewTitle())
                 .reviewContent(addReviewCommand.getReviewContent())
