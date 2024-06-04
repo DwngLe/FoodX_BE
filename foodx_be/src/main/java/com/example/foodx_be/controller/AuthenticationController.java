@@ -1,9 +1,6 @@
 package com.example.foodx_be.controller;
 
-import com.example.foodx_be.dto.request.AuthenticationRequest;
-import com.example.foodx_be.dto.request.IntrospectRequest;
-import com.example.foodx_be.dto.request.LogoutRequest;
-import com.example.foodx_be.dto.request.UserCreationRequest;
+import com.example.foodx_be.dto.request.*;
 import com.example.foodx_be.dto.response.AuthenticationResponse;
 import com.example.foodx_be.dto.response.IntrospectResponse;
 import com.example.foodx_be.dto.response.UserResponse;
@@ -85,5 +82,12 @@ public class AuthenticationController {
             throws ParseException, JOSEException {
         var result = authenticationService.introspect(request);
         return APIResponse.<IntrospectResponse>builder().result(result).build();
+    }
+
+    @PostMapping("/refresh")
+    private APIResponse<AuthenticationResponse> refreshToken(@RequestBody RefeshRequest request) throws ParseException, JOSEException {
+        return APIResponse.<AuthenticationResponse>builder()
+                .result(authenticationService.refeshToken(request))
+                .build();
     }
 }

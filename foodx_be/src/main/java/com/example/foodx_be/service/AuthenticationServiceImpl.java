@@ -3,6 +3,7 @@ package com.example.foodx_be.service;
 import com.example.foodx_be.dto.request.AuthenticationRequest;
 import com.example.foodx_be.dto.request.IntrospectRequest;
 import com.example.foodx_be.dto.request.LogoutRequest;
+import com.example.foodx_be.dto.request.RefeshRequest;
 import com.example.foodx_be.dto.response.AuthenticationResponse;
 import com.example.foodx_be.dto.response.IntrospectResponse;
 import com.example.foodx_be.enity.InvalidatedToken;
@@ -41,7 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
-        var signToken = verifyToken(request.getToken());
+        var signToken = verifyToken(request.getToken(), true);
         String tokenID = signToken.getJWTClaimsSet().getJWTID();
         Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
 
@@ -53,10 +54,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public SignedJWT verifyToken(String token) throws JOSEException, ParseException {
+    public SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
         JWSVerifier jwsVerifier = new MACVerifier(SecurityConstants.SECRET_KEY.getBytes());
         SignedJWT signedJWT = SignedJWT.parse(token);
-        Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+        Date expiryTime = isRefresh ? new Date(signedJWT.getJWTClaimsSet().getIssueTime().toInstant().plus(SecurityConstants.REFESHABLE_DURATION, ChronoUnit.MINUTES).toEpochMilli())
+                : signedJWT.getJWTClaimsSet().getExpirationTime();
 
         var verified = signedJWT.verify(jwsVerifier);
 
@@ -76,13 +78,36 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var token = introspectRequest.getToken();
         boolean isValid = true;
         try {
-            verifyToken(token);
+            verifyToken(token, false);
         } catch (AppException e) {
             isValid = false;
         }
         return IntrospectResponse.builder()
                 .isValid(isValid)
                 .build();
+    }
+
+    @Override
+    public AuthenticationResponse refeshToken(RefeshRequest request) throws ParseException, JOSEException {
+        var signToken = verifyToken(request.getToken(), true);
+
+        Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
+        String tokenID = signToken.getJWTClaimsSet().getJWTID();
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(tokenID)
+                .expiryTime(expiryTime)
+                .build();
+        invalidatedTokenRepository.save(invalidatedToken);
+
+        UUID idUser = UUID.fromString(signToken.getJWTClaimsSet().getSubject());
+        var user = userRepository.findById(idUser).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        var token = generateToken(user);
+        return AuthenticationResponse.builder()
+                .token(token)
+                .authenticated(true)
+                .build();
+
+
     }
 
     @Override
@@ -109,7 +134,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .subject(user.getId().toString())
                 .issuer("DuongLe")//issue tu ai, thuong la domain service
                 .issueTime(new Date())
-                .expirationTime(new Date(Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()))
+                .expirationTime(new Date(Instant.now().plus(SecurityConstants.VALID_DURATION, ChronoUnit.MINUTES).toEpochMilli()))
                 .claim("scope", buildScope(user))
                 .jwtID(UUID.randomUUID().toString())
                 .build();
