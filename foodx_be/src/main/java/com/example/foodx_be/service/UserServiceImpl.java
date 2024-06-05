@@ -96,6 +96,7 @@ public class UserServiceImpl implements UserService{
         UUID idUser = (UUID.fromString(context.getAuthentication().getName()));
         Optional<User> optionalUser = userRepository.findById(idUser);
         User user = unwrapUser(optionalUser);
+
         userMapper.updateUser(user, userUpdateRequest);
         return userMapper.toUserResponse(userRepository.save(user));
     }

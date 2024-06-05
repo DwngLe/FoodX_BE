@@ -6,6 +6,7 @@ import com.example.foodx_be.exception.AppException;
 import com.example.foodx_be.exception.ErrorCode;
 import com.example.foodx_be.repository.TagRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class TagServiceImpl implements TagService{
         return convertToListTagDTO(tagRepository.findAll());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public void addTag(List<TagDTO> tagDTOList) {
         for(TagDTO tagDTO : tagDTOList){

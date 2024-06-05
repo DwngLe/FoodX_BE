@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,6 +57,7 @@ public class BusinessProofServiceImpl implements BusinessProofService {
 
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public void reviewBusinessProof(UUID idBusinessProof, UpdateState updateState) {
         Optional<BusinessProof> businessProofOptional = businessProofRepository.findById(idBusinessProof);
@@ -69,6 +71,7 @@ public class BusinessProofServiceImpl implements BusinessProofService {
         businessProofRepository.save(businessProof);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public BusinessProofDTO getBusinessProof(UUID idBusinessProof) {
         Optional<BusinessProof> businessProofOptional = businessProofRepository.findById(idBusinessProof);
@@ -76,6 +79,7 @@ public class BusinessProofServiceImpl implements BusinessProofService {
         return convertToBusinessProofDTO(businessProof);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public Page<BusinessProofDTO> getListBusinessProofByState(int pageNo, int limit, UpdateState state) {
         List<BusinessProof> businessProofList = businessProofRepository.findAllByUpdateState(state);
