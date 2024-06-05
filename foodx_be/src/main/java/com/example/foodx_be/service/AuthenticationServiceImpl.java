@@ -2,7 +2,6 @@ package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.request.AuthenticationRequest;
 import com.example.foodx_be.dto.request.IntrospectRequest;
-import com.example.foodx_be.dto.request.LogoutRequest;
 import com.example.foodx_be.dto.request.RefeshRequest;
 import com.example.foodx_be.dto.response.AuthenticationResponse;
 import com.example.foodx_be.dto.response.IntrospectResponse;
@@ -18,6 +17,7 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -40,9 +40,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     UserRepository userRepository;
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    HttpServletRequest request;
+
     @Override
-    public void logout(LogoutRequest request) throws ParseException, JOSEException {
-        var signToken = verifyToken(request.getToken(), true);
+    public void logout() throws ParseException, JOSEException {
+        String token = extractJwtFromRequest(request);
+        var signToken = verifyToken(token, true);
         String tokenID = signToken.getJWTClaimsSet().getJWTID();
         Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
 
@@ -158,5 +161,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             user.getRoles().forEach(stringJoiner::add);
         }
         return stringJoiner.toString();
+    }
+
+    private String extractJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7); // Cắt bỏ "Bearer "
+        }
+        return null;
     }
 }

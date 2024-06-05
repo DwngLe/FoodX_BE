@@ -1,6 +1,9 @@
 package com.example.foodx_be.controller;
 
-import com.example.foodx_be.dto.request.*;
+import com.example.foodx_be.dto.request.AuthenticationRequest;
+import com.example.foodx_be.dto.request.IntrospectRequest;
+import com.example.foodx_be.dto.request.RefeshRequest;
+import com.example.foodx_be.dto.request.UserCreationRequest;
 import com.example.foodx_be.dto.response.AuthenticationResponse;
 import com.example.foodx_be.dto.response.IntrospectResponse;
 import com.example.foodx_be.dto.response.UserResponse;
@@ -72,8 +75,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
-    private APIResponse<Void> logout(@RequestBody LogoutRequest logoutRequest) throws ParseException, JOSEException {
-        authenticationService.logout(logoutRequest);
+    private APIResponse<Void> logout() throws ParseException, JOSEException {
+        authenticationService.logout();
         return APIResponse.<Void>builder().build();
     }
 
