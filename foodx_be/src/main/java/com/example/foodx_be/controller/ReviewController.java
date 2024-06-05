@@ -1,6 +1,7 @@
 package com.example.foodx_be.controller;
 
 import com.example.foodx_be.dto.request.ReviewRestaurantCreationRequest;
+import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.dto.response.ReviewRestaurantDTO;
 import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.ReviewService;
@@ -13,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
@@ -61,12 +61,10 @@ public class ReviewController {
             }
 
     )
-    @GetMapping("/{idRestaurant}")
-    public APIResponse<Page<ReviewRestaurantDTO>> getListReviewOfRestaurant(@PathVariable UUID idRestaurant,
-                                                                               @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
-                                                                               @RequestParam(name = "limit", defaultValue = "5") int limit) {
+    @PostMapping("/specification")
+    public APIResponse<Page<ReviewRestaurantDTO>> getListReview(@RequestBody RequestDTO requestDTO) {
         return APIResponse.<Page<ReviewRestaurantDTO>>builder()
-                .result(reviewService.getListReviewOfRestaurant(pageNo, limit, idRestaurant))
+                .result(reviewService.getListReviewBySpecification(requestDTO))
                 .build();
     }
 

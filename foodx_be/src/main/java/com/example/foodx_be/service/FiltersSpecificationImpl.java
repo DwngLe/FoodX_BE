@@ -1,13 +1,11 @@
 package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.response.SearchRequestDTO;
-import com.example.foodx_be.enity.Restaurant;
-import com.example.foodx_be.enity.RestaurantTag;
-import com.example.foodx_be.enity.Tag;
+import com.example.foodx_be.enity.*;
 import com.example.foodx_be.ulti.GlobalOperator;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.metamodel.Attribute;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -23,9 +21,6 @@ public class FiltersSpecificationImpl<T> {
 
     public Specification<T> getSearchSpecification(List<SearchRequestDTO> searchRequestDTOList, GlobalOperator operator) {
         return (root, query, criteriaBuilder) -> {
-            for (Attribute<?, ?> attribute : root.getModel().getAttributes()) {
-                System.out.println("Attribute: " + attribute.getName());
-            }
             List<Predicate> predicates = new ArrayList<>();
 
             for (SearchRequestDTO requestDTO : searchRequestDTOList) {
@@ -84,6 +79,53 @@ public class FiltersSpecificationImpl<T> {
                         throw new IllegalStateException("Unexpected value: " + requestDTO.getOperation());
                 }
             }
+            if (operator.equals(GlobalOperator.AND)) {
+                return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            } else {
+                return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
+            }
+        };
+    }
+
+    public Specification<Review> getReviewSpecification(List<SearchRequestDTO> searchRequestDTOList, GlobalOperator operator) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            Join<Review, User> userJoin = root.join("user", JoinType.LEFT);
+            Join<Review, Restaurant> restaurantJoin = root.join("restaurant", JoinType.LEFT);
+            for (SearchRequestDTO requestDTO : searchRequestDTOList) {
+                switch (requestDTO.getOperation()) {
+                    case EQUAL:
+                        if ("userId".equalsIgnoreCase(requestDTO.getColumn())) {
+                            predicates.add(criteriaBuilder.equal(userJoin.get("id"), UUID.fromString(requestDTO.getValue())));
+                        } else if ("restaurantId".equalsIgnoreCase(requestDTO.getColumn())) {
+                            predicates.add(criteriaBuilder.equal(restaurantJoin.get("id"), UUID.fromString(requestDTO.getValue())));
+                        } else {
+                            predicates.add(criteriaBuilder.equal(root.get(requestDTO.getColumn()), requestDTO.getValue()));
+                        }
+                        break;
+                    case IN:
+                        String[] splitForIn = requestDTO.getValue().split(", ");
+                        Predicate in = root.get(requestDTO.getColumn()).in(Arrays.asList(splitForIn));
+                        predicates.add(in);
+                        break;
+                    case LESS_THAN:
+                        Predicate lessThan = criteriaBuilder.lessThan(root.get(requestDTO.getColumn()), requestDTO.getValue());
+                        predicates.add(lessThan);
+                        break;
+                    case GREATER_THAN:
+                        Predicate greaterThan = criteriaBuilder.greaterThan(root.get(requestDTO.getColumn()), requestDTO.getValue());
+                        predicates.add(greaterThan);
+                        break;
+                    case BETWEEN:
+                        String[] splitForBetween = requestDTO.getValue().split(", ");
+                        Predicate between = criteriaBuilder.between(root.get(requestDTO.getColumn()), new BigDecimal(Double.parseDouble(splitForBetween[0])), new BigDecimal(Double.parseDouble(splitForBetween[1])));
+                        predicates.add(between);
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + requestDTO.getOperation());
+                }
+            }
+
             if (operator.equals(GlobalOperator.AND)) {
                 return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
             } else {

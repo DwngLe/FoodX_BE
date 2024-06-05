@@ -18,7 +18,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
     private CustomJwtDecoder jwtDecoder;
-    private final String[] PUBLIC_POST_ENPOINTS = {"/auth/*", "/restaurants/specification"};
+    private final String[] PUBLIC_POST_ENPOINTS = {"/auth/*", "/restaurants/specification", "/restaurants/nearby", "/reviews/specification"};
     private final String[] PUBLIC_GET_ENPOINTS = {"/opentimes/*", "/restaurants/*", "/reviews/*", "/users/*"};
 
     @Bean

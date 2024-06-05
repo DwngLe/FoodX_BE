@@ -16,6 +16,7 @@ public enum ErrorCode {
 
     RESTAURANT_NOT_EXISTED(1006, "Restaurant not existed", HttpStatus.NOT_FOUND),
     BUSINESS_NOT_EXISTED(1007, "Business not existed", HttpStatus.NOT_FOUND),
+    REVIEW_NOT_EXISTED(1008, "Cannot find any review", HttpStatus.NOT_FOUND),
 
     UNAUTHENTICATED(2000, "Cannot Authenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(2001, "You do not have permission", HttpStatus.FORBIDDEN),

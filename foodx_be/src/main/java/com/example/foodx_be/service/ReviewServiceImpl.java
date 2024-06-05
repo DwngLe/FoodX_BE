@@ -1,6 +1,8 @@
 package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.request.ReviewRestaurantCreationRequest;
+import com.example.foodx_be.dto.response.PageRequestDTO;
+import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.dto.response.ReviewRestaurantDTO;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.Review;
@@ -10,11 +12,12 @@ import com.example.foodx_be.exception.AppException;
 import com.example.foodx_be.exception.ErrorCode;
 import com.example.foodx_be.repository.ReviewImageRepository;
 import com.example.foodx_be.repository.ReviewRepository;
+import com.example.foodx_be.ulti.GlobalOperator;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +35,7 @@ public class ReviewServiceImpl implements ReviewService {
     private UserService userService;
     private RestaurantService restaurantService;
     private CloudiaryService cloudiaryService;
+    private FiltersSpecificationImpl<Review> specification;
 
     private ReviewRepository reviewRepository;
     private ReviewImageRepository reviewImageRepository;
@@ -84,27 +88,17 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
 
-    @Override
-    public Review getReview(UUID id) {
-        return reviewRepository.getOne(id);
-    }
 
     @Override
-    public Page<ReviewRestaurantDTO> getListReviewOfRestaurant(int pageNo, int limit, UUID idRestaurant) {
-        List<Review> reviewList = reviewRepository.findAllByRestaurantId(idRestaurant);
-        if (reviewList.isEmpty()) {
-            throw new AppException(ErrorCode.RESTAURANT_NOT_EXISTED);
+    public Page<ReviewRestaurantDTO> getListReviewBySpecification(RequestDTO requestDTO) {
+        Specification<Review> reviewSpecification = specification.getReviewSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
+        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
+        reviewSpecification.and(specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
+        Page<Review> all = reviewRepository.findAll(reviewSpecification, pageable);
+        if (all.getContent().isEmpty()) {
+            throw new AppException(ErrorCode.REVIEW_NOT_EXISTED);
         }
-        List<ReviewRestaurantDTO> reviewRestaurantDTOList = new ArrayList<>();
-        for (Review review : reviewList) {
-            reviewRestaurantDTOList.add(convertToReViewRestaurantDTO(review));
-        }
-        Pageable pageable = PageRequest.of(pageNo, limit);
-
-        int startIndex = (int) pageable.getOffset();
-        int endIndex = (int) Math.min(pageable.getOffset() + pageable.getPageSize(), reviewList.size());
-        List<ReviewRestaurantDTO> subList = reviewRestaurantDTOList.subList(startIndex, endIndex);
-        return new PageImpl<>(subList, pageable, reviewRestaurantDTOList.size());
+        return all.map(this::convertToReViewRestaurantDTO);
     }
 
     public Review converToReviewEnity(ReviewRestaurantCreationRequest addReviewCommand) {
