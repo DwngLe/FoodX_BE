@@ -40,7 +40,6 @@ public class FoodxBeApplication {
                         .phoneNumber("123")
                         .points(0)
                         .build();
-
                 userRepository.save(user);
             }
         };
