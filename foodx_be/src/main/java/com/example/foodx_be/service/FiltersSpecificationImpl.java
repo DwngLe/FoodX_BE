@@ -60,7 +60,7 @@ public class FiltersSpecificationImpl<T> {
                     }
                     case BETWEEN -> {
                         String[] splitForBetween = requestDTO.getValue().split(", ");
-                        Predicate between = criteriaBuilder.between(root.get(requestDTO.getColumn()), BigDecimal.valueOf(Double.parseDouble(splitForBetween[0])), new BigDecimal(Double.parseDouble(splitForBetween[1])));
+                        Predicate between = criteriaBuilder.between(root.get(requestDTO.getColumn()), BigDecimal.valueOf(Double.parseDouble(splitForBetween[0])), BigDecimal.valueOf(Double.parseDouble(splitForBetween[1])));
                         predicates.add(between);
                     }
                     case TAG_IN -> {
@@ -116,7 +116,7 @@ public class FiltersSpecificationImpl<T> {
                     }
                     case BETWEEN -> {
                         String[] splitForBetween = requestDTO.getValue().split(", ");
-                        Predicate between = criteriaBuilder.between(root.get(requestDTO.getColumn()), new BigDecimal(Double.parseDouble(splitForBetween[0])), new BigDecimal(Double.parseDouble(splitForBetween[1])));
+                        Predicate between = criteriaBuilder.between(root.get(requestDTO.getColumn()), BigDecimal.valueOf(Double.parseDouble(splitForBetween[0])), BigDecimal.valueOf(Double.parseDouble(splitForBetween[1])));
                         predicates.add(between);
                     }
                     default -> throw new IllegalStateException("Unexpected value: " + requestDTO.getOperation());
