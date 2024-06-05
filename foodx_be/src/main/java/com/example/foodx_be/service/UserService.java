@@ -3,6 +3,7 @@ package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.request.UserCreationRequest;
 import com.example.foodx_be.dto.request.UserUpdateRequest;
+import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.dto.response.UserBasicInforResponse;
 import com.example.foodx_be.dto.response.UserResponse;
 import com.example.foodx_be.enity.User;
@@ -14,13 +15,11 @@ import java.util.UUID;
 
 public interface UserService {
     UserResponse saveUser(UserCreationRequest userCreationRequest);
-
-    User getUser(String username);
     User getUser(UUID idUser);
 
     UserResponse getUserByID(UUID id);
 
-    Page<UserResponse> getUsersByName(int pageNo, int limit, String name);
+    Page<UserResponse> getUserBySpecification(RequestDTO requestDTO);
 
     UserResponse updateUser(UserUpdateRequest userUpdateRequest);
 

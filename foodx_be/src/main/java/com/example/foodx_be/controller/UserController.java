@@ -2,6 +2,7 @@ package com.example.foodx_be.controller;
 
 import com.example.foodx_be.dto.request.BusinessProofCreationRequest;
 import com.example.foodx_be.dto.request.UserUpdateRequest;
+import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.dto.response.UserResponse;
 import com.example.foodx_be.enity.User;
 import com.example.foodx_be.exception.APIResponse;
@@ -76,7 +77,7 @@ public class UserController {
 
 
     @Operation(
-            summary = "Lấy ra danh sách các người dùng dựa trên tên người dùng",
+            summary = "Lấy ra danh sách các người dùng dựa trên các tiêu chí",
             responses = {
                     @ApiResponse(
                             description = "Thành công",
@@ -89,12 +90,10 @@ public class UserController {
             }
 
     )
-    @GetMapping("/search")
-    public APIResponse<Page<UserResponse>> findUsersByName(@RequestParam(name = "name") String name,
-                                                              @RequestParam(name = "pageNo", defaultValue = "0") int pageNo,
-                                                              @RequestParam(name = "limit", defaultValue = "5") int limit) {
+    @GetMapping("/specification")
+    public APIResponse<Page<UserResponse>> findUsersByName(@RequestBody RequestDTO requestDTO) {
         return APIResponse.<Page<UserResponse>>builder()
-                .result(userService.getUsersByName(pageNo, limit, name))
+                .result(userService.getUserBySpecification(requestDTO))
                 .build();
     }
 

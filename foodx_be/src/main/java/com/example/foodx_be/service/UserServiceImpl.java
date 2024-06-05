@@ -2,6 +2,8 @@ package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.request.UserCreationRequest;
 import com.example.foodx_be.dto.request.UserUpdateRequest;
+import com.example.foodx_be.dto.response.PageRequestDTO;
+import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.dto.response.UserBasicInforResponse;
 import com.example.foodx_be.dto.response.UserResponse;
 import com.example.foodx_be.enity.User;
@@ -9,12 +11,12 @@ import com.example.foodx_be.exception.AppException;
 import com.example.foodx_be.exception.ErrorCode;
 import com.example.foodx_be.mapper.UserMapper;
 import com.example.foodx_be.repository.UserRepository;
+import com.example.foodx_be.ulti.GlobalOperator;
 import com.example.foodx_be.ulti.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,13 +24,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService{
     private CloudiaryService cloudiaryService;
     private UserMapper userMapper;
+    private FiltersSpecificationImpl<User> specification;
 
     private UserRepository userRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -60,12 +66,6 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User getUser(String username) {
-        Optional<User> user = userRepository.findByUsername(username);
-        return unwrapUser(user);
-    }
-
-    @Override
     public User getUser(UUID idUser) {
         Optional<User> user = userRepository.findById(idUser);
         return unwrapUser(user);
@@ -78,21 +78,15 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Page<UserResponse> getUsersByName(int pageNo, int limit, String name) {
-        List<User> userList = userRepository.findByNameContaining(name);
-        if(userList.isEmpty()){
-            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+    public Page<UserResponse> getUserBySpecification(RequestDTO requestDTO) {
+        Specification<User> userSpecification = specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
+        userSpecification.and(specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
+        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
+        Page<User> usersPage = userRepository.findAll(userSpecification, pageable);
+        if (usersPage.getContent().isEmpty()) {
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
-        List<UserResponse> userResponseList = new ArrayList<>();
-        for (User user : userList) {
-            userResponseList.add(userMapper.toUserResponse(user));
-        }
-        Pageable pageable = PageRequest.of(pageNo, limit);
-
-        int startIndex = (int) pageable.getOffset();
-        int endIndex = (int) Math.min(pageable.getOffset() + pageable.getPageSize(), userResponseList.size());
-        List<UserResponse> subList = userResponseList.subList(startIndex, endIndex);
-        return new PageImpl<>(subList, pageable, userResponseList.size());
+        return usersPage.map(userMapper::toUserResponse);
     }
 
     @PostAuthorize("returnObject.id.toString() == authentication.principal.claims['sub']") //phai chuyen UUID ve String
