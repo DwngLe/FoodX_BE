@@ -1,8 +1,8 @@
 package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.response.RestaurantUpdateDTO;
-import com.example.foodx_be.ulti.RestaurantState;
-import com.example.foodx_be.ulti.UpdateState;
+import com.example.foodx_be.enums.RestaurantState;
+import com.example.foodx_be.enums.UpdateState;
 import org.springframework.data.domain.Page;
 
 import java.util.UUID;

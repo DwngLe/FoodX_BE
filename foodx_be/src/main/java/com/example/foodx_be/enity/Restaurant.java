@@ -1,7 +1,7 @@
 package com.example.foodx_be.enity;
 
-import com.example.foodx_be.ulti.Price;
-import com.example.foodx_be.ulti.RestaurantState;
+import com.example.foodx_be.enums.Price;
+import com.example.foodx_be.enums.RestaurantState;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;

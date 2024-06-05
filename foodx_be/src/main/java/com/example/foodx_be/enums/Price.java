@@ -1,4 +1,4 @@
-package com.example.foodx_be.ulti;
+package com.example.foodx_be.enums;
 
 import lombok.Getter;
 

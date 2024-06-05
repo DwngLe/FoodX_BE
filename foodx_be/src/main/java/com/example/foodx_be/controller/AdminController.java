@@ -4,15 +4,16 @@ import com.example.foodx_be.dto.response.BusinessProofDTO;
 import com.example.foodx_be.dto.response.RestaurantDTO;
 import com.example.foodx_be.dto.response.RestaurantUpdateDTO;
 import com.example.foodx_be.dto.response.TagDTO;
+import com.example.foodx_be.enums.RestaurantState;
+import com.example.foodx_be.enums.UpdateState;
 import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.AdminService;
 import com.example.foodx_be.service.BusinessProofService;
 import com.example.foodx_be.service.RestaurantService;
 import com.example.foodx_be.service.TagService;
-import com.example.foodx_be.ulti.RestaurantState;
-import com.example.foodx_be.ulti.UpdateState;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
+@SecurityRequirement(name = "bearAuth")
 @RequestMapping("/admin")
 @Tag(name = "Admin")
 public class AdminController {
@@ -46,6 +48,10 @@ public class AdminController {
                     @ApiResponse(
                             description = "Không có quyền truy cập hoặc Token không hợp lệ",
                             responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
                     )
             }
 
@@ -74,13 +80,17 @@ public class AdminController {
                     @ApiResponse(
                             description = "Không có quyền truy cập hoặc Token không hợp lệ",
                             responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
                     )
             }
 
     )
     @PostMapping("/reviewUpdates/{idUpdate}")
     public APIResponse<Void> reviewRestaurantUpdate(@PathVariable UUID idUpdate,
-                                                             @RequestParam UpdateState updateState) {
+                                                    @RequestParam UpdateState updateState) {
         adminService.reviewRestaurantUpdate(idUpdate, updateState);
         return APIResponse.<Void>builder().build();
     }
@@ -100,6 +110,10 @@ public class AdminController {
                     @ApiResponse(
                             description = "Không có quyền truy cập hoặc Token không hợp lệ",
                             responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
                     )
             }
 
@@ -126,6 +140,10 @@ public class AdminController {
                     @ApiResponse(
                             description = "Không có quyền truy cập hoặc Token không hợp lệ",
                             responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
                     )
             }
 
@@ -154,6 +172,10 @@ public class AdminController {
                     @ApiResponse(
                             description = "Không có quyền truy cập hoặc Token không hợp lệ",
                             responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
                     )
             }
 
@@ -168,7 +190,7 @@ public class AdminController {
     }
 
     @Operation(
-            description = "Xem chi tiết 1 bằng chứng dựa trên ID",
+            description = "Xem chi tiết 1 bằng chứng dựa trên ID của bằng chứng",
             summary = "Xem chi tiết 1 bằng chứng",
             responses = {
                     @ApiResponse(
@@ -182,6 +204,10 @@ public class AdminController {
                     @ApiResponse(
                             description = "Không có quyền truy cập hoặc Token không hợp lệ",
                             responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
                     )
             }
 
@@ -208,6 +234,10 @@ public class AdminController {
                     @ApiResponse(
                             description = "Không có quyền truy cập hoặc Token không hợp lệ",
                             responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
                     )
             }
 
@@ -230,6 +260,10 @@ public class AdminController {
                     @ApiResponse(
                             description = "Không có quyền truy cập hoặc Token không hợp lệ",
                             responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
                     )
             }
 

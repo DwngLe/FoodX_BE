@@ -2,7 +2,7 @@ package com.example.foodx_be.service;
 
 import com.example.foodx_be.dto.response.SearchRequestDTO;
 import com.example.foodx_be.enity.*;
-import com.example.foodx_be.ulti.GlobalOperator;
+import com.example.foodx_be.enums.GlobalOperator;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -25,7 +25,7 @@ public class FiltersSpecificationImpl<T> {
 
             for (SearchRequestDTO requestDTO : searchRequestDTOList) {
                 switch (requestDTO.getOperation()) {
-                    case EQUAL:
+                    case EQUAL -> {
                         if (root.get(requestDTO.getColumn()).getJavaType() == Boolean.class) {
                             predicates.add(criteriaBuilder.equal(root.get(requestDTO.getColumn()), Boolean.valueOf(requestDTO.getValue())));
                         } else if (root.get(requestDTO.getColumn()).getJavaType() == UUID.class) {
@@ -40,43 +40,41 @@ public class FiltersSpecificationImpl<T> {
                         } else {
                             predicates.add(criteriaBuilder.equal(root.get(requestDTO.getColumn()), requestDTO.getValue()));
                         }
-                        break;
-                    case LIKE:
+                    }
+                    case LIKE -> {
                         Predicate like = criteriaBuilder.like(root.get(requestDTO.getColumn()), "%" + requestDTO.getValue() + "%");
                         predicates.add(like);
-                        break;
-                    case IN:
+                    }
+                    case IN -> {
                         String[] splitForIn = requestDTO.getValue().split(", ");
                         Predicate in = root.get(requestDTO.getColumn()).in(Arrays.asList(splitForIn));
                         predicates.add(in);
-                        break;
-                    case LESS_THAN:
+                    }
+                    case LESS_THAN -> {
                         Predicate lessThan = criteriaBuilder.lessThan(root.get(requestDTO.getColumn()), requestDTO.getValue());
                         predicates.add(lessThan);
-                        break;
-                    case GREATER_THAN:
+                    }
+                    case GREATER_THAN -> {
                         Predicate greaterThan = criteriaBuilder.greaterThan(root.get(requestDTO.getColumn()), requestDTO.getValue());
                         predicates.add(greaterThan);
-                        break;
-                    case BETWEEN:
+                    }
+                    case BETWEEN -> {
                         String[] splitForBetween = requestDTO.getValue().split(", ");
-                        Predicate between = criteriaBuilder.between(root.get(requestDTO.getColumn()), new BigDecimal(Double.parseDouble(splitForBetween[0])), new BigDecimal(Double.parseDouble(splitForBetween[1])));
+                        Predicate between = criteriaBuilder.between(root.get(requestDTO.getColumn()), BigDecimal.valueOf(Double.parseDouble(splitForBetween[0])), new BigDecimal(Double.parseDouble(splitForBetween[1])));
                         predicates.add(between);
-                        break;
-                    case TAG_IN:
+                    }
+                    case TAG_IN -> {
                         String[] tagIds = requestDTO.getValue().split(", ");
                         List<UUID> uuidList = new ArrayList<>();
                         for (String tagId : tagIds) {
                             uuidList.add(UUID.fromString(tagId));
                         }
-
                         Join<Restaurant, RestaurantTag> tagRestaurantTagJoin = root.join("restaurantTagList");
                         Join<RestaurantTag, Tag> restaurantJoin = tagRestaurantTagJoin.join("tag");
                         Predicate tagInPredicate = restaurantJoin.get("id").in(uuidList);
                         predicates.add(tagInPredicate);
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + requestDTO.getOperation());
+                    }
+                    default -> throw new IllegalStateException("Unexpected value: " + requestDTO.getOperation());
                 }
             }
             if (operator.equals(GlobalOperator.AND)) {
@@ -94,7 +92,7 @@ public class FiltersSpecificationImpl<T> {
             Join<Review, Restaurant> restaurantJoin = root.join("restaurant", JoinType.LEFT);
             for (SearchRequestDTO requestDTO : searchRequestDTOList) {
                 switch (requestDTO.getOperation()) {
-                    case EQUAL:
+                    case EQUAL -> {
                         if ("userId".equalsIgnoreCase(requestDTO.getColumn())) {
                             predicates.add(criteriaBuilder.equal(userJoin.get("id"), UUID.fromString(requestDTO.getValue())));
                         } else if ("restaurantId".equalsIgnoreCase(requestDTO.getColumn())) {
@@ -102,27 +100,26 @@ public class FiltersSpecificationImpl<T> {
                         } else {
                             predicates.add(criteriaBuilder.equal(root.get(requestDTO.getColumn()), requestDTO.getValue()));
                         }
-                        break;
-                    case IN:
+                    }
+                    case IN -> {
                         String[] splitForIn = requestDTO.getValue().split(", ");
                         Predicate in = root.get(requestDTO.getColumn()).in(Arrays.asList(splitForIn));
                         predicates.add(in);
-                        break;
-                    case LESS_THAN:
+                    }
+                    case LESS_THAN -> {
                         Predicate lessThan = criteriaBuilder.lessThan(root.get(requestDTO.getColumn()), requestDTO.getValue());
                         predicates.add(lessThan);
-                        break;
-                    case GREATER_THAN:
+                    }
+                    case GREATER_THAN -> {
                         Predicate greaterThan = criteriaBuilder.greaterThan(root.get(requestDTO.getColumn()), requestDTO.getValue());
                         predicates.add(greaterThan);
-                        break;
-                    case BETWEEN:
+                    }
+                    case BETWEEN -> {
                         String[] splitForBetween = requestDTO.getValue().split(", ");
                         Predicate between = criteriaBuilder.between(root.get(requestDTO.getColumn()), new BigDecimal(Double.parseDouble(splitForBetween[0])), new BigDecimal(Double.parseDouble(splitForBetween[1])));
                         predicates.add(between);
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + requestDTO.getOperation());
+                    }
+                    default -> throw new IllegalStateException("Unexpected value: " + requestDTO.getOperation());
                 }
             }
 

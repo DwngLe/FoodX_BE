@@ -7,7 +7,7 @@ import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.dto.response.RestaurantDTO;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.RestaurantTag;
-import com.example.foodx_be.ulti.RestaurantState;
+import com.example.foodx_be.enums.RestaurantState;
 import org.springframework.data.domain.Page;
 
 import java.util.UUID;

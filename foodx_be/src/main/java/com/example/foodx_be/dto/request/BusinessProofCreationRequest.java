@@ -1,6 +1,6 @@
 package com.example.foodx_be.dto.request;
 
-import com.example.foodx_be.ulti.OwnerRole;
+import com.example.foodx_be.enums.OwnerRole;
 import lombok.Builder;
 import lombok.Data;
 

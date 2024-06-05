@@ -1,6 +1,6 @@
 package com.example.foodx_be.dto.response;
 
-import com.example.foodx_be.ulti.Operation;
+import com.example.foodx_be.enums.Operation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,7 +1,7 @@
 package com.example.foodx_be.dto.response;
 
-import com.example.foodx_be.ulti.OwnerRole;
-import com.example.foodx_be.ulti.UpdateState;
+import com.example.foodx_be.enums.OwnerRole;
+import com.example.foodx_be.enums.UpdateState;
 import lombok.Builder;
 import lombok.Data;
 

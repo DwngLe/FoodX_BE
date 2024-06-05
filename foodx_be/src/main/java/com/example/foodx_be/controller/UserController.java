@@ -4,14 +4,13 @@ import com.example.foodx_be.dto.request.BusinessProofCreationRequest;
 import com.example.foodx_be.dto.request.UserUpdateRequest;
 import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.dto.response.UserResponse;
-import com.example.foodx_be.enity.User;
 import com.example.foodx_be.exception.APIResponse;
-import com.example.foodx_be.repository.UserRepository;
 import com.example.foodx_be.service.BusinessProofService;
-import com.example.foodx_be.service.FiltersSpecificationImpl;
 import com.example.foodx_be.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +21,12 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
+@Tag(name = "User")
 @RequestMapping("/users")
 public class UserController {
     private UserService userService;
     private BusinessProofService businessProofService;
 
-    private UserRepository userRepository;
-    private FiltersSpecificationImpl<User> specification;
     @Operation(
             summary = "Lấy ra thông tin của 1 người dùng",
             responses = {
@@ -50,6 +48,7 @@ public class UserController {
                 .build();
     }
 
+    @SecurityRequirement(name = "bearAuth")
     @Operation(
             summary = "Cập nhật thông tin cá nhân của người dùng",
             responses = {
@@ -64,6 +63,10 @@ public class UserController {
                     @ApiResponse(
                             description = "Không có quyền truy cập hoặc Token không hợp lệ",
                             responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
                     )
             }
 
@@ -90,14 +93,16 @@ public class UserController {
             }
 
     )
-    @GetMapping("/specification")
-    public APIResponse<Page<UserResponse>> findUsersByName(@RequestBody RequestDTO requestDTO) {
+    @PostMapping("/specification")
+    public APIResponse<Page<UserResponse>> findUsersBySpecification(@RequestBody RequestDTO requestDTO) {
         return APIResponse.<Page<UserResponse>>builder()
                 .result(userService.getUserBySpecification(requestDTO))
                 .build();
     }
 
+    @SecurityRequirement(name = "bearAuth")
     @Operation(
+            description = "Người dùng gửi lên ảnh để cập nhật. Ảnh sẽ được resize về kích thước 120x120",
             summary = "Cập nhật ảnh cá nhân của người dùng",
             responses = {
                     @ApiResponse(
@@ -111,6 +116,10 @@ public class UserController {
                     @ApiResponse(
                             description = "Không có quyền truy cập hoặc Token không hợp lệ",
                             responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
                     )
             }
 
@@ -123,6 +132,25 @@ public class UserController {
                 .build();
     }
 
+    @SecurityRequirement(name = "bearAuth")
+    @Operation(
+            description = "Người dùng xem thông tin cá nhân của họ",
+            summary = "Xem thông tin cá nhân",
+            responses = {
+                    @ApiResponse(
+                            description = "Thành công",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Thông tin không hợp lệ",
+                            responseCode = "405"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
+                    )
+            }
+    )
     @GetMapping("/myInfo")
     public APIResponse<UserResponse> getMyInfo() {
         return APIResponse.<UserResponse>builder()
@@ -130,7 +158,7 @@ public class UserController {
                 .build();
     }
 
-
+    @SecurityRequirement(name = "bearAuth")
     @Operation(
             summary = "Gừi yêu cầu xác thực nhà hàng",
             responses = {
@@ -149,6 +177,10 @@ public class UserController {
                     @ApiResponse(
                             description = "Yêu cầu nộp bằng chứng",
                             responseCode = "405"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
                     )
             }
 

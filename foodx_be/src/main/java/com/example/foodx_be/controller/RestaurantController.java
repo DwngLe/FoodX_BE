@@ -10,6 +10,8 @@ import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.RestaurantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +20,14 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
+@Tag(name = "Restaurant")
 @RequestMapping("/restaurants")
 public class RestaurantController {
     private RestaurantService restaurantService;
 
+    @SecurityRequirement(name = "bearAuth")
     @Operation(
+            description = "Người dùng gửi lên các thông tin về nhà hàng",
             summary = "Thêm nhà hàng",
             responses = {
                     @ApiResponse(
@@ -32,6 +37,10 @@ public class RestaurantController {
                     @ApiResponse(
                             description = "Không có quyền truy cập hoặc Token không hợp lệ",
                             responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
                     )
             }
     )
@@ -97,7 +106,6 @@ public class RestaurantController {
             }
 
     )
-    //for testing purpose
     @PostMapping("/search/tag")
     public APIResponse<Page<RestaurantTag>> getRestaurantsByTag(@RequestBody RequestDTO requestDTO) {
         return APIResponse.<Page<RestaurantTag>>builder()
@@ -105,6 +113,7 @@ public class RestaurantController {
                 .build();
     }
 
+    @SecurityRequirement(name = "bearAuth")
     @Operation(
             description = "Gửi lên bản cập nhật thông tin của 1 nhà hàng dựa trên ID của nhà hàng đấy. Bản cập nhật có trạng thái mặc định là PENDING",
             summary = "Cập nhật thông tin của 1 nhà hàng dựa trên ID nhà hàng",
@@ -120,13 +129,17 @@ public class RestaurantController {
                     @ApiResponse(
                             description = "Không có quyền truy cập hoặc Token không hợp lệ",
                             responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
                     )
             }
 
     )
     @PostMapping("/{idRestaurant}")
     public APIResponse<Void> updateRestaurant(@PathVariable UUID idRestaurant,
-                                                       @RequestBody RestaurantUpdateRequest restaurantUpdateRequest) {
+                                              @RequestBody RestaurantUpdateRequest restaurantUpdateRequest) {
         restaurantService.updateRestaurant(idRestaurant, restaurantUpdateRequest);
         return APIResponse.<Void>builder().build();
     }
@@ -144,7 +157,6 @@ public class RestaurantController {
                             responseCode = "404"
                     )
             }
-
     )
     @PostMapping("/nearby")
     public APIResponse<Page<RestaurantDTO>> getRestaurantNearBy(@RequestBody NearbyRequestDTO nearbyRequestDTO) {

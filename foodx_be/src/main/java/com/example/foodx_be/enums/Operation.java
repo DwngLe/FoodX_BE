@@ -1,4 +1,4 @@
-package com.example.foodx_be.ulti;
+package com.example.foodx_be.enums;
 
 public enum Operation {
     EQUAL,

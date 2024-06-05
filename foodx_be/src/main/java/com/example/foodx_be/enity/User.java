@@ -1,7 +1,7 @@
 package com.example.foodx_be.enity;
 
-import com.example.foodx_be.ulti.AccountState;
-import com.example.foodx_be.ulti.Role;
+import com.example.foodx_be.enums.AccountState;
+import com.example.foodx_be.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

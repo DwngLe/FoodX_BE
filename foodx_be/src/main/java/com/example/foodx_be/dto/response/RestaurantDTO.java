@@ -1,7 +1,7 @@
 package com.example.foodx_be.dto.response;
 
-import com.example.foodx_be.ulti.RestaurantState;
-import com.example.foodx_be.ulti.UpdateState;
+import com.example.foodx_be.enums.RestaurantState;
+import com.example.foodx_be.enums.UpdateState;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;

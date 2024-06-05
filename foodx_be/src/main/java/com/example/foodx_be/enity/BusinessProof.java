@@ -1,7 +1,7 @@
 package com.example.foodx_be.enity;
 
-import com.example.foodx_be.ulti.OwnerRole;
-import com.example.foodx_be.ulti.UpdateState;
+import com.example.foodx_be.enums.OwnerRole;
+import com.example.foodx_be.enums.UpdateState;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

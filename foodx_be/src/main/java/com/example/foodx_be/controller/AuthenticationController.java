@@ -11,8 +11,11 @@ import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.AuthenticationService;
 import com.example.foodx_be.service.UserService;
 import com.nimbusds.jose.JOSEException;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -25,6 +28,7 @@ import java.text.ParseException;
 
 @Controller
 @RestController
+@Tag(name = "Authentication")
 @RequestMapping("/auth")
 @AllArgsConstructor
 public class AuthenticationController {
@@ -64,6 +68,10 @@ public class AuthenticationController {
                     @ApiResponse(
                             description = "Thông tin không hợp lệ",
                             responseCode = "405"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
                     )
             }
     )
@@ -74,12 +82,22 @@ public class AuthenticationController {
                 .build();
     }
 
+    @Operation(
+            summary = "Đăng xuất tài khoản",
+            responses = {
+                    @ApiResponse(
+                            description = "Thành công",
+                            responseCode = "200"
+                    )
+            }
+    )
     @PostMapping("/logout")
     private APIResponse<Void> logout() throws ParseException, JOSEException {
         authenticationService.logout();
         return APIResponse.<Void>builder().build();
     }
 
+    @Hidden
     @PostMapping("/introspect")
     private APIResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request)
             throws ParseException, JOSEException {
@@ -87,6 +105,21 @@ public class AuthenticationController {
         return APIResponse.<IntrospectResponse>builder().result(result).build();
     }
 
+    @Operation(
+            description = "Người dùng gửi lên token đã hết hạn, hệ thống sẽ trả về token mới (token cũ phải còn trong thời hạn refresh)",
+            summary = "Refresh token",
+            responses = {
+                    @ApiResponse(
+                            description = "Thành công",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Xác thực không thành công",
+                            responseCode = "401"
+                    )
+            }
+    )
+    @SecurityRequirement(name = "bearAuth")
     @PostMapping("/refresh")
     private APIResponse<AuthenticationResponse> refreshToken(@RequestBody RefeshRequest request) throws ParseException, JOSEException {
         return APIResponse.<AuthenticationResponse>builder()

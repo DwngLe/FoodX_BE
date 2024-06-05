@@ -1,9 +1,9 @@
 package com.example.foodx_be;
 
 import com.example.foodx_be.enity.User;
+import com.example.foodx_be.enums.AccountState;
+import com.example.foodx_be.enums.Role;
 import com.example.foodx_be.repository.UserRepository;
-import com.example.foodx_be.ulti.AccountState;
-import com.example.foodx_be.ulti.Role;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

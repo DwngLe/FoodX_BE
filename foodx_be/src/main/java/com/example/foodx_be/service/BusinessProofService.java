@@ -3,7 +3,7 @@ package com.example.foodx_be.service;
 import com.example.foodx_be.dto.request.BusinessProofCreationRequest;
 import com.example.foodx_be.dto.response.BusinessProofDTO;
 import com.example.foodx_be.enity.BusinessProof;
-import com.example.foodx_be.ulti.UpdateState;
+import com.example.foodx_be.enums.UpdateState;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 

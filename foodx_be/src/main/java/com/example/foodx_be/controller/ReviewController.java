@@ -7,6 +7,8 @@ import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +19,14 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
+@Tag(name = "Review")
 @RequestMapping("/reviews")
 public class ReviewController {
     private ReviewService reviewService;
 
+    @SecurityRequirement(name = "bearAuth")
     @Operation(
+            description = "Người dùng thực hiện việc viết review cho nhà hàng, có thể không cần gửi ảnh",
             summary = "Thêm đánh giá cho 1 nhà hàng",
             responses = {
                     @ApiResponse(
@@ -89,12 +94,5 @@ public class ReviewController {
                 .result(reviewService.getListRecentReview(pageNo, limit))
                 .build();
 
-    }
-
-    @PostMapping("/myReview")
-    public APIResponse<Page<ReviewRestaurantDTO>> getMyReview(@RequestBody RequestDTO requestDTO) {
-        return APIResponse.<Page<ReviewRestaurantDTO>>builder()
-                .result(reviewService.getListReviewBySpecification(requestDTO))
-                .build();
     }
 }

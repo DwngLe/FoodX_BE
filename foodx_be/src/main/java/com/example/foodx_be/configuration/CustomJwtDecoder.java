@@ -1,7 +1,7 @@
 package com.example.foodx_be.configuration;
 
+import com.example.foodx_be.constants.SecurityConstants;
 import com.example.foodx_be.dto.request.IntrospectRequest;
-import com.example.foodx_be.security.SecurityConstants;
 import com.example.foodx_be.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;

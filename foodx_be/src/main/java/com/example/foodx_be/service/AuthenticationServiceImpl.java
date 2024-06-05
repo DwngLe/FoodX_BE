@@ -1,5 +1,6 @@
 package com.example.foodx_be.service;
 
+import com.example.foodx_be.constants.SecurityConstants;
 import com.example.foodx_be.dto.request.AuthenticationRequest;
 import com.example.foodx_be.dto.request.IntrospectRequest;
 import com.example.foodx_be.dto.request.RefeshRequest;
@@ -11,7 +12,6 @@ import com.example.foodx_be.exception.AppException;
 import com.example.foodx_be.exception.ErrorCode;
 import com.example.foodx_be.repository.InvalidatedTokenRepository;
 import com.example.foodx_be.repository.UserRepository;
-import com.example.foodx_be.security.SecurityConstants;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
