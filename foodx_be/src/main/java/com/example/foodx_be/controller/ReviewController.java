@@ -90,4 +90,11 @@ public class ReviewController {
                 .build();
 
     }
+
+    @PostMapping("/myReview")
+    public APIResponse<Page<ReviewRestaurantDTO>> getMyReview(@RequestBody RequestDTO requestDTO) {
+        return APIResponse.<Page<ReviewRestaurantDTO>>builder()
+                .result(reviewService.getListReviewBySpecification(requestDTO))
+                .build();
+    }
 }

@@ -4,6 +4,7 @@ import com.example.foodx_be.dto.request.ReviewRestaurantCreationRequest;
 import com.example.foodx_be.dto.response.PageRequestDTO;
 import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.dto.response.ReviewRestaurantDTO;
+import com.example.foodx_be.dto.response.SearchRequestDTO;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.Review;
 import com.example.foodx_be.enity.ReviewImage;
@@ -13,6 +14,7 @@ import com.example.foodx_be.exception.ErrorCode;
 import com.example.foodx_be.repository.ReviewImageRepository;
 import com.example.foodx_be.repository.ReviewRepository;
 import com.example.foodx_be.ulti.GlobalOperator;
+import com.example.foodx_be.ulti.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -91,6 +93,21 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Page<ReviewRestaurantDTO> getListReviewBySpecification(RequestDTO requestDTO) {
+        Specification<Review> reviewSpecification = specification.getReviewSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
+        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
+        reviewSpecification.and(specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
+        Page<Review> all = reviewRepository.findAll(reviewSpecification, pageable);
+        if (all.getContent().isEmpty()) {
+            throw new AppException(ErrorCode.REVIEW_NOT_EXISTED);
+        }
+        return all.map(this::convertToReViewRestaurantDTO);
+    }
+
+    @Override
+    public Page<ReviewRestaurantDTO> getMyReviewSpecification(RequestDTO requestDTO) {
+        var context = SecurityContextHolder.getContext();
+        UUID userId = UUID.fromString(context.getAuthentication().getName());
+        requestDTO.getSearchRequestDTO().add(new SearchRequestDTO("userId", userId.toString(), Operation.EQUAL));
         Specification<Review> reviewSpecification = specification.getReviewSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
         Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
         reviewSpecification.and(specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));

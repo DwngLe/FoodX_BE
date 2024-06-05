@@ -13,5 +13,7 @@ public interface ReviewService {
     void addReview(ReviewRestaurantCreationRequest reviewCommand, MultipartFile[] multipartFiles) throws IOException;
 
     Page<ReviewRestaurantDTO> getListReviewBySpecification(RequestDTO requestDTO);
+
+    Page<ReviewRestaurantDTO> getMyReviewSpecification(RequestDTO requestDTO);
     List<ReviewRestaurantDTO> getListRecentReview(int pageNo, int limit);
 }
