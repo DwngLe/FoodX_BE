@@ -30,8 +30,10 @@ public class RestaurantDTO {
     private String facebookLink;
     private String instagramLink;
     private RestaurantState restaurantState;
+
     @JsonFormat(pattern = "dd:MM:yyyy")
     private LocalDate timeAdded;
+
     private Boolean hasAnOwner;
     private Boolean offerDelivery;
     private Boolean offerTakeaway;
@@ -39,8 +41,10 @@ public class RestaurantDTO {
     private UserBasicInforResponse userAdd;
     private UserBasicInforResponse userUpdate;
     private UpdateState updateState;
+
     @JsonFormat(pattern = "HH:mm:ss dd:MM:yyyy")
     private LocalDateTime updateTime;
+
     private List<TagDTO> tagDTOList;
     private double points;
 }

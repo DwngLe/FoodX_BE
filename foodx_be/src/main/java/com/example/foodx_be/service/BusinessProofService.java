@@ -11,7 +11,8 @@ import java.io.IOException;
 import java.util.UUID;
 
 public interface BusinessProofService {
-    void addBusinessProof(BusinessProofCreationRequest businessProofCreationRequest, MultipartFile multipartFile) throws IOException;
+    void addBusinessProof(BusinessProofCreationRequest businessProofCreationRequest, MultipartFile multipartFile)
+            throws IOException;
 
     Page<BusinessProofDTO> getListBusinessProofByState(int pageNo, int limit, UpdateState state);
 

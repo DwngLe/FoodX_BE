@@ -29,11 +29,14 @@ public class RestaurantUpdateDTO {
     private String facebookLink;
     private String instagramLink;
     private RestaurantState restaurantState;
+
     @JsonFormat(pattern = "dd:MM:yyyy")
     private LocalDate timeAdded;
+
     private UserBasicInforResponse userOnwerName;
     private UserBasicInforResponse userUpdate;
     private UpdateState updateState;
+
     @JsonFormat(pattern = "HH:mm:ss dd:MM:yyyy")
     private LocalDateTime updateTime;
 }

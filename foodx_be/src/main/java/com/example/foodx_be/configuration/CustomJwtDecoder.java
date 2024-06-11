@@ -20,13 +20,15 @@ import java.util.Objects;
 public class CustomJwtDecoder implements JwtDecoder {
     @Autowired
     private AuthenticationService authenticationService;
+
     private NimbusJwtDecoder nimbusJwtDecoder = null;
 
     @Override
     public Jwt decode(String token) throws JwtException {
         try {
-            var response = authenticationService.introspect(
-                    IntrospectRequest.builder().token(token).build()); //kiem tra xem token con hop le hay khong truoc khi decode
+            var response = authenticationService.introspect(IntrospectRequest.builder()
+                    .token(token)
+                    .build()); // kiem tra xem token con hop le hay khong truoc khi decode
 
             if (!response.getIsValid()) throw new JwtException("Token invalid");
         } catch (JOSEException | ParseException e) {
@@ -41,6 +43,5 @@ public class CustomJwtDecoder implements JwtDecoder {
         }
 
         return nimbusJwtDecoder.decode(token);
-
     }
 }

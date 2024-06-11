@@ -18,16 +18,12 @@ import java.util.UUID;
 public class Tag {
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
+
     @Column(name = "tag_name")
     private String tagName;
+
     @Column(name = "tag_description")
     private String tagDescription;
-
-
-
 }

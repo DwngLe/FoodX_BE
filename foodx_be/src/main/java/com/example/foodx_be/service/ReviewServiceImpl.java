@@ -62,20 +62,21 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void addReview(ReviewRestaurantCreationRequest reviewCommand, MultipartFile[] multipartFiles) throws IOException {
-        //update user and restaurant point
+    public void addReview(ReviewRestaurantCreationRequest reviewCommand, MultipartFile[] multipartFiles)
+            throws IOException {
+        // update user and restaurant point
         var context = SecurityContextHolder.getContext();
         UUID idUser = UUID.fromString(context.getAuthentication().getName());
         User userReview = userService.updateUserPoint(idUser, POINTS_REVIEW);
-        Restaurant restaurant = restaurantService.updateRestaurantPoint(reviewCommand.getRestaurantId(), reviewCommand.getStarNumber(), REVIEW_ADD_COUNT);
+        Restaurant restaurant = restaurantService.updateRestaurantPoint(
+                reviewCommand.getRestaurantId(), reviewCommand.getStarNumber(), REVIEW_ADD_COUNT);
 
-        //add review
+        // add review
         Review review = converToReviewEnity(reviewCommand);
         review.setUser(userReview);
         review.setRestaurant(restaurant);
         review.setReviewDate(LocalDateTime.now());
         reviewRepository.save(review);
-
 
         if (multipartFiles != null) {
             List<Map> results = cloudiaryService.uploadMultiFiles(multipartFiles, FOLDER_UPLOAD);
@@ -90,10 +91,10 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
 
-
     @Override
     public Page<ReviewRestaurantDTO> getListReviewBySpecification(RequestDTO requestDTO) {
-        Specification<Review> reviewSpecification = specification.getReviewSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
+        Specification<Review> reviewSpecification =
+                specification.getReviewSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
         Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
         reviewSpecification.and(specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
         Page<Review> all = reviewRepository.findAll(reviewSpecification, pageable);
@@ -108,7 +109,8 @@ public class ReviewServiceImpl implements ReviewService {
         var context = SecurityContextHolder.getContext();
         UUID userId = UUID.fromString(context.getAuthentication().getName());
         requestDTO.getSearchRequestDTO().add(new SearchRequestDTO("userId", userId.toString(), Operation.EQUAL));
-        Specification<Review> reviewSpecification = specification.getReviewSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
+        Specification<Review> reviewSpecification =
+                specification.getReviewSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
         Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
         reviewSpecification.and(specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
         Page<Review> all = reviewRepository.findAll(reviewSpecification, pageable);

@@ -10,5 +10,6 @@ import java.util.UUID;
 
 public interface ReviewRepository extends JpaRepository<Review, UUID>, JpaSpecificationExecutor<Review> {
     List<Review> findAllByRestaurantId(UUID idRestaurant);
+
     List<Review> findAllByOrderByReviewDateDesc(Pageable pageable);
 }

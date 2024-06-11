@@ -17,5 +17,4 @@ public class BusinessProofDTO {
     private UserResponse userOwner;
     private UUID idRestaurant;
     private String restaurantName;
-
 }

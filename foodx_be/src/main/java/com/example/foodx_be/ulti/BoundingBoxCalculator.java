@@ -21,8 +21,8 @@ public class BoundingBoxCalculator {
         BigDecimal maxLat = latRadians.add(angularRadius, MATH_CONTEXT);
 
         // Longitude bounds
-        BigDecimal deltaLng = BigDecimal.valueOf(Math.asin(
-                Math.sin(angularRadius.doubleValue()) / Math.cos(latRadians.doubleValue())));
+        BigDecimal deltaLng = BigDecimal.valueOf(
+                Math.asin(Math.sin(angularRadius.doubleValue()) / Math.cos(latRadians.doubleValue())));
 
         BigDecimal minLng = lngRadians.subtract(deltaLng, MATH_CONTEXT);
         BigDecimal maxLng = lngRadians.add(deltaLng, MATH_CONTEXT);

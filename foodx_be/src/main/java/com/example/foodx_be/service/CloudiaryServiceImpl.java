@@ -38,7 +38,6 @@ public class CloudiaryServiceImpl implements CloudiaryService {
         return results;
     }
 
-
     @Override
     public Map uploadFile(MultipartFile multipartFile, String folderName) throws IOException {
         File file = convert(multipartFile);

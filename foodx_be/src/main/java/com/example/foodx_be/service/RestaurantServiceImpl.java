@@ -44,7 +44,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public void addRestaurant(RestaurantCreationRequest restaurantCreationRequest) {
         var context = SecurityContextHolder.getContext();
-        User user = userService.getUser(UUID.fromString(context.getAuthentication().getName()));
+        User user =
+                userService.getUser(UUID.fromString(context.getAuthentication().getName()));
         Restaurant restaurant = convertToRestaurantEnity(restaurantCreationRequest);
         restaurant.setUserAdd(user);
         restaurantRepository.save(restaurant);
@@ -65,28 +66,36 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Page<RestaurantDTO> getNearByRestaurant(RequestDTO requestDTO, LocationDTO locationDTO) {
-        //random number
         BigDecimal latitude = locationDTO.getLatitude();
         BigDecimal longitude = locationDTO.getLongitude();
         BigDecimal radiusInKm = locationDTO.getRadius();
 
-
         BigDecimal[] boundingBox = BoundingBoxCalculator.calculateBoundingBox(latitude, longitude, radiusInKm);
 
-        //min lat, min long, max lat, max log
-        requestDTO.getSearchRequestDTO().add(new SearchRequestDTO("latitude", boundingBox[0].toString() + ", " + boundingBox[2], Operation.BETWEEN));
-        requestDTO.getSearchRequestDTO().add(new SearchRequestDTO("longitude", boundingBox[1].toString() + ", " + boundingBox[3], Operation.BETWEEN));
-        requestDTO.getSearchRequestDTO().add(new SearchRequestDTO("restaurantState", RestaurantState.ACTIVE.toString(), Operation.EQUAL));
+        // min lat, min long, max lat, max log
+        requestDTO
+                .getSearchRequestDTO()
+                .add(new SearchRequestDTO(
+                        "latitude", boundingBox[0].toString() + ", " + boundingBox[2], Operation.BETWEEN));
+        requestDTO
+                .getSearchRequestDTO()
+                .add(new SearchRequestDTO(
+                        "longitude", boundingBox[1].toString() + ", " + boundingBox[3], Operation.BETWEEN));
+        requestDTO
+                .getSearchRequestDTO()
+                .add(new SearchRequestDTO("restaurantState", RestaurantState.ACTIVE.toString(), Operation.EQUAL));
 
-
-        Specification<Restaurant> restaurantSpecification = specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
+        Specification<Restaurant> restaurantSpecification =
+                specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
         Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
 
         // Apply sorting based on the sortByColumn
         if ("point".equals(requestDTO.getSortByColumn())) {
-            restaurantSpecification = restaurantSpecification.and(specification.sortByAverageReview(requestDTO.getSort()));
+            restaurantSpecification =
+                    restaurantSpecification.and(specification.sortByAverageReview(requestDTO.getSort()));
         } else {
-            restaurantSpecification = restaurantSpecification.and(specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
+            restaurantSpecification = restaurantSpecification.and(
+                    specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
         }
 
         Page<Restaurant> all = restaurantRepository.findAll(restaurantSpecification, pageable);
@@ -95,8 +104,6 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
         return all.map(this::convertToRestaurantDTO);
     }
-
-
 
     @Override
     public Page<RestaurantDTO> getRestaurantByRestaurantState(int pageNo, int limit, RestaurantState restaurantState) {
@@ -110,15 +117,20 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Page<RestaurantDTO> getRestaurantBySpecification(RequestDTO requestDTO) {
-        requestDTO.getSearchRequestDTO().add(new SearchRequestDTO("restaurantState", RestaurantState.ACTIVE.toString(), Operation.EQUAL));
-        Specification<Restaurant> restaurantSpecification = specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
+        requestDTO
+                .getSearchRequestDTO()
+                .add(new SearchRequestDTO("restaurantState", RestaurantState.ACTIVE.toString(), Operation.EQUAL));
+        Specification<Restaurant> restaurantSpecification =
+                specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
         Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
 
         // Apply sorting based on the sortByColumn
         if ("point".equals(requestDTO.getSortByColumn())) {
-            restaurantSpecification = restaurantSpecification.and(specification.sortByAverageReview(requestDTO.getSort()));
+            restaurantSpecification =
+                    restaurantSpecification.and(specification.sortByAverageReview(requestDTO.getSort()));
         } else {
-            restaurantSpecification = restaurantSpecification.and(specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
+            restaurantSpecification = restaurantSpecification.and(
+                    specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
         }
 
         Page<Restaurant> all = restaurantRepository.findAll(restaurantSpecification, pageable);
@@ -128,13 +140,12 @@ public class RestaurantServiceImpl implements RestaurantService {
         return all.map(this::convertToRestaurantDTO);
     }
 
-    //for checking restaurant id
+    // for checking restaurant id
     @Override
     public Restaurant getRestaurantEnity(UUID idRestaurant) {
         Optional<Restaurant> restaurantOptional = restaurantRepository.findById(idRestaurant);
         return unwrarpRestaurant(restaurantOptional);
     }
-
 
     public Page<RestaurantTag> getListRestaurantByTag(RequestDTO requestDTO) {
         return restaurantTagService.getListRestaurantByTag(requestDTO);
@@ -150,7 +161,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public void updateRestaurant(UUID idRestaurant, RestaurantUpdateRequest restaurantUpdateRequest) {
         var context = SecurityContextHolder.getContext();
-        User userUpdate = userService.getUser(UUID.fromString(context.getAuthentication().getName()));
+        User userUpdate =
+                userService.getUser(UUID.fromString(context.getAuthentication().getName()));
         Restaurant restaurant = getRestaurantEnity(idRestaurant);
 
         UpdateRestaurant updateRestaurant = convertToUpdateRestaurantEnity(restaurantUpdateRequest);
@@ -158,11 +170,9 @@ public class RestaurantServiceImpl implements RestaurantService {
         updateRestaurant.setRestaurant(restaurant);
         updateRestaurantRepository.save(updateRestaurant);
 
-
         if (restaurantUpdateRequest.getOpenTimeList() != null) {
             updateOpenTimeService.saveUpdateOpenTime(restaurantUpdateRequest.getOpenTimeList(), updateRestaurant);
         }
-
     }
 
     @Override
@@ -173,7 +183,6 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurantRepository.save(restaurant);
         return restaurant;
     }
-
 
     public Page<RestaurantDTO> converListRestaurantEnityToPage(List<Restaurant> restaurants, int pageNo, int limit) {
         List<RestaurantDTO> restaurantDTOList = new ArrayList<>();
@@ -260,12 +269,11 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .hasAnOwner(restaurant.getHasAnOwner())
                 .userAdd(userService.convertTouserBasicInfor(restaurant.getUserAdd()))
                 .points(restaurant.getReviewSum() / restaurant.getReviewCount())
-                .tagDTOList(tagService.convertToListTagDTO(restaurantTagService.getListTagOfRestaurant(restaurant.getId())));
+                .tagDTOList(tagService.convertToListTagDTO(
+                        restaurantTagService.getListTagOfRestaurant(restaurant.getId())));
         if (restaurant.getUserAdd() != null) {
             builder.userAdd(userService.convertTouserBasicInfor(restaurant.getUserAdd()));
         }
         return builder.build();
     }
-
-
 }

@@ -17,7 +17,6 @@ public class FoodxBeApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(FoodxBeApplication.class, args);
-
     }
 
     @Bean
@@ -49,6 +48,4 @@ public class FoodxBeApplication {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 }

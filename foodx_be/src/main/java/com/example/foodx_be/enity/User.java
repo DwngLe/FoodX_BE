@@ -1,19 +1,22 @@
 package com.example.foodx_be.enity;
 
-import com.example.foodx_be.enums.AccountState;
-import com.example.foodx_be.enums.Role;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import jakarta.persistence.*;
+
+import org.hibernate.annotations.GenericGenerator;
+
+import com.example.foodx_be.enums.AccountState;
+import com.example.foodx_be.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
@@ -24,10 +27,7 @@ import java.util.UUID;
 public class User {
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
     @Column(nullable = false)
@@ -66,23 +66,26 @@ public class User {
     @Column(name = "joint_date")
     private LocalDate jointDate;
 
-    private int points =0;
+    private int points = 0;
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
     @Enumerated(EnumType.STRING)
     private AccountState accountState;
+
     private Set<String> roles;
 
     @PrePersist
-    public void control(){
-        if(jointDate == null){
+    public void control() {
+        if (jointDate == null) {
             jointDate = LocalDate.now();
         }
-        if(avatarLink == null){
-            avatarLink = "https://res.cloudinary.com/dfsdwobb1/image/upload/v1713339322/Review%27s%20Images/gpft7enbgnz1wm2xnd4i.png";
+        if (avatarLink == null) {
+            avatarLink =
+                    "https://res.cloudinary.com/dfsdwobb1/image/upload/v1713339322/Review%27s%20Images/gpft7enbgnz1wm2xnd4i.png";
         }
-        if(accountState == null){
+        if (accountState == null) {
             accountState = AccountState.ACTIVE;
         }
     }
@@ -97,7 +100,7 @@ public class User {
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Review>   reviewList;
+    private List<Review> reviewList;
 
     @JsonIgnore
     @OneToMany(mappedBy = "userAdd", cascade = CascadeType.ALL)
@@ -110,5 +113,4 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "userOwner", cascade = CascadeType.ALL)
     private List<BusinessProof> businessProofList;
-
 }

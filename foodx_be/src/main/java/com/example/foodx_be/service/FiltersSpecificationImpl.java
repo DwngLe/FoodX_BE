@@ -19,7 +19,8 @@ import java.util.UUID;
 @Service
 public class FiltersSpecificationImpl<T> {
 
-    public Specification<T> getSearchSpecification(List<SearchRequestDTO> searchRequestDTOList, GlobalOperator operator) {
+    public Specification<T> getSearchSpecification(
+            List<SearchRequestDTO> searchRequestDTOList, GlobalOperator operator) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -27,7 +28,8 @@ public class FiltersSpecificationImpl<T> {
                 switch (requestDTO.getOperation()) {
                     case EQUAL -> {
                         if (root.get(requestDTO.getColumn()).getJavaType() == Boolean.class) {
-                            predicates.add(criteriaBuilder.equal(root.get(requestDTO.getColumn()), Boolean.valueOf(requestDTO.getValue())));
+                            predicates.add(criteriaBuilder.equal(
+                                    root.get(requestDTO.getColumn()), Boolean.valueOf(requestDTO.getValue())));
                         } else if (root.get(requestDTO.getColumn()).getJavaType() == UUID.class) {
                             try {
                                 UUID uuid = UUID.fromString(requestDTO.getValue());
@@ -38,11 +40,13 @@ public class FiltersSpecificationImpl<T> {
                                 throw new RuntimeException("Invalid UUID string: " + requestDTO.getValue(), e);
                             }
                         } else {
-                            predicates.add(criteriaBuilder.equal(root.get(requestDTO.getColumn()), requestDTO.getValue()));
+                            predicates.add(
+                                    criteriaBuilder.equal(root.get(requestDTO.getColumn()), requestDTO.getValue()));
                         }
                     }
                     case LIKE -> {
-                        Predicate like = criteriaBuilder.like(root.get(requestDTO.getColumn()), "%" + requestDTO.getValue() + "%");
+                        Predicate like = criteriaBuilder.like(
+                                root.get(requestDTO.getColumn()), "%" + requestDTO.getValue() + "%");
                         predicates.add(like);
                     }
                     case IN -> {
@@ -51,16 +55,21 @@ public class FiltersSpecificationImpl<T> {
                         predicates.add(in);
                     }
                     case LESS_THAN -> {
-                        Predicate lessThan = criteriaBuilder.lessThan(root.get(requestDTO.getColumn()), requestDTO.getValue());
+                        Predicate lessThan =
+                                criteriaBuilder.lessThan(root.get(requestDTO.getColumn()), requestDTO.getValue());
                         predicates.add(lessThan);
                     }
                     case GREATER_THAN -> {
-                        Predicate greaterThan = criteriaBuilder.greaterThan(root.get(requestDTO.getColumn()), requestDTO.getValue());
+                        Predicate greaterThan =
+                                criteriaBuilder.greaterThan(root.get(requestDTO.getColumn()), requestDTO.getValue());
                         predicates.add(greaterThan);
                     }
                     case BETWEEN -> {
                         String[] splitForBetween = requestDTO.getValue().split(", ");
-                        Predicate between = criteriaBuilder.between(root.get(requestDTO.getColumn()), BigDecimal.valueOf(Double.parseDouble(splitForBetween[0])), BigDecimal.valueOf(Double.parseDouble(splitForBetween[1])));
+                        Predicate between = criteriaBuilder.between(
+                                root.get(requestDTO.getColumn()),
+                                BigDecimal.valueOf(Double.parseDouble(splitForBetween[0])),
+                                BigDecimal.valueOf(Double.parseDouble(splitForBetween[1])));
                         predicates.add(between);
                     }
                     case TAG_IN -> {
@@ -85,7 +94,8 @@ public class FiltersSpecificationImpl<T> {
         };
     }
 
-    public Specification<Review> getReviewSpecification(List<SearchRequestDTO> searchRequestDTOList, GlobalOperator operator) {
+    public Specification<Review> getReviewSpecification(
+            List<SearchRequestDTO> searchRequestDTOList, GlobalOperator operator) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             Join<Review, User> userJoin = root.join("user", JoinType.LEFT);
@@ -94,11 +104,14 @@ public class FiltersSpecificationImpl<T> {
                 switch (requestDTO.getOperation()) {
                     case EQUAL -> {
                         if ("userId".equalsIgnoreCase(requestDTO.getColumn())) {
-                            predicates.add(criteriaBuilder.equal(userJoin.get("id"), UUID.fromString(requestDTO.getValue())));
+                            predicates.add(
+                                    criteriaBuilder.equal(userJoin.get("id"), UUID.fromString(requestDTO.getValue())));
                         } else if ("restaurantId".equalsIgnoreCase(requestDTO.getColumn())) {
-                            predicates.add(criteriaBuilder.equal(restaurantJoin.get("id"), UUID.fromString(requestDTO.getValue())));
+                            predicates.add(criteriaBuilder.equal(
+                                    restaurantJoin.get("id"), UUID.fromString(requestDTO.getValue())));
                         } else {
-                            predicates.add(criteriaBuilder.equal(root.get(requestDTO.getColumn()), requestDTO.getValue()));
+                            predicates.add(
+                                    criteriaBuilder.equal(root.get(requestDTO.getColumn()), requestDTO.getValue()));
                         }
                     }
                     case IN -> {
@@ -107,16 +120,21 @@ public class FiltersSpecificationImpl<T> {
                         predicates.add(in);
                     }
                     case LESS_THAN -> {
-                        Predicate lessThan = criteriaBuilder.lessThan(root.get(requestDTO.getColumn()), requestDTO.getValue());
+                        Predicate lessThan =
+                                criteriaBuilder.lessThan(root.get(requestDTO.getColumn()), requestDTO.getValue());
                         predicates.add(lessThan);
                     }
                     case GREATER_THAN -> {
-                        Predicate greaterThan = criteriaBuilder.greaterThan(root.get(requestDTO.getColumn()), requestDTO.getValue());
+                        Predicate greaterThan =
+                                criteriaBuilder.greaterThan(root.get(requestDTO.getColumn()), requestDTO.getValue());
                         predicates.add(greaterThan);
                     }
                     case BETWEEN -> {
                         String[] splitForBetween = requestDTO.getValue().split(", ");
-                        Predicate between = criteriaBuilder.between(root.get(requestDTO.getColumn()), BigDecimal.valueOf(Double.parseDouble(splitForBetween[0])), BigDecimal.valueOf(Double.parseDouble(splitForBetween[1])));
+                        Predicate between = criteriaBuilder.between(
+                                root.get(requestDTO.getColumn()),
+                                BigDecimal.valueOf(Double.parseDouble(splitForBetween[0])),
+                                BigDecimal.valueOf(Double.parseDouble(splitForBetween[1])));
                         predicates.add(between);
                     }
                     default -> throw new IllegalStateException("Unexpected value: " + requestDTO.getOperation());
@@ -145,9 +163,11 @@ public class FiltersSpecificationImpl<T> {
     public Specification<T> sortByAverageReview(Sort.Direction direction) {
         return (root, query, criteriaBuilder) -> {
             if (direction == Sort.Direction.ASC) {
-                query.orderBy(criteriaBuilder.asc(criteriaBuilder.quot(root.get("reviewSum"), root.get("reviewCount"))));
+                query.orderBy(
+                        criteriaBuilder.asc(criteriaBuilder.quot(root.get("reviewSum"), root.get("reviewCount"))));
             } else {
-                query.orderBy(criteriaBuilder.desc(criteriaBuilder.quot(root.get("reviewSum"), root.get("reviewCount"))));
+                query.orderBy(
+                        criteriaBuilder.desc(criteriaBuilder.quot(root.get("reviewSum"), root.get("reviewCount"))));
             }
             return criteriaBuilder.conjunction();
         };

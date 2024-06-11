@@ -3,7 +3,6 @@ package com.example.foodx_be.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-
 public class UsernameValidator implements ConstraintValidator<ValidUsername, String> {
 
     @Override

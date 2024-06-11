@@ -16,8 +16,10 @@ import java.time.LocalDateTime;
 public class APIResponse<T> {
     @Builder.Default
     private int code = 1000;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDateTime timeStamp = LocalDateTime.now();
+
     private String message;
     private T result;
 }

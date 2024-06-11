@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 public class OpenTimeServiceImpl implements OpenTimeService {
@@ -43,7 +44,7 @@ public class OpenTimeServiceImpl implements OpenTimeService {
     @Override
     public List<OpenTime> convertToOpenTimeEnityList(List<OpenTimeDTO> openTimeDTOList) {
         List<OpenTime> openTimeList = new ArrayList<>();
-        for(OpenTimeDTO openTimeDTO: openTimeDTOList){
+        for (OpenTimeDTO openTimeDTO : openTimeDTOList) {
             openTimeList.add(convertToOpenTimeEnity(openTimeDTO));
         }
         return openTimeList;
@@ -66,7 +67,4 @@ public class OpenTimeServiceImpl implements OpenTimeService {
                 .dayOfWeek(openTime.getDayOfWeek())
                 .build();
     }
-
-
 }
-

@@ -39,9 +39,11 @@ public class BusinessProofServiceImpl implements BusinessProofService {
     private final String FOLDER_UPLOAD = "Business Proof";
 
     @Override
-    public void addBusinessProof(BusinessProofCreationRequest businessProofCreationRequest, MultipartFile multipartFile) throws IOException {
+    public void addBusinessProof(BusinessProofCreationRequest businessProofCreationRequest, MultipartFile multipartFile)
+            throws IOException {
         var context = SecurityContextHolder.getContext();
-        User userOwner = userService.getUser(UUID.fromString(context.getAuthentication().getName()));
+        User userOwner =
+                userService.getUser(UUID.fromString(context.getAuthentication().getName()));
         Restaurant restaurant = restaurantService.getRestaurantEnity(businessProofCreationRequest.getIdRestaurant());
 
         Map result = cloudiaryService.uploadFile(multipartFile, FOLDER_UPLOAD);
@@ -54,7 +56,6 @@ public class BusinessProofServiceImpl implements BusinessProofService {
         businessProof.setBusinessProofUrl((String) result.get("url"));
 
         businessProofRepository.save(businessProof);
-
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -62,8 +63,9 @@ public class BusinessProofServiceImpl implements BusinessProofService {
     public void reviewBusinessProof(UUID idBusinessProof, UpdateState updateState) {
         Optional<BusinessProof> businessProofOptional = businessProofRepository.findById(idBusinessProof);
         BusinessProof businessProof = unwrapBusinessProof(businessProofOptional);
-        if(updateState.equals(UpdateState.ACCEPTED)){
-            Restaurant restaurant = restaurantService.getRestaurantEnity(businessProof.getRestaurant().getId());
+        if (updateState.equals(UpdateState.ACCEPTED)) {
+            Restaurant restaurant = restaurantService.getRestaurantEnity(
+                    businessProof.getRestaurant().getId());
             restaurant.setHasAnOwner(true);
             restaurantService.saveRestaurantEnity(restaurant);
         }
@@ -89,8 +91,8 @@ public class BusinessProofServiceImpl implements BusinessProofService {
         return convertListBusinessProofToPage(businessProofList, pageNo, limit);
     }
 
-
-    public Page<BusinessProofDTO> convertListBusinessProofToPage(List<BusinessProof> businessProofList, int pageNo, int limit) {
+    public Page<BusinessProofDTO> convertListBusinessProofToPage(
+            List<BusinessProof> businessProofList, int pageNo, int limit) {
         List<BusinessProofDTO> businessProofDTOList = new ArrayList<>();
         for (BusinessProof businessProof : businessProofList) {
             businessProofDTOList.add(convertToBusinessProofDTO(businessProof));
@@ -127,5 +129,4 @@ public class BusinessProofServiceImpl implements BusinessProofService {
         }
         return builder.build();
     }
-
 }

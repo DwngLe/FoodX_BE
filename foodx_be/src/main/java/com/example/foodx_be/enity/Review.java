@@ -1,6 +1,5 @@
 package com.example.foodx_be.enity;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,21 +19,24 @@ import java.util.UUID;
 public class Review {
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
+
     @Column(name = "review_date")
     private LocalDateTime reviewDate;
+
     @Column(name = "review_title")
     private String reviewTitle;
+
     @Column(name = "review_content")
     private String reviewContent;
+
     @Column(name = "star_number")
     private Double starNumber;
+
     @Column(name = "like_number")
     private int likeNumber;
+
     @Column(name = "unlike_number")
     private int unlikeNumber;
 

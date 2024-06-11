@@ -8,8 +8,10 @@ import lombok.Data;
 @Builder
 public class OpenTimeDTO {
     private String dayOfWeek;
+
     @JsonFormat(pattern = "HH:mm:ss")
     private String openingTime;
+
     @JsonFormat(pattern = "HH:mm:ss")
     private String closingTime;
 }

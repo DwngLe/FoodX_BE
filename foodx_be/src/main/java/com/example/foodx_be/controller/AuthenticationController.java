@@ -35,21 +35,14 @@ public class AuthenticationController {
     private UserService userService;
     private AuthenticationService authenticationService;
 
-
     @Operation(
-            description = "Người dùng gửi lên các thông tin cần thiết để đăng ký tài khoản, hệ thống sẽ trả về các thông tin cơ bản",
+            description =
+                    "Người dùng gửi lên các thông tin cần thiết để đăng ký tài khoản, hệ thống sẽ trả về các thông tin cơ bản",
             summary = "Đăng ký tài khoản",
             responses = {
-                    @ApiResponse(
-                            description = "Thành công",
-                            responseCode = "200"
-                    ),
-                    @ApiResponse(
-                            description = "Thông tin không hợp lệ",
-                            responseCode = "405"
-                    )
-            }
-    )
+                    @ApiResponse(description = "Thành công", responseCode = "200"),
+                    @ApiResponse(description = "Thông tin không hợp lệ", responseCode = "405")
+            })
     @PostMapping("/register")
     private APIResponse<UserResponse> register(@Valid @RequestBody UserCreationRequest userCreationRequest) {
         return APIResponse.<UserResponse>builder()
@@ -61,20 +54,10 @@ public class AuthenticationController {
             description = "Người dùng gửi lên các thông tin cần thiết để đăng nhập tài khoản, hệ thống sẽ trả về token",
             summary = "Đăng nhập tài khoản",
             responses = {
-                    @ApiResponse(
-                            description = "Thành công",
-                            responseCode = "200"
-                    ),
-                    @ApiResponse(
-                            description = "Thông tin không hợp lệ",
-                            responseCode = "405"
-                    ),
-                    @ApiResponse(
-                            description = "Xác thực không thành công",
-                            responseCode = "401"
-                    )
-            }
-    )
+                    @ApiResponse(description = "Thành công", responseCode = "200"),
+                    @ApiResponse(description = "Thông tin không hợp lệ", responseCode = "405"),
+                    @ApiResponse(description = "Xác thực không thành công", responseCode = "401")
+            })
     @PostMapping("/login")
     private APIResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         return APIResponse.<AuthenticationResponse>builder()
@@ -84,13 +67,7 @@ public class AuthenticationController {
 
     @Operation(
             summary = "Đăng xuất tài khoản",
-            responses = {
-                    @ApiResponse(
-                            description = "Thành công",
-                            responseCode = "200"
-                    )
-            }
-    )
+            responses = {@ApiResponse(description = "Thành công", responseCode = "200")})
     @PostMapping("/logout")
     private APIResponse<Void> logout() throws ParseException, JOSEException {
         authenticationService.logout();
@@ -106,22 +83,17 @@ public class AuthenticationController {
     }
 
     @Operation(
-            description = "Người dùng gửi lên token đã hết hạn, hệ thống sẽ trả về token mới (token cũ phải còn trong thời hạn refresh)",
+            description =
+                    "Người dùng gửi lên token đã hết hạn, hệ thống sẽ trả về token mới (token cũ phải còn trong thời hạn refresh)",
             summary = "Refresh token",
             responses = {
-                    @ApiResponse(
-                            description = "Thành công",
-                            responseCode = "200"
-                    ),
-                    @ApiResponse(
-                            description = "Xác thực không thành công",
-                            responseCode = "401"
-                    )
-            }
-    )
+                    @ApiResponse(description = "Thành công", responseCode = "200"),
+                    @ApiResponse(description = "Xác thực không thành công", responseCode = "401")
+            })
     @SecurityRequirement(name = "bearAuth")
     @PostMapping("/refresh")
-    private APIResponse<AuthenticationResponse> refreshToken(@RequestBody RefeshRequest request) throws ParseException, JOSEException {
+    private APIResponse<AuthenticationResponse> refreshToken(@RequestBody RefeshRequest request)
+            throws ParseException, JOSEException {
         return APIResponse.<AuthenticationResponse>builder()
                 .result(authenticationService.refeshToken(request))
                 .build();

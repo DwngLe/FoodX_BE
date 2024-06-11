@@ -1,11 +1,13 @@
 package com.example.foodx_be.enity;
 
+import java.util.UUID;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+
 import org.hibernate.annotations.GenericGenerator;
 
-import java.util.UUID;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,16 +19,16 @@ import java.util.UUID;
 public class UpdateOpenTime {
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
+
     @NotBlank
     @Column(name = "day_of_week")
     private String dayOfWeek;
+
     @Column(name = "opening_time")
     private String openingTime;
+
     @Column(name = "closing_time")
     private String closingTime;
 

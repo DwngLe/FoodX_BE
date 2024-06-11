@@ -26,23 +26,13 @@ public class OpenTimeController {
             description = "Lấy ra thông tin về giờ mở cửa của 1 nhà hàng dựa trên ID của nhà hàng đó",
             summary = "Lấy ra thông tin về giờ mở cửa của nhà hàng",
             responses = {
-                    @ApiResponse(
-                            description = "Thành công",
-                            responseCode = "200"
-                    ),
-                    @ApiResponse(
-                            description = "Không tìm thấy kết quả",
-                            responseCode = "404"
-                    )
-            }
-
-    )
+                    @ApiResponse(description = "Thành công", responseCode = "200"),
+                    @ApiResponse(description = "Không tìm thấy kết quả", responseCode = "404")
+            })
     @GetMapping("/{idRestaurant}")
     public APIResponse<List<OpenTimeDTO>> getOpenTimeOfRestaurant(@PathVariable UUID idRestaurant) {
         return APIResponse.<List<OpenTimeDTO>>builder()
                 .result(openTimeService.getOpenTimeOfRestaurant(idRestaurant))
                 .build();
     }
-
-
 }

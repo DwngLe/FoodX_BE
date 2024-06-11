@@ -13,5 +13,6 @@ public interface RestaurantTagService {
     List<Tag> getListTagOfRestaurant(UUID idRestaurant);
 
     Page<RestaurantTag> getListRestaurantByTag(RequestDTO requestDTO);
+
     void saveRestaurantTag(Restaurant restaurant, Tag tag);
 }

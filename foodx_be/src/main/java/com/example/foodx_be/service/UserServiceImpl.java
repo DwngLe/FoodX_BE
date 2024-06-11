@@ -1,5 +1,20 @@
 package com.example.foodx_be.service;
 
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.foodx_be.dto.request.UserCreationRequest;
 import com.example.foodx_be.dto.request.UserUpdateRequest;
 import com.example.foodx_be.dto.response.PageRequestDTO;
@@ -13,25 +28,12 @@ import com.example.foodx_be.exception.AppException;
 import com.example.foodx_be.exception.ErrorCode;
 import com.example.foodx_be.mapper.UserMapper;
 import com.example.foodx_be.repository.UserRepository;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     private CloudiaryService cloudiaryService;
     private UserMapper userMapper;
     private FiltersSpecificationImpl<User> specification;
@@ -44,7 +46,7 @@ public class UserServiceImpl implements UserService{
     public void updateUserAvatar(UUID idUser, MultipartFile multipartFile) throws IOException {
         Map result = cloudiaryService.uploadFile(multipartFile, FOLDER_UPLOAD);
         User user = getUser(idUser);
-        user.setAvatarLink((String)result.get("url"));
+        user.setAvatarLink((String) result.get("url"));
         userRepository.save(user);
     }
 
@@ -79,7 +81,8 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Page<UserResponse> getUserBySpecification(RequestDTO requestDTO) {
-        Specification<User> userSpecification = specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
+        Specification<User> userSpecification =
+                specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
         userSpecification.and(specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
         Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
         Page<User> usersPage = userRepository.findAll(userSpecification, pageable);
@@ -89,7 +92,7 @@ public class UserServiceImpl implements UserService{
         return usersPage.map(userMapper::toUserResponse);
     }
 
-    @PostAuthorize("returnObject.id.toString() == authentication.principal.claims['sub']") //phai chuyen UUID ve String
+    @PostAuthorize("returnObject.id.toString() == authentication.principal.claims['sub']") // phai chuyen UUID ve String
     @Override
     public UserResponse updateUser(UserUpdateRequest userUpdateRequest) {
         var context = SecurityContextHolder.getContext();
@@ -100,7 +103,6 @@ public class UserServiceImpl implements UserService{
         userMapper.updateUser(user, userUpdateRequest);
         return userMapper.toUserResponse(userRepository.save(user));
     }
-
 
     static User unwrapUser(Optional<User> entity) {
         if (entity.isPresent()) return entity.get();
@@ -119,7 +121,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User updateUserPoint(UUID idUser, int point) {
-        User user= unwrapUser(userRepository.findById(idUser));
+        User user = unwrapUser(userRepository.findById(idUser));
         user.setPoints(user.getPoints() + point);
         userRepository.save(user);
         return user;

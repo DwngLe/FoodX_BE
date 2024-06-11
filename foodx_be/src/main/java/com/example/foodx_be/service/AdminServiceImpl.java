@@ -60,7 +60,6 @@ public class AdminServiceImpl implements AdminService {
         return new PageImpl<>(subList, pageable, restaurantUpdateDTOList.size());
     }
 
-
     @PreAuthorize("hasRole('ADMIN')")
     @Override
     public void reviewRestaurantUpdate(UUID idRestaurantUpdate, UpdateState updateState) {
@@ -83,7 +82,6 @@ public class AdminServiceImpl implements AdminService {
         if (entity.isPresent()) return entity.get();
         else throw new AppException(ErrorCode.RESTAURANT_NOT_EXISTED);
     }
-
 
     private RestaurantUpdateDTO convertToRestaurantUpdateDTO(UpdateRestaurant updateRestaurant) {
         RestaurantUpdateDTO.RestaurantUpdateDTOBuilder builder = RestaurantUpdateDTO.builder()
@@ -111,8 +109,7 @@ public class AdminServiceImpl implements AdminService {
         return builder.build();
     }
 
-    //DARK SIDE ;))
-
+    // DARK SIDE ;))
 
     public void updateFromRestaurantUpdate(UpdateRestaurant restaurantUpdate, Restaurant restaurant) {
         Optional.ofNullable(restaurantUpdate.getRestaurantName()).ifPresent(restaurant::setRestaurantName);
@@ -146,7 +143,4 @@ public class AdminServiceImpl implements AdminService {
         }
         return convertedOpenTimeList;
     }
-
-
 }
-

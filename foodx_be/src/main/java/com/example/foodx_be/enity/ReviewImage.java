@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -18,16 +19,16 @@ import java.util.UUID;
 public class ReviewImage {
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
+
     @JsonIgnore
     @Column(name = "image_id")
     private String imageId;
+
     private String name;
-    @Column(name="image_url")
+
+    @Column(name = "image_url")
     private String imageUrl;
 
     @ManyToOne(optional = true)

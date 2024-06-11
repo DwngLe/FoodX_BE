@@ -20,16 +20,16 @@ import java.util.UUID;
 public class BusinessProof {
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
+
     @Column(name = "owner_role")
     @Enumerated(EnumType.STRING)
     private OwnerRole ownerRole;
+
     @Column(name = "business_proof_url")
     private String businessProofUrl;
+
     @Column(name = "update_state")
     @Enumerated(EnumType.STRING)
     private UpdateState updateState;
@@ -37,8 +37,8 @@ public class BusinessProof {
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_owner", referencedColumnName = "id")
     private User userOwner;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_restaurant", referencedColumnName = "id")
     private Restaurant restaurant;
-
 }

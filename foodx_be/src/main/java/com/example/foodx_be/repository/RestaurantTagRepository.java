@@ -7,7 +7,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.List;
 import java.util.UUID;
 
-public interface RestaurantTagRepository extends JpaRepository<RestaurantTag, UUID>, JpaSpecificationExecutor<RestaurantTag> {
+public interface RestaurantTagRepository
+        extends JpaRepository<RestaurantTag, UUID>, JpaSpecificationExecutor<RestaurantTag> {
 
     List<RestaurantTag> getAllByRestaurantId(UUID idRestaurant);
 }

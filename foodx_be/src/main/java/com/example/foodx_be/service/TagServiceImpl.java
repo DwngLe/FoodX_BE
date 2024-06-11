@@ -16,8 +16,9 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class TagServiceImpl implements TagService{
+public class TagServiceImpl implements TagService {
     private TagRepository tagRepository;
+
     @Override
     public List<TagDTO> getListTag() {
         return convertToListTagDTO(tagRepository.findAll());
@@ -26,7 +27,7 @@ public class TagServiceImpl implements TagService{
     @PreAuthorize("hasRole('ADMIN')")
     @Override
     public void addTag(List<TagDTO> tagDTOList) {
-        for(TagDTO tagDTO : tagDTOList){
+        for (TagDTO tagDTO : tagDTOList) {
             tagRepository.save(convertToTagEnity(tagDTO));
         }
     }
@@ -39,23 +40,21 @@ public class TagServiceImpl implements TagService{
     @Override
     public List<TagDTO> convertToListTagDTO(List<Tag> tagList) {
         List<TagDTO> tagDTOList = new ArrayList<>();
-        for(Tag tag : tagList){
+        for (Tag tag : tagList) {
             tagDTOList.add(convertToTagDTO(tag));
         }
         return tagDTOList;
     }
 
-
-
-    public TagDTO convertToTagDTO(Tag tag){
-        return  TagDTO.builder()
+    public TagDTO convertToTagDTO(Tag tag) {
+        return TagDTO.builder()
                 .id(tag.getId())
                 .tagName(tag.getTagName())
                 .tagDescription(tag.getTagDescription())
                 .build();
     }
 
-    public Tag convertToTagEnity(TagDTO tagDTO){
+    public Tag convertToTagEnity(TagDTO tagDTO) {
         return Tag.builder()
                 .id(tagDTO.getId())
                 .tagName(tagDTO.getTagName())
@@ -66,4 +65,5 @@ public class TagServiceImpl implements TagService{
     static Tag unwrapUser(Optional<Tag> entity) {
         if (entity.isPresent()) return entity.get();
         else throw new AppException(ErrorCode.TAG_NOT_EXISTED);
-    }}
+    }
+}

@@ -1,10 +1,10 @@
 package com.example.foodx_be.dto.response;
 
-import lombok.Builder;
-import lombok.Data;
-
 import java.util.Set;
 import java.util.UUID;
+
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder

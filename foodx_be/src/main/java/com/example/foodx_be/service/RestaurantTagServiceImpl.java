@@ -25,11 +25,12 @@ public class RestaurantTagServiceImpl implements RestaurantTagService {
     private FiltersSpecificationImpl<RestaurantTag> tagFiltersSpecification;
 
     private RestaurantTagRepository restaurantTagRepository;
+
     @Override
     public List<Tag> getListTagOfRestaurant(UUID idRestaurant) {
         List<Tag> tagList = new ArrayList<>();
         List<RestaurantTag> restaurantTagList = restaurantTagRepository.getAllByRestaurantId(idRestaurant);
-        for(RestaurantTag restaurantTag : restaurantTagList){
+        for (RestaurantTag restaurantTag : restaurantTagList) {
             tagList.add(restaurantTag.getTag());
         }
         return tagList;
@@ -37,13 +38,16 @@ public class RestaurantTagServiceImpl implements RestaurantTagService {
 
     @Override
     public Page<RestaurantTag> getListRestaurantByTag(RequestDTO requestDTO) {
-        Specification<RestaurantTag> restaurantSpecification = tagFiltersSpecification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.OR);
+        Specification<RestaurantTag> restaurantSpecification =
+                tagFiltersSpecification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.OR);
         Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
 
         if ("point".equals(requestDTO.getSortByColumn())) {
-            restaurantSpecification = restaurantSpecification.and(tagFiltersSpecification.sortByAverageReview(requestDTO.getSort()));
+            restaurantSpecification =
+                    restaurantSpecification.and(tagFiltersSpecification.sortByAverageReview(requestDTO.getSort()));
         } else {
-            restaurantSpecification = restaurantSpecification.and(tagFiltersSpecification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
+            restaurantSpecification = restaurantSpecification.and(
+                    tagFiltersSpecification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
         }
 
         Page<RestaurantTag> all = restaurantTagRepository.findAll(restaurantSpecification, pageable);

@@ -23,17 +23,9 @@ public class TagController {
     @Operation(
             summary = "Lấy ra danh sách các thẻ Tag",
             responses = {
-                    @ApiResponse(
-                            description = "Thành công",
-                            responseCode = "200"
-                    ),
-                    @ApiResponse(
-                            description = "Không tìm thấy kết quả",
-                            responseCode = "404"
-                    )
-            }
-
-    )
+                    @ApiResponse(description = "Thành công", responseCode = "200"),
+                    @ApiResponse(description = "Không tìm thấy kết quả", responseCode = "404")
+            })
     @GetMapping("")
     public APIResponse<List<TagDTO>> getListTag() {
         return APIResponse.<List<TagDTO>>builder()

@@ -18,17 +18,14 @@ import java.util.UUID;
 public class RestaurantTag {
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "id_restaurant", referencedColumnName = "id")
     private Restaurant restaurant;
+
     @ManyToOne
     @JoinColumn(name = "id_tag", referencedColumnName = "id")
     private Tag tag;
-
 }

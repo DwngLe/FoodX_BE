@@ -15,5 +15,6 @@ public interface ReviewService {
     Page<ReviewRestaurantDTO> getListReviewBySpecification(RequestDTO requestDTO);
 
     Page<ReviewRestaurantDTO> getMyReviewSpecification(RequestDTO requestDTO);
+
     List<ReviewRestaurantDTO> getListRecentReview(int pageNo, int limit);
 }

@@ -49,10 +49,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String tokenID = signToken.getJWTClaimsSet().getJWTID();
         Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
 
-        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
-                .id(tokenID)
-                .expiryTime(expiryTime)
-                .build();
+        InvalidatedToken invalidatedToken =
+                InvalidatedToken.builder().id(tokenID).expiryTime(expiryTime).build();
         invalidatedTokenRepository.save(invalidatedToken);
     }
 
@@ -60,7 +58,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
         JWSVerifier jwsVerifier = new MACVerifier(SecurityConstants.SECRET_KEY.getBytes());
         SignedJWT signedJWT = SignedJWT.parse(token);
-        Date expiryTime = isRefresh ? new Date(signedJWT.getJWTClaimsSet().getIssueTime().toInstant().plus(SecurityConstants.REFESHABLE_DURATION, ChronoUnit.MINUTES).toEpochMilli())
+        Date expiryTime = isRefresh
+                ? new Date(signedJWT
+                .getJWTClaimsSet()
+                .getIssueTime()
+                .toInstant()
+                .plus(SecurityConstants.REFESHABLE_DURATION, ChronoUnit.MINUTES)
+                .toEpochMilli())
                 : signedJWT.getJWTClaimsSet().getExpirationTime();
 
         var verified = signedJWT.verify(jwsVerifier);
@@ -73,7 +77,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
         return signedJWT;
-
     }
 
     @Override
@@ -85,9 +88,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         } catch (AppException e) {
             isValid = false;
         }
-        return IntrospectResponse.builder()
-                .isValid(isValid)
-                .build();
+        return IntrospectResponse.builder().isValid(isValid).build();
     }
 
     @Override
@@ -96,26 +97,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
         String tokenID = signToken.getJWTClaimsSet().getJWTID();
-        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
-                .id(tokenID)
-                .expiryTime(expiryTime)
-                .build();
+        InvalidatedToken invalidatedToken =
+                InvalidatedToken.builder().id(tokenID).expiryTime(expiryTime).build();
         invalidatedTokenRepository.save(invalidatedToken);
 
         UUID idUser = UUID.fromString(signToken.getJWTClaimsSet().getSubject());
         var user = userRepository.findById(idUser).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
         var token = generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(token)
-                .authenticated(true)
-                .build();
-
-
+        return AuthenticationResponse.builder().token(token).authenticated(true).build();
     }
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
-        var user = userRepository.findByUsername(authenticationRequest.getUsername())
+        var user = userRepository
+                .findByUsername(authenticationRequest.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         boolean authenticated = bCryptPasswordEncoder.matches(authenticationRequest.getPassword(), user.getPassword());
         if (!authenticated) {
@@ -131,13 +126,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private String generateToken(User user) {
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
-        //data trong body dc goi la claim
-        //claim tieu chuan:
+        // data trong body dc goi la claim
+        // claim tieu chuan:
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getId().toString())
-                .issuer("DuongLe")//issue tu ai, thuong la domain service
+                .issuer("DuongLe") // issue tu ai, thuong la domain service
                 .issueTime(new Date())
-                .expirationTime(new Date(Instant.now().plus(SecurityConstants.VALID_DURATION, ChronoUnit.MINUTES).toEpochMilli()))
+                .expirationTime(new Date(Instant.now()
+                        .plus(SecurityConstants.VALID_DURATION, ChronoUnit.MINUTES)
+                        .toEpochMilli()))
                 .claim("scope", buildScope(user))
                 .jwtID(UUID.randomUUID().toString())
                 .build();
@@ -147,7 +144,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         JWSObject jwsObject = new JWSObject(jwsHeader, payload);
 
         try {
-            //MAC: khoa giai ma va khoa ky la 1
+            // MAC: khoa giai ma va khoa ky la 1
             jwsObject.sign(new MACSigner(SecurityConstants.SECRET_KEY.getBytes()));
             return jwsObject.serialize();
         } catch (JOSEException e) {

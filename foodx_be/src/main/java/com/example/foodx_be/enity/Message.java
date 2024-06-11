@@ -20,12 +20,11 @@ import java.util.UUID;
 public class Message {
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
+
     private String content;
+
     @NotBlank
     @Column(name = "sent_time")
     private LocalDateTime sentTime;
@@ -33,6 +32,7 @@ public class Message {
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_sent", referencedColumnName = "id")
     private User userSent;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_recive", referencedColumnName = "id")
     private User userRecvie;
