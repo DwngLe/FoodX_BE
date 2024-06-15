@@ -314,6 +314,12 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .offerDelivery(restaurant.getOfferDelivery())
                 .outdoorSeating(restaurant.getOutdoorSeating())
                 .offerTakeaway(restaurant.getOfferTakeaway())
+                .houseNumber(restaurant.getHouseNumber())
+                .ward(restaurant.getWard())
+                .district(restaurant.getDistrict())
+                .city(restaurant.getCity())
+                .longitude(restaurant.getLongitude())
+                .latitude(restaurant.getLatitude())
                 .points(restaurant.getReviewCount() == 0 ? 0 : restaurant.getReviewSum() / restaurant.getReviewCount())
                 .restaurantImageResponseList(restaurant.getRestaurantImageList().stream().map(restaurantImageMapper::toRestaurantImageResponse).collect(Collectors.toList()))
                 .tagDTOList(tagService.convertToListTagDTO(
