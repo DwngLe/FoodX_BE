@@ -1,5 +1,6 @@
 package com.example.foodx_be.service;
 
+import com.example.foodx_be.dto.request.Request;
 import com.example.foodx_be.dto.request.RestaurantCreationRequest;
 import com.example.foodx_be.dto.request.RestaurantUpdateRequest;
 import com.example.foodx_be.dto.response.*;
@@ -9,6 +10,10 @@ import com.example.foodx_be.enums.Operation;
 import com.example.foodx_be.enums.RestaurantState;
 import com.example.foodx_be.exception.AppException;
 import com.example.foodx_be.exception.ErrorCode;
+import com.example.foodx_be.mapper.RestaurantImageMapper;
+import com.example.foodx_be.mapper.RestaurantMapper;
+import com.example.foodx_be.mapper.UpdateRestaurantMapper;
+import com.example.foodx_be.repository.RestaurantImageRepository;
 import com.example.foodx_be.repository.RestaurantRepository;
 import com.example.foodx_be.repository.UpdateRestaurantRepository;
 import com.example.foodx_be.ulti.BoundingBoxCalculator;
@@ -18,31 +23,40 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class RestaurantServiceImpl implements RestaurantService {
+    private RestaurantMapper restaurantMapper;
+    private RestaurantImageMapper restaurantImageMapper;
+    private UpdateRestaurantMapper updateRestaurantMapper;
+
     private UserService userService;
     private OpenTimeService openTimeService;
     private UpdateOpenTimeService updateOpenTimeService;
     private TagService tagService;
     private RestaurantTagService restaurantTagService;
+    private CloudiaryService cloudiaryService;
 
     private FiltersSpecificationImpl<Restaurant> specification;
 
     private RestaurantRepository restaurantRepository;
     private UpdateRestaurantRepository updateRestaurantRepository;
+    private RestaurantImageRepository restaurantImageRepository;
+
+    private final String FOLDER_UPLOAD = "Restaurant's Images";
 
     @Override
-    public void addRestaurant(RestaurantCreationRequest restaurantCreationRequest) {
+    public void addRestaurant(RestaurantCreationRequest restaurantCreationRequest, MultipartFile[] multipartFiles) throws IOException {
         var context = SecurityContextHolder.getContext();
         User user =
                 userService.getUser(UUID.fromString(context.getAuthentication().getName()));
@@ -50,12 +64,24 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setUserAdd(user);
         restaurantRepository.save(restaurant);
 
-        openTimeService.saveOpenTime(restaurantCreationRequest.getOpenTimeList(), restaurant);
+//        openTimeService.saveOpenTime(restaurantCreationRequest.getOpenTimeList(), restaurant);
 
         List<UUID> listID = restaurantCreationRequest.getListIdTag();
         for (UUID uuid : listID) {
             Tag tag = tagService.getTagEity(uuid);
             restaurantTagService.saveRestaurantTag(restaurant, tag);
+        }
+
+        if (multipartFiles != null) {
+            List<Map> results = cloudiaryService.uploadMultiFiles(multipartFiles, FOLDER_UPLOAD);
+            for (Map result : results) {
+                RestaurantImage image = new RestaurantImage();
+                image.setImageId((String) result.get("public_id"));
+                image.setName((String) result.get("original_filename"));
+                image.setImageUrl((String) result.get("url"));
+                image.setRestaurant(restaurant);
+                restaurantImageRepository.save(image);
+            }
         }
     }
 
@@ -65,79 +91,80 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Page<RestaurantDTO> getNearByRestaurant(RequestDTO requestDTO, LocationDTO locationDTO) {
-        BigDecimal latitude = locationDTO.getLatitude();
-        BigDecimal longitude = locationDTO.getLongitude();
-        BigDecimal radiusInKm = locationDTO.getRadius();
+    public Page<RestaurantBasicInfoResponse> getNearByRestaurant(Request request, LocationRequest locationRequest) {
+        BigDecimal latitude = locationRequest.getLatitude();
+        BigDecimal longitude = locationRequest.getLongitude();
+        BigDecimal radiusInKm = locationRequest.getRadius();
 
         BigDecimal[] boundingBox = BoundingBoxCalculator.calculateBoundingBox(latitude, longitude, radiusInKm);
 
         // min lat, min long, max lat, max log
-        requestDTO
+        request
                 .getSearchRequestDTO()
                 .add(new SearchRequestDTO(
                         "latitude", boundingBox[0].toString() + ", " + boundingBox[2], Operation.BETWEEN));
-        requestDTO
+        request
                 .getSearchRequestDTO()
                 .add(new SearchRequestDTO(
                         "longitude", boundingBox[1].toString() + ", " + boundingBox[3], Operation.BETWEEN));
-        requestDTO
+        request
                 .getSearchRequestDTO()
                 .add(new SearchRequestDTO("restaurantState", RestaurantState.ACTIVE.toString(), Operation.EQUAL));
 
         Specification<Restaurant> restaurantSpecification =
-                specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
-        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
+                specification.getSearchSpecification(request.getSearchRequestDTO(), GlobalOperator.AND);
+        Pageable pageable = new PageRequestDTO().getPageable(request.getPageRequestDTO());
 
         // Apply sorting based on the sortByColumn
-        if ("point".equals(requestDTO.getSortByColumn())) {
+        if ("point".equals(request.getSortByColumn())) {
             restaurantSpecification =
-                    restaurantSpecification.and(specification.sortByAverageReview(requestDTO.getSort()));
+                    restaurantSpecification.and(specification.sortByAverageReview(request.getSort()));
         } else {
             restaurantSpecification = restaurantSpecification.and(
-                    specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
+                    specification.sortByColumn(request.getSortByColumn(), request.getSort()));
         }
 
         Page<Restaurant> all = restaurantRepository.findAll(restaurantSpecification, pageable);
         if (all.getContent().isEmpty()) {
             throw new AppException(ErrorCode.RESTAURANT_NOT_EXISTED);
         }
-        return all.map(this::convertToRestaurantDTO);
+        return all.map(this::convertToRestaurantBasicInfo);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
-    public Page<RestaurantDTO> getRestaurantByRestaurantState(int pageNo, int limit, RestaurantState restaurantState) {
-
-        List<Restaurant> restaurantList = restaurantRepository.findAllByRestaurantState(restaurantState);
-        if (restaurantList.isEmpty()) {
+    public Page<RestaurantBasicInfoResponse> getRestaurantByRestaurantState(int pageNo, int limit, RestaurantState restaurantState) {
+        Pageable pageable = PageRequest.of(pageNo, limit);
+        Page<Restaurant> restaurantPage = restaurantRepository.findAllByRestaurantState(restaurantState, pageable);
+        if (restaurantPage.isEmpty()) {
             throw new AppException(ErrorCode.RESTAURANT_NOT_EXISTED);
         }
-        return converListRestaurantEnityToPage(restaurantList, pageNo, limit);
+        return restaurantPage.map(this::convertToRestaurantBasicInfo);
     }
 
     @Override
-    public Page<RestaurantDTO> getRestaurantBySpecification(RequestDTO requestDTO) {
-        requestDTO
+    public Page<RestaurantBasicInfoResponse> getRestaurantBySpecification(Request request) {
+        request
                 .getSearchRequestDTO()
                 .add(new SearchRequestDTO("restaurantState", RestaurantState.ACTIVE.toString(), Operation.EQUAL));
         Specification<Restaurant> restaurantSpecification =
-                specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
-        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
+                specification.getSearchSpecification(request.getSearchRequestDTO(), GlobalOperator.AND);
+        Pageable pageable = new PageRequestDTO().getPageable(request.getPageRequestDTO());
 
         // Apply sorting based on the sortByColumn
-        if ("point".equals(requestDTO.getSortByColumn())) {
+        if ("point".equals(request.getSortByColumn())) {
             restaurantSpecification =
-                    restaurantSpecification.and(specification.sortByAverageReview(requestDTO.getSort()));
+                    restaurantSpecification.and(specification.sortByAverageReview(request.getSort()));
         } else {
             restaurantSpecification = restaurantSpecification.and(
-                    specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
+                    specification.sortByColumn(request.getSortByColumn(), request.getSort()));
         }
 
         Page<Restaurant> all = restaurantRepository.findAll(restaurantSpecification, pageable);
         if (all.getContent().isEmpty()) {
             throw new AppException(ErrorCode.RESTAURANT_NOT_EXISTED);
         }
-        return all.map(this::convertToRestaurantDTO);
+        return all.map(this::convertToRestaurantBasicInfo);
     }
 
     // for checking restaurant id
@@ -147,15 +174,15 @@ public class RestaurantServiceImpl implements RestaurantService {
         return unwrarpRestaurant(restaurantOptional);
     }
 
-    public Page<RestaurantTag> getListRestaurantByTag(RequestDTO requestDTO) {
-        return restaurantTagService.getListRestaurantByTag(requestDTO);
+    public Page<RestaurantTag> getListRestaurantByTag(Request request) {
+        return restaurantTagService.getListRestaurantByTag(request);
     }
 
     @Override
-    public RestaurantDTO getRestaurantDTO(UUID idRestaurant) {
+    public RestaurantResponse getRestaurantDTO(UUID idRestaurant) {
         Optional<Restaurant> restaurantOptional = restaurantRepository.findById(idRestaurant);
         Restaurant restaurant = unwrarpRestaurant(restaurantOptional);
-        return convertToRestaurantDTO(restaurant);
+        return convertToRestaurantResponse(restaurant);
     }
 
     @Override
@@ -184,17 +211,17 @@ public class RestaurantServiceImpl implements RestaurantService {
         return restaurant;
     }
 
-    public Page<RestaurantDTO> converListRestaurantEnityToPage(List<Restaurant> restaurants, int pageNo, int limit) {
-        List<RestaurantDTO> restaurantDTOList = new ArrayList<>();
+    public Page<RestaurantResponse> converListRestaurantEnityToPage(List<Restaurant> restaurants, int pageNo, int limit) {
+        List<RestaurantResponse> restaurantResponseList = new ArrayList<>();
         for (Restaurant restaurant : restaurants) {
-            restaurantDTOList.add(convertToRestaurantDTO(restaurant));
+            restaurantResponseList.add(convertToRestaurantResponse(restaurant));
         }
         Pageable pageable = PageRequest.of(pageNo, limit);
 
         int startIndex = (int) pageable.getOffset();
-        int endIndex = (int) Math.min(pageable.getOffset() + pageable.getPageSize(), restaurantDTOList.size());
-        List<RestaurantDTO> subList = restaurantDTOList.subList(startIndex, endIndex);
-        return new PageImpl<>(subList, pageable, restaurantDTOList.size());
+        int endIndex = (int) Math.min(pageable.getOffset() + pageable.getPageSize(), restaurantResponseList.size());
+        List<RestaurantResponse> subList = restaurantResponseList.subList(startIndex, endIndex);
+        return new PageImpl<>(subList, pageable, restaurantResponseList.size());
     }
 
     static Restaurant unwrarpRestaurant(Optional<Restaurant> entity) {
@@ -245,10 +272,11 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .build();
     }
 
-    private RestaurantDTO convertToRestaurantDTO(Restaurant restaurant) {
-        RestaurantDTO.RestaurantDTOBuilder builder = RestaurantDTO.builder()
+    private RestaurantResponse convertToRestaurantResponse(Restaurant restaurant) {
+        RestaurantResponse.RestaurantResponseBuilder builder = RestaurantResponse.builder()
                 .id(restaurant.getId())
                 .restaurantName(restaurant.getRestaurantName())
+                .description(restaurant.getDescription())
                 .houseNumber(restaurant.getHouseNumber())
                 .ward(restaurant.getWard())
                 .district(restaurant.getDistrict())
@@ -268,12 +296,28 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .timeAdded(restaurant.getTimeAdded())
                 .hasAnOwner(restaurant.getHasAnOwner())
                 .userAdd(userService.convertTouserBasicInfor(restaurant.getUserAdd()))
-                .points(restaurant.getReviewSum() / restaurant.getReviewCount())
+                .points(restaurant.getReviewCount() == 0 ? 0 : restaurant.getReviewSum() / restaurant.getReviewCount())
+                .restaurantImageResponseList(restaurant.getRestaurantImageList().stream().map(restaurantImageMapper::toRestaurantImageResponse).collect(Collectors.toList()))
                 .tagDTOList(tagService.convertToListTagDTO(
                         restaurantTagService.getListTagOfRestaurant(restaurant.getId())));
         if (restaurant.getUserAdd() != null) {
             builder.userAdd(userService.convertTouserBasicInfor(restaurant.getUserAdd()));
         }
+        return builder.build();
+    }
+
+    private RestaurantBasicInfoResponse convertToRestaurantBasicInfo(Restaurant restaurant) {
+        RestaurantBasicInfoResponse.RestaurantBasicInfoResponseBuilder builder = RestaurantBasicInfoResponse.builder()
+                .id(restaurant.getId())
+                .restaurantName(restaurant.getRestaurantName())
+                .description(restaurant.getDescription())
+                .offerDelivery(restaurant.getOfferDelivery())
+                .outdoorSeating(restaurant.getOutdoorSeating())
+                .offerTakeaway(restaurant.getOfferTakeaway())
+                .points(restaurant.getReviewCount() == 0 ? 0 : restaurant.getReviewSum() / restaurant.getReviewCount())
+                .restaurantImageResponseList(restaurant.getRestaurantImageList().stream().map(restaurantImageMapper::toRestaurantImageResponse).collect(Collectors.toList()))
+                .tagDTOList(tagService.convertToListTagDTO(
+                        restaurantTagService.getListTagOfRestaurant(restaurant.getId())));
         return builder.build();
     }
 }

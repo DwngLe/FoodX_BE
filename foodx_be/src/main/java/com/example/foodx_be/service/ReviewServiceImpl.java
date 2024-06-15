@@ -1,8 +1,8 @@
 package com.example.foodx_be.service;
 
+import com.example.foodx_be.dto.request.Request;
 import com.example.foodx_be.dto.request.ReviewRestaurantCreationRequest;
 import com.example.foodx_be.dto.response.PageRequestDTO;
-import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.dto.response.ReviewRestaurantDTO;
 import com.example.foodx_be.dto.response.SearchRequestDTO;
 import com.example.foodx_be.enity.Restaurant;
@@ -92,11 +92,11 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Page<ReviewRestaurantDTO> getListReviewBySpecification(RequestDTO requestDTO) {
+    public Page<ReviewRestaurantDTO> getListReviewBySpecification(Request request) {
         Specification<Review> reviewSpecification =
-                specification.getReviewSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
-        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
-        reviewSpecification.and(specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
+                specification.getReviewSpecification(request.getSearchRequestDTO(), GlobalOperator.AND);
+        Pageable pageable = new PageRequestDTO().getPageable(request.getPageRequestDTO());
+        reviewSpecification.and(specification.sortByColumn(request.getSortByColumn(), request.getSort()));
         Page<Review> all = reviewRepository.findAll(reviewSpecification, pageable);
         if (all.getContent().isEmpty()) {
             throw new AppException(ErrorCode.REVIEW_NOT_EXISTED);
@@ -105,14 +105,14 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Page<ReviewRestaurantDTO> getMyReviewSpecification(RequestDTO requestDTO) {
+    public Page<ReviewRestaurantDTO> getMyReviewSpecification(Request request) {
         var context = SecurityContextHolder.getContext();
         UUID userId = UUID.fromString(context.getAuthentication().getName());
-        requestDTO.getSearchRequestDTO().add(new SearchRequestDTO("userId", userId.toString(), Operation.EQUAL));
+        request.getSearchRequestDTO().add(new SearchRequestDTO("userId", userId.toString(), Operation.EQUAL));
         Specification<Review> reviewSpecification =
-                specification.getReviewSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
-        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
-        reviewSpecification.and(specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
+                specification.getReviewSpecification(request.getSearchRequestDTO(), GlobalOperator.AND);
+        Pageable pageable = new PageRequestDTO().getPageable(request.getPageRequestDTO());
+        reviewSpecification.and(specification.sortByColumn(request.getSortByColumn(), request.getSort()));
         Page<Review> all = reviewRepository.findAll(reviewSpecification, pageable);
         if (all.getContent().isEmpty()) {
             throw new AppException(ErrorCode.REVIEW_NOT_EXISTED);

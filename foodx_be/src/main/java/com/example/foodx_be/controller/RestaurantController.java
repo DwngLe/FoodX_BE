@@ -1,10 +1,11 @@
 package com.example.foodx_be.controller;
 
+import com.example.foodx_be.dto.request.Request;
 import com.example.foodx_be.dto.request.RestaurantCreationRequest;
 import com.example.foodx_be.dto.request.RestaurantUpdateRequest;
 import com.example.foodx_be.dto.response.NearbyRequestDTO;
-import com.example.foodx_be.dto.response.RequestDTO;
-import com.example.foodx_be.dto.response.RestaurantDTO;
+import com.example.foodx_be.dto.response.RestaurantBasicInfoResponse;
+import com.example.foodx_be.dto.response.RestaurantResponse;
 import com.example.foodx_be.enity.RestaurantTag;
 import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.RestaurantService;
@@ -15,7 +16,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -23,6 +26,7 @@ import java.util.UUID;
 @Tag(name = "Restaurant")
 @RequestMapping("/restaurants")
 public class RestaurantController {
+
     private RestaurantService restaurantService;
 
     @SecurityRequirement(name = "bearAuth")
@@ -35,8 +39,10 @@ public class RestaurantController {
                     @ApiResponse(description = "Xác thực không thành công", responseCode = "401")
             })
     @PostMapping("")
-    public APIResponse<Void> addRestaurant(@RequestBody RestaurantCreationRequest restaurantCreationRequest) {
-        restaurantService.addRestaurant(restaurantCreationRequest);
+    public APIResponse<Void> addRestaurant(@RequestPart("data") RestaurantCreationRequest restaurantCreationRequest,
+                                           @RequestPart(value = "multipartFiles", required = true) MultipartFile[] multipartFiles)
+            throws IOException {
+        restaurantService.addRestaurant(restaurantCreationRequest, multipartFiles);
         return APIResponse.<Void>builder().build();
     }
 
@@ -47,8 +53,8 @@ public class RestaurantController {
                     @ApiResponse(description = "Không tìm thấy kết quả", responseCode = "404")
             })
     @GetMapping("/{idRestaurant}")
-    public APIResponse<RestaurantDTO> getRestaurant(@PathVariable UUID idRestaurant) {
-        return APIResponse.<RestaurantDTO>builder()
+    public APIResponse<RestaurantResponse> getRestaurant(@PathVariable UUID idRestaurant) {
+        return APIResponse.<RestaurantResponse>builder()
                 .result(restaurantService.getRestaurantDTO(idRestaurant))
                 .build();
     }
@@ -61,9 +67,9 @@ public class RestaurantController {
                     @ApiResponse(description = "Không tìm thấy kết quả", responseCode = "404")
             })
     @PostMapping("/specification")
-    public APIResponse<Page<RestaurantDTO>> getRestaurants(@RequestBody RequestDTO requestDTO) {
-        return APIResponse.<Page<RestaurantDTO>>builder()
-                .result(restaurantService.getRestaurantBySpecification(requestDTO))
+    public APIResponse<Page<RestaurantBasicInfoResponse>> getRestaurants(@RequestBody Request request) {
+        return APIResponse.<Page<RestaurantBasicInfoResponse>>builder()
+                .result(restaurantService.getRestaurantBySpecification(request))
                 .build();
     }
 
@@ -74,9 +80,9 @@ public class RestaurantController {
                     @ApiResponse(description = "Không tìm thấy kết quả", responseCode = "404")
             })
     @PostMapping("/search/tag")
-    public APIResponse<Page<RestaurantTag>> getRestaurantsByTag(@RequestBody RequestDTO requestDTO) {
+    public APIResponse<Page<RestaurantTag>> getRestaurantsByTag(@RequestBody Request request) {
         return APIResponse.<Page<RestaurantTag>>builder()
-                .result(restaurantService.getListRestaurantByTag(requestDTO))
+                .result(restaurantService.getListRestaurantByTag(request))
                 .build();
     }
 
@@ -106,10 +112,10 @@ public class RestaurantController {
                     @ApiResponse(description = "Không tìm thấy kết quả", responseCode = "404")
             })
     @PostMapping("/nearby")
-    public APIResponse<Page<RestaurantDTO>> getRestaurantNearBy(@RequestBody NearbyRequestDTO nearbyRequestDTO) {
-        return APIResponse.<Page<RestaurantDTO>>builder()
+    public APIResponse<Page<RestaurantBasicInfoResponse>> getRestaurantNearBy(@RequestBody NearbyRequestDTO nearbyRequestDTO) {
+        return APIResponse.<Page<RestaurantBasicInfoResponse>>builder()
                 .result(restaurantService.getNearByRestaurant(
-                        nearbyRequestDTO.getRequestDTO(), nearbyRequestDTO.getLocationDTO()))
+                        nearbyRequestDTO.getRequest(), nearbyRequestDTO.getLocationRequest()))
                 .build();
     }
 }

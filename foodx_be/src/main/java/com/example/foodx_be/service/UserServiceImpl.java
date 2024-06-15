@@ -1,24 +1,9 @@
 package com.example.foodx_be.service;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
+import com.example.foodx_be.dto.request.Request;
 import com.example.foodx_be.dto.request.UserCreationRequest;
 import com.example.foodx_be.dto.request.UserUpdateRequest;
 import com.example.foodx_be.dto.response.PageRequestDTO;
-import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.dto.response.UserBasicInforResponse;
 import com.example.foodx_be.dto.response.UserResponse;
 import com.example.foodx_be.enity.User;
@@ -28,8 +13,21 @@ import com.example.foodx_be.exception.AppException;
 import com.example.foodx_be.exception.ErrorCode;
 import com.example.foodx_be.mapper.UserMapper;
 import com.example.foodx_be.repository.UserRepository;
-
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -80,11 +78,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserResponse> getUserBySpecification(RequestDTO requestDTO) {
+    public Page<UserResponse> getUserBySpecification(Request request) {
         Specification<User> userSpecification =
-                specification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.AND);
-        userSpecification.and(specification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
-        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
+                specification.getSearchSpecification(request.getSearchRequestDTO(), GlobalOperator.AND);
+        userSpecification.and(specification.sortByColumn(request.getSortByColumn(), request.getSort()));
+        Pageable pageable = new PageRequestDTO().getPageable(request.getPageRequestDTO());
         Page<User> usersPage = userRepository.findAll(userSpecification, pageable);
         if (usersPage.getContent().isEmpty()) {
             throw new AppException(ErrorCode.USER_EXISTED);

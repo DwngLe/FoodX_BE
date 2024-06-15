@@ -3,8 +3,10 @@ package com.example.foodx_be.dto.response;
 import com.example.foodx_be.enums.RestaurantState;
 import com.example.foodx_be.enums.UpdateState;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,7 +16,8 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class RestaurantDTO {
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class RestaurantResponse {
     private UUID id;
     private String restaurantName;
     private String houseNumber;
@@ -41,10 +44,12 @@ public class RestaurantDTO {
     private UserBasicInforResponse userAdd;
     private UserBasicInforResponse userUpdate;
     private UpdateState updateState;
+    private double points;
 
     @JsonFormat(pattern = "HH:mm:ss dd:MM:yyyy")
     private LocalDateTime updateTime;
 
     private List<TagDTO> tagDTOList;
-    private double points;
+    private List<RestaurantImageResponse> restaurantImageResponseList;
+
 }

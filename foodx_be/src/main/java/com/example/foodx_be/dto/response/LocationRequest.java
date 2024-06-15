@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class LocationDTO {
+public class LocationRequest {
     private BigDecimal latitude;
     private BigDecimal longitude;
     private BigDecimal radius;

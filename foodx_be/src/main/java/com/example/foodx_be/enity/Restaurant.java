@@ -113,4 +113,10 @@ public class Restaurant {
     @JsonIgnore
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     private List<RestaurantTag> restaurantTagList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    private List<RestaurantImage> restaurantImageList;
+
+
 }

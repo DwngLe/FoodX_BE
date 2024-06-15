@@ -1,25 +1,23 @@
 package com.example.foodx_be.controller;
 
-import java.io.IOException;
-import java.util.UUID;
-
-import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.example.foodx_be.dto.request.BusinessProofCreationRequest;
+import com.example.foodx_be.dto.request.Request;
 import com.example.foodx_be.dto.request.UserUpdateRequest;
-import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.dto.response.UserResponse;
 import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.BusinessProofService;
 import com.example.foodx_be.service.UserService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
@@ -65,9 +63,9 @@ public class UserController {
                     @ApiResponse(description = "Không tìm thấy kết quả", responseCode = "404")
             })
     @PostMapping("/specification")
-    public APIResponse<Page<UserResponse>> findUsersBySpecification(@RequestBody RequestDTO requestDTO) {
+    public APIResponse<Page<UserResponse>> findUsersBySpecification(@RequestBody Request request) {
         return APIResponse.<Page<UserResponse>>builder()
-                .result(userService.getUserBySpecification(requestDTO))
+                .result(userService.getUserBySpecification(request))
                 .build();
     }
 

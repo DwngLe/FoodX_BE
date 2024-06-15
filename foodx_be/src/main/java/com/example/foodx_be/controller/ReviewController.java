@@ -1,7 +1,7 @@
 package com.example.foodx_be.controller;
 
+import com.example.foodx_be.dto.request.Request;
 import com.example.foodx_be.dto.request.ReviewRestaurantCreationRequest;
-import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.dto.response.ReviewRestaurantDTO;
 import com.example.foodx_be.exception.APIResponse;
 import com.example.foodx_be.service.ReviewService;
@@ -50,9 +50,9 @@ public class ReviewController {
                     @ApiResponse(description = "Không tìm thấy kết quả", responseCode = "404")
             })
     @PostMapping("/specification")
-    public APIResponse<Page<ReviewRestaurantDTO>> getListReview(@RequestBody RequestDTO requestDTO) {
+    public APIResponse<Page<ReviewRestaurantDTO>> getListReview(@RequestBody Request request) {
         return APIResponse.<Page<ReviewRestaurantDTO>>builder()
-                .result(reviewService.getListReviewBySpecification(requestDTO))
+                .result(reviewService.getListReviewBySpecification(request))
                 .build();
     }
 

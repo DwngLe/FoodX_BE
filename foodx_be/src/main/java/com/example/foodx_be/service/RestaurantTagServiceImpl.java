@@ -1,7 +1,7 @@
 package com.example.foodx_be.service;
 
+import com.example.foodx_be.dto.request.Request;
 import com.example.foodx_be.dto.response.PageRequestDTO;
-import com.example.foodx_be.dto.response.RequestDTO;
 import com.example.foodx_be.enity.Restaurant;
 import com.example.foodx_be.enity.RestaurantTag;
 import com.example.foodx_be.enity.Tag;
@@ -37,17 +37,17 @@ public class RestaurantTagServiceImpl implements RestaurantTagService {
     }
 
     @Override
-    public Page<RestaurantTag> getListRestaurantByTag(RequestDTO requestDTO) {
+    public Page<RestaurantTag> getListRestaurantByTag(Request request) {
         Specification<RestaurantTag> restaurantSpecification =
-                tagFiltersSpecification.getSearchSpecification(requestDTO.getSearchRequestDTO(), GlobalOperator.OR);
-        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDTO());
+                tagFiltersSpecification.getSearchSpecification(request.getSearchRequestDTO(), GlobalOperator.OR);
+        Pageable pageable = new PageRequestDTO().getPageable(request.getPageRequestDTO());
 
-        if ("point".equals(requestDTO.getSortByColumn())) {
+        if ("point".equals(request.getSortByColumn())) {
             restaurantSpecification =
-                    restaurantSpecification.and(tagFiltersSpecification.sortByAverageReview(requestDTO.getSort()));
+                    restaurantSpecification.and(tagFiltersSpecification.sortByAverageReview(request.getSort()));
         } else {
             restaurantSpecification = restaurantSpecification.and(
-                    tagFiltersSpecification.sortByColumn(requestDTO.getSortByColumn(), requestDTO.getSort()));
+                    tagFiltersSpecification.sortByColumn(request.getSortByColumn(), request.getSort()));
         }
 
         Page<RestaurantTag> all = restaurantTagRepository.findAll(restaurantSpecification, pageable);
