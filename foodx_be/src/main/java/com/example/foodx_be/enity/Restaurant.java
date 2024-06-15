@@ -80,7 +80,7 @@ public class Restaurant {
     @PrePersist
     public void control() {
         if (restaurantState == null) {
-            restaurantState = RestaurantState.PENDING;
+            restaurantState = RestaurantState.ACTIVE;
         }
         if (timeAdded == null) {
             timeAdded = LocalDate.now();
