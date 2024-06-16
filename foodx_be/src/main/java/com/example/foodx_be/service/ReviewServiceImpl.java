@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,6 +62,7 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRestaurantDTOList;
     }
 
+    @PreAuthorize("hasRole('USER')")
     @Override
     public void addReview(ReviewRestaurantCreationRequest reviewCommand, MultipartFile[] multipartFiles)
             throws IOException {
@@ -98,9 +100,9 @@ public class ReviewServiceImpl implements ReviewService {
         Pageable pageable = new PageRequestDTO().getPageable(request.getPageRequestDTO());
         reviewSpecification.and(specification.sortByColumn(request.getSortByColumn(), request.getSort()));
         Page<Review> all = reviewRepository.findAll(reviewSpecification, pageable);
-        if (all.getContent().isEmpty()) {
-            throw new AppException(ErrorCode.REVIEW_NOT_EXISTED);
-        }
+//        if (all.getContent().isEmpty()) {
+//            throw new AppException(ErrorCode.REVIEW_NOT_EXISTED);
+//        }
         return all.map(this::convertToReViewRestaurantDTO);
     }
 

@@ -43,8 +43,8 @@ public class ReviewController {
     }
 
     @Operation(
-            description = "Lấy thông tin các bài đánh giá của 1 nhà hàng dựa trên ID của nhà hàng đó",
-            summary = "Lấy ra danh sách các bài đánh giá của 1 nhà hàng",
+            description = "Lấy thông tin các bài đánh giá của 1 nhà hàng hoặc 1 người dùng dựa vào id",
+            summary = "Lấy ra danh sách các bài đánh giá của 1 nhà hàng hoặc 1 người dùng",
             responses = {
                     @ApiResponse(description = "Thành công", responseCode = "200"),
                     @ApiResponse(description = "Không tìm thấy kết quả", responseCode = "404")
