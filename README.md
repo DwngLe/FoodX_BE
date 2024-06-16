@@ -4,9 +4,8 @@ Một trang web xếp hạng các nhà hàng dựa trên đánh giá của ngư�
 
 ## Authors
 
-- [@DwngLee](https://github.com/DwngLee)
-- [@Semicof](https://github.com/Semicof)
-- [@Qu-yen](https://github.com/Qu-yen)
+- [@DwngLee - Back-end](https://github.com/DwngLee)
+- [@Semicof - Front-end](https://github.com/Semicof)
 
 
 ## Deployment
