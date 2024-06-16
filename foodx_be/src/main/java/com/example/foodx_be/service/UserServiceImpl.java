@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
         Pageable pageable = new PageRequestDTO().getPageable(request.getPageRequestDTO());
         Page<User> usersPage = userRepository.findAll(userSpecification, pageable);
         if (usersPage.getContent().isEmpty()) {
-            throw new AppException(ErrorCode.USER_EXISTED);
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
         }
         return usersPage.map(userMapper::toUserResponse);
     }
