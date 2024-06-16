@@ -29,7 +29,12 @@ public enum ErrorCode {
 
     // for authen and author
     UNAUTHENTICATED(3000, "Cannot Authenticated", HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(3001, "You do not have permission", HttpStatus.FORBIDDEN);
+    UNAUTHORIZED(3001, "You do not have permission", HttpStatus.FORBIDDEN),
+
+    //for invalid param
+    INVALID_PAGE_SIZE(4000, "Page size must be at least {min} objects", HttpStatus.BAD_REQUEST),
+    INVALID_PAGE_NUMBER(4001, "Page cannot be negotive", HttpStatus.BAD_REQUEST);
+
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;

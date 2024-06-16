@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -112,7 +113,7 @@ public class RestaurantController {
                     @ApiResponse(description = "Không tìm thấy kết quả", responseCode = "404")
             })
     @PostMapping("/nearby")
-    public APIResponse<Page<RestaurantBasicInfoResponse>> getRestaurantNearBy(@RequestBody NearbyRequestDTO nearbyRequestDTO) {
+    public APIResponse<Page<RestaurantBasicInfoResponse>> getRestaurantNearBy(@Valid @RequestBody NearbyRequestDTO nearbyRequestDTO) {
         return APIResponse.<Page<RestaurantBasicInfoResponse>>builder()
                 .result(restaurantService.getNearByRestaurant(
                         nearbyRequestDTO.getRequest(), nearbyRequestDTO.getLocationRequest()))
