@@ -10,12 +10,4 @@ public class UUIDUtil {
         return UUID.randomUUID().toString();
     }
 
-    private boolean validateId(String id) {
-        try {
-            UUID.fromString(id);
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
 }
